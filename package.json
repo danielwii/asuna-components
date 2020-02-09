@@ -1,9 +1,11 @@
 {
   "name": "asuna-components",
   "version": "0.1.0",
-  "private": true,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "echo 'no tests for asuna-components yet.'",
     "type-check": "tsc --noEmit",
