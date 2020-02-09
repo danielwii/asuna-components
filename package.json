@@ -1,0 +1,74 @@
+{
+  "name": "asuna-components",
+  "version": "0.1.0",
+  "private": true,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "test": "echo 'no tests for asuna-components yet.'",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "yarn type-check -- --watch",
+    "build1": "yarn build:types && yarn build:js",
+    "build": "yarn build:tsc",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
+    "build:tsc": "tsc",
+    "postinstall": "yarn build",
+    "clean": "rm -rf dist lib",
+    "storybook": "start-storybook -p 9009 -s public"
+  },
+  "dependencies": {
+    "antd": "^3.26.9",
+    "emotion": "^10.0.27",
+    "qrcode.react": "^1.0.0",
+    "rc-tween-one": "^2.6.8",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-use": "^13.24.0",
+    "spinkit": "^2.0.1",
+    "styled-components": "^5.0.1",
+    "typescript": "~3.7.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@storybook/preset-create-react-app": "^1.5.2",
+    "@storybook/react": "^5.3.12",
+    "@testing-library/jest-dom": "^5.1.1",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^8.1.0",
+    "@types/jest": "^25.1.1",
+    "@types/node": "^12.12.26",
+    "@types/qrcode.react": "^1.0.0",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
+    "@types/styled-components": "^4.4.2",
+    "babel-loader": "^8.0.6",
+    "babel-preset-react-app": "^9.1.1",
+    "eslint-config-react-app": "^5.2.0",
+    "husky": "^4.2.1",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
