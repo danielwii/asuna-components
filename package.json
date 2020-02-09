@@ -15,7 +15,7 @@
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
     "build:tsc": "tsc",
-    "postinstall": "yarn build",
+    "postinstall!": "yarn build",
     "clean": "rm -rf dist lib",
     "storybook": "start-storybook -p 9009 -s public"
   },
