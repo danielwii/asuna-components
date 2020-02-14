@@ -5,7 +5,6 @@ import React from 'react';
 import { useLogger } from 'react-use';
 
 import { parseJSONIfCould, StaticImplements, WithVariable } from '../helper';
-import { DebugInfo } from './debug';
 
 export type FieldOpts = (
   name: string,
@@ -18,8 +17,15 @@ export type ParsedFieldOpts = {
 };
 
 export interface DynamicJsonTableAdapter {
-  createItem: () => object;
+  // 创建新元素
+  createItem: () => any;
+  // 生成用于输入标签的帮助方法
   fieldParser: (item, index: number) => ParsedFieldOpts;
+  parseValue: (value) => any;
+  unparseValue: (value) => any;
+  clear: (onChange) => any;
+  // 包括 onChange 的帮助方法
+  getFieldOpts: (formik, item) => FieldOpts;
 }
 
 export interface DynamicJsonTableProps<V extends Record<string, string | number>> {
@@ -27,42 +33,71 @@ export interface DynamicJsonTableProps<V extends Record<string, string | number>
   render: (opts: { formik; item: object; index: number; fieldOpts: FieldOpts }) => React.ReactNode;
   onChange: (values) => void;
   preview: (item) => React.ReactNode;
-  // item part
-  createItem: () => object;
-  fieldOptsParser: (item, index: number) => ParsedFieldOpts;
+  adapter: DynamicJsonTableAdapter;
 }
 
 @StaticImplements<DynamicJsonTableAdapter>()
-export class IndexArrayHelper {
+export class ObjectArrayHelper {
   static key = 'key';
   static createItem = () => ({ key: '' });
-  static keyParser = value => ({ [value.key]: _.omit(value, IndexArrayHelper.key) });
-  static fieldParser = (value: object, index: number): ParsedFieldOpts => ({
+  static keyParser = value => ({ [value.key]: _.omit(value, ObjectArrayHelper.key) });
+  static fieldParser = (value: any, index: number): ParsedFieldOpts => ({
     name: (name: string): string => `${index}.${name}`,
     value: (name: string): string => value?.[name],
   });
+  static parseValue = value =>
+    _.chain(value)
+      .toPairs()
+      .groupBy(([k]) => k.split('-')[0])
+      .flatMap(arr => _.fromPairs(arr.map(([k, v]) => [k.split('-')[1], v])))
+      .value();
+  static unparseValue = value => _.assign({}, ..._.flatMap(value, (v, i) => _.mapKeys(v, (v, k) => `${i}-${k}`)));
+  static clear = onChange => onChange({});
+  static getFieldOpts = (formik, item): FieldOpts => (name: string, index: number) => {
+    const field = ObjectArrayHelper.fieldParser(item, index);
+    return { name: field.name(name), value: field.value(name), onChange: event => formik.handleChange(event) };
+  };
+}
+
+@StaticImplements<DynamicJsonTableAdapter>()
+export class StringArrayHelper {
+  static createItem = () => '';
+  static keyParser = value => value;
+  static fieldParser = (value: any, index: number): ParsedFieldOpts => ({
+    name: (name: string): string => `${index}.${name}`,
+    value: (name: string): string => value,
+  });
+  static parseValue = value => value;
+  static unparseValue = value => value;
+  // static unparseValue = value => _.flatten(_.map(value, field => (_.isObject(field) ? _.values(field) : field)));
+  static clear = onChange => onChange([]);
+  static getFieldOpts = (formik, item): FieldOpts => (name: string, index: number) => {
+    const field = StringArrayHelper.fieldParser(item, index);
+    return {
+      name: field.name(name),
+      value: field.value(name),
+      onChange: event => {
+        console.log(index, name, event.target.name, event.target.value);
+        // formik.handleChange(event);
+        formik.values[index] = event.target.value;
+        formik.setValues(formik.values);
+      },
+    };
+  };
 }
 
 export const DynamicJsonArrayTable: <T extends Record<string, string | number>>(
   props: DynamicJsonTableProps<T>,
-) => React.ReactElement<DynamicJsonTableProps<T>> = ({ value, render, onChange, preview, fieldOptsParser }) => {
+) => React.ReactElement<DynamicJsonTableProps<T>> = ({ value, render, onChange, preview, adapter }) => {
   const initialValues = parseJSONIfCould(value as any) ?? {};
 
   const funcs = {
-    parseValue: value =>
-      _.chain(value)
-        .toPairs()
-        .groupBy(([k]) => k.split('-')[0])
-        .flatMap(arr => _.fromPairs(arr.map(([k, v]) => [k.split('-')[1], v])))
-        .value(),
-    unparseValue: value => _.assign({}, ..._.flatMap(value, (v, i) => _.mapKeys(v, (v, k) => `${i}-${k}`))),
+    parseValue: adapter.parseValue,
+    unparseValue: adapter.unparseValue,
     remove: (index: number) => formik.setValues(_.filter(parsedFields, (o, i) => i !== index)),
-    add: () => formik.setValues([...parsedFields, { key: '' }]),
-    clear: () => onChange({}),
-    fieldOpts: (formik, item): FieldOpts => (name: string, index: number) => {
-      const field = fieldOptsParser(item, index);
-      return { name: field.name(name), value: field.value(name), onChange: event => formik.handleChange(event) };
-    },
+    add: () => formik.setValues([...parsedFields, adapter.createItem()]),
+    clear: () => adapter.clear(onChange),
+    fieldOpts: adapter.getFieldOpts,
   };
 
   const parsedFields: object[] = funcs.parseValue(initialValues);
@@ -81,24 +116,20 @@ export const DynamicJsonArrayTable: <T extends Record<string, string | number>>(
         renderItem={(indexObject, index) => (
           <WithVariable variable={indexObject[index]}>
             {item => (
-              <>
-                <DebugInfo data={formik.values} debug type="util" />
-
-                <List.Item
-                  actions={[
-                    <Button size="small" type="danger" onClick={() => funcs.remove(index)}>
-                      remove
-                    </Button>,
-                  ]}
-                  // extra={preview(item)}
-                >
-                  {/*<List.Item.Meta />*/}
-                  <div>
-                    <div>{render({ formik, item, index, fieldOpts: funcs.fieldOpts(formik, item) })}</div>
-                    <div>data: {preview(item)}</div>
-                  </div>
-                </List.Item>
-              </>
+              <List.Item
+                actions={[
+                  <Button size="small" type="danger" onClick={() => funcs.remove(index)}>
+                    remove
+                  </Button>,
+                ]}
+                // extra={preview(item)}
+              >
+                {/*<List.Item.Meta />*/}
+                <div>
+                  <div>{render({ formik, item, index, fieldOpts: funcs.fieldOpts(formik, item) })}</div>
+                  <div>data: {preview(item)}</div>
+                </div>
+              </List.Item>
             )}
           </WithVariable>
         )}
