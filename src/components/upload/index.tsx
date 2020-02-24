@@ -13,6 +13,8 @@ import { Loading } from '../loading';
 import { AssetsPreview, ImagePreview, WithModal } from '../preview';
 import { valueToArray, valueToString, wrapFilesToFileList } from './utils';
 
+export * from './utils';
+
 export interface IUploadedFile {
   bucket: string;
   path: string;
@@ -39,6 +41,7 @@ export interface IUploaderProps {
   multiple?: boolean; // 是否启用多图上传模式，选填，默认false，boolean类型
   jsonMode?: boolean;
 
+  enableDragMode?: boolean;
   // action?: string; // 图片上传的接口地址，必填，string类型
   disabled?: boolean; // 是否禁用上传功能，选填，默认false，boolean类型
   // formData?: Partial<IFormData>; // 上传图片大小尺寸
@@ -52,7 +55,15 @@ export interface IUploaderProps {
   onChange: (value: string | string[]) => void;
 }
 
-export const Uploader: React.FC<IUploaderProps> = ({ adapter, value, disabled, multiple, jsonMode, onChange }) => {
+export const Uploader: React.FC<IUploaderProps> = ({
+  adapter,
+  value,
+  disabled,
+  multiple,
+  jsonMode,
+  enableDragMode,
+  onChange,
+}) => {
   // const [refreshFlag, updateRefreshFlag] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [layout, setLayout] = React.useState<UploadListType>('picture');
@@ -118,9 +129,11 @@ export const Uploader: React.FC<IUploaderProps> = ({ adapter, value, disabled, m
         if (inList) {
           inList.status = 'success';
         }
+        setFileList(_.takeRight(info.fileList));
+      } else {
+        // console.table(info.fileList);
+        setFileList(info.fileList); // update progress
       }
-      // console.table(info.fileList);
-      setFileList(info.fileList); // update progress
     },
     addNetworkAddress: (url: string): void => {
       setFileList([...fileList, ...wrapFilesToFileList(url)]);
@@ -215,7 +228,9 @@ export const Uploader: React.FC<IUploaderProps> = ({ adapter, value, disabled, m
           </div>
         )}
       >
-        <Button>Add Network Address</Button>
+        <Button>
+          <Icon type="cloud-upload" /> Add Network Address
+        </Button>
       </WithModal>
     ),
   };
@@ -246,40 +261,69 @@ export const Uploader: React.FC<IUploaderProps> = ({ adapter, value, disabled, m
       `}
     >
       {/*<Tag>{refreshFlag}</Tag>*/}
-      <Radio.Group value={layout} onChange={e => setLayout(e.target.value)}>
-        <Radio.Button value="picture">picture</Radio.Button>
-        <Radio.Button value="picture-card">picture-card</Radio.Button>
-      </Radio.Group>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        {views.renderedAddNetworkAddressButton}
+        <Radio.Group value={layout} onChange={e => setLayout(e.target.value)}>
+          <Radio.Button value="picture">
+            picture <Icon type="picture" />
+          </Radio.Button>
+          <Radio.Button value="picture-card">
+            picture-card <Icon type="unordered-list" />
+          </Radio.Button>
+        </Radio.Group>
+      </div>
       <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
-      {views.renderedAddNetworkAddressButton}
-      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
-      <Upload.Dragger
-        name="avatar"
-        showUploadList
-        listType={layout}
-        customRequest={func.customRequest}
-        fileList={fileList}
-        disabled={disabled}
-        multiple={multiple}
-        beforeUpload={func.beforeUpload}
-        onChange={func.handleChange}
-      >
-        {loading ? (
-          <div style={{ display: 'inline-block' }}>
-            <Loading type="chase" />
-          </div>
-        ) : (
-          <React.Fragment>
-            <p className="ant-upload-drag-icon">
-              <Icon type="inbox" />
-            </p>
-            <p className="ant-upload-text">Click or drag file to this area to upload</p>
-            <Button loading={loading}>
-              <Icon type="upload" /> Click to Upload
+      {enableDragMode ? (
+        <Upload.Dragger
+          name="avatar"
+          showUploadList
+          listType={layout}
+          customRequest={func.customRequest}
+          fileList={fileList}
+          disabled={disabled}
+          multiple={multiple}
+          beforeUpload={func.beforeUpload}
+          onChange={func.handleChange}
+        >
+          {loading ? (
+            <div style={{ display: 'inline-block' }}>
+              <Loading type="chase" />
+            </div>
+          ) : (
+            <React.Fragment>
+              <p className="ant-upload-drag-icon">
+                <Icon type="inbox" />
+              </p>
+              <p className="ant-upload-text">Click or drag file to this area to upload</p>
+              <Button loading={loading}>
+                <Icon type="upload" /> Click to Upload
+              </Button>
+            </React.Fragment>
+          )}
+        </Upload.Dragger>
+      ) : (
+        <Upload
+          name="avatar"
+          showUploadList
+          listType={layout}
+          customRequest={func.customRequest}
+          fileList={fileList}
+          disabled={disabled}
+          multiple={multiple}
+          beforeUpload={func.beforeUpload}
+          onChange={func.handleChange}
+        >
+          {loading ? (
+            <div style={{ display: 'inline-block' }}>
+              <Loading type="chase" />
+            </div>
+          ) : (
+            <Button>
+              <Icon type="upload" /> upload
             </Button>
-          </React.Fragment>
-        )}
-      </Upload.Dragger>
+          )}
+        </Upload>
+      )}
       <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
       <div>
         <AssetsPreview
@@ -327,7 +371,7 @@ export const Uploader: React.FC<IUploaderProps> = ({ adapter, value, disabled, m
               }}
             >
               {({ item, hasUrl, isHead, isTail }) => (
-                <React.Fragment>
+                <WithDebugInfo key={url} info={{ item, url }}>
                   <div>
                     <Button.Group size="small">
                       <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, 0)}>
@@ -364,7 +408,7 @@ export const Uploader: React.FC<IUploaderProps> = ({ adapter, value, disabled, m
                       {(item.size / 1024 / 1024).toFixed(3)}MB
                     </Tag>
                   )}
-                </React.Fragment>
+                </WithDebugInfo>
               )}
             </WithVariable>
           )}

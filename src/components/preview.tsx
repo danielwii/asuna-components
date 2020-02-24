@@ -125,7 +125,7 @@ export function AssetsPreview({
   children?: (props: { view: React.ReactNode; index: number }) => React.ReactNode;
 }) {
   const renderView = (url: string, index: number) => (
-    <ImagePreview key={index} url={url}>
+    <ImagePreview key={url} url={url}>
       <div
         css={css`
           display: inline-block;
