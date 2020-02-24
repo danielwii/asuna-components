@@ -13,7 +13,7 @@ const StoreProvider: StateFC<string | string[]> = ({ initialState, children }) =
   return <div>{children(state, setState)}</div>;
 };
 
-storiesOf('Uploader', module).add('upload-single', () => (
+storiesOf('Uploader', module).add('default', () => (
   <div style={{ margin: '1rem' }}>
     <StoreProvider initialState={''}>
       {(state, setState) => (

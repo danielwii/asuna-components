@@ -9,7 +9,7 @@ import { parseJSONIfCould, StaticImplements, WithVariable } from '../helper';
 export type FieldOpts = (
   name: string,
   index: number,
-) => { name: string; value: string; onChange: React.ChangeEventHandler<HTMLInputElement> };
+) => { name: string; value: string; onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> };
 
 export type ParsedFieldOpts = {
   name: (name: string) => string;
@@ -32,15 +32,15 @@ export interface DynamicJsonTableProps<V extends Record<string, string | number>
   value: V;
   render: (opts: { formik; item: object; index: number; fieldOpts: FieldOpts }) => React.ReactNode;
   onChange: (values) => void;
-  preview: (item) => React.ReactNode;
+  preview: (item, index: number) => React.ReactNode;
   adapter: DynamicJsonTableAdapter;
 }
 
 @StaticImplements<DynamicJsonTableAdapter>()
-export class ObjectArrayHelper {
+export class ObjectJsonTableHelper {
   static key = 'key';
   static createItem = () => ({ key: '' });
-  static keyParser = value => ({ [value.key]: _.omit(value, ObjectArrayHelper.key) });
+  static keyParser = value => ({ [value.key]: _.omit(value, ObjectJsonTableHelper.key) });
   static fieldParser = (value: any, index: number): ParsedFieldOpts => ({
     name: (name: string): string => `${index}.${name}`,
     value: (name: string): string => value?.[name],
@@ -54,13 +54,13 @@ export class ObjectArrayHelper {
   static unparseValue = value => _.assign({}, ..._.flatMap(value, (v, i) => _.mapKeys(v, (v, k) => `${i}-${k}`)));
   static clear = onChange => onChange({});
   static getFieldOpts = (formik, item): FieldOpts => (name: string, index: number) => {
-    const field = ObjectArrayHelper.fieldParser(item, index);
+    const field = ObjectJsonTableHelper.fieldParser(item, index);
     return { name: field.name(name), value: field.value(name), onChange: event => formik.handleChange(event) };
   };
 }
 
 @StaticImplements<DynamicJsonTableAdapter>()
-export class StringArrayHelper {
+export class StringArrayJsonTableHelper {
   static createItem = () => '';
   static keyParser = value => value;
   static fieldParser = (value: any, index: number): ParsedFieldOpts => ({
@@ -72,14 +72,41 @@ export class StringArrayHelper {
   // static unparseValue = value => _.flatten(_.map(value, field => (_.isObject(field) ? _.values(field) : field)));
   static clear = onChange => onChange([]);
   static getFieldOpts = (formik, item): FieldOpts => (name: string, index: number) => {
-    const field = StringArrayHelper.fieldParser(item, index);
+    const field = StringArrayJsonTableHelper.fieldParser(item, index);
     return {
       name: field.name(name),
       value: field.value(name),
       onChange: event => {
-        console.log(index, name, event.target.name, event.target.value);
+        // console.log(index, name, event.target.name, event.target.value);
         // formik.handleChange(event);
         formik.values[index] = event.target.value;
+        formik.setValues(formik.values);
+      },
+    };
+  };
+}
+
+@StaticImplements<DynamicJsonTableAdapter>()
+export class ObjectArrayJsonTableHelper {
+  static createItem = () => ({});
+  static keyParser = value => value;
+  static fieldParser = (value: any, index: number): ParsedFieldOpts => ({
+    name: (name: string): string => name, // `${index}.${name}`,
+    value: (name: string): string => value[name],
+  });
+  static parseValue = value => value;
+  static unparseValue = value => value;
+  //  unparseValue = value => _.flatten(_.map(value, field => (_.isObject(field) ? _.values(field) : field)));
+  static clear = onChange => onChange([]);
+  static getFieldOpts = (formik, item): FieldOpts => (name: string, index: number) => {
+    const field = ObjectArrayJsonTableHelper.fieldParser(item, index);
+    return {
+      name: field.name(name),
+      value: field.value(name),
+      onChange: event => {
+        // console.log(index, this.fields, name, { name: event.target.name, value: event.target.value }, formik.values);
+        // formik.handleChange(event);
+        formik.values[index] = { ...formik.values[index], ...{ [name]: event.target.value } };
         formik.setValues(formik.values);
       },
     };
@@ -127,7 +154,7 @@ export const DynamicJsonArrayTable: <T extends Record<string, string | number>>(
                 {/*<List.Item.Meta />*/}
                 <div>
                   <div>{render({ formik, item, index, fieldOpts: funcs.fieldOpts(formik, item) })}</div>
-                  <div>data: {preview(item)}</div>
+                  <div>data: {preview(item, index)}</div>
                 </div>
               </List.Item>
             )}
