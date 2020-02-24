@@ -5,14 +5,13 @@ import { RcCustomRequestOptions, RcFile, UploadFile, UploadListType } from 'antd
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import { AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
-import * as fp from 'lodash/fp';
 import React from 'react';
 import { useLogger } from 'react-use';
 import { WithVariable } from '../../helper';
 import { WithDebugInfo } from '../debug';
 import { Loading } from '../loading';
 import { AssetsPreview, ImagePreview, WithModal } from '../preview';
-import { loadReaderAsync, valueToArray, valueToString, wrapFilesToFileList } from './utils';
+import { valueToArray, valueToString, wrapFilesToFileList } from './utils';
 
 export interface IUploadedFile {
   bucket: string;

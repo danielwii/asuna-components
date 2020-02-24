@@ -47,7 +47,7 @@ storiesOf('DynamicJsonArray', module)
                         <DynamicJsonArrayTable
                           adapter={ObjectJsonTableHelper}
                           value={field.value}
-                          preview={item => <pre>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</pre>}
+                          preview={item => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
                           render={({ formik, item, index, fieldOpts }) => (
                             <WithDebugInfo info={{ formik }} debug>
                               <Card>
@@ -102,7 +102,7 @@ storiesOf('DynamicJsonArray', module)
                         <DynamicJsonArrayTable
                           adapter={StringArrayJsonTableHelper}
                           value={field.value}
-                          preview={item => <pre>{util.inspect(StringArrayJsonTableHelper.keyParser(item))}</pre>}
+                          preview={item => <div>{util.inspect(StringArrayJsonTableHelper.keyParser(item))}</div>}
                           render={({ fieldOpts, index }) => <Input {...fieldOpts('key', index)} addonBefore="text" />}
                           onChange={values => form.setFieldValue(field.name, values)}
                         />
@@ -143,7 +143,7 @@ storiesOf('DynamicJsonArray', module)
                             <DynamicJsonArrayTable
                               adapter={helper}
                               value={field.value}
-                              preview={item => <pre>{util.inspect(helper.keyParser(item))}</pre>}
+                              preview={item => <div>{util.inspect(helper.keyParser(item))}</div>}
                               render={({ fieldOpts, index }) => (
                                 <>
                                   <Input {...fieldOpts('path', index)} addonBefore="path" />

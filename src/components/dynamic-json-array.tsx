@@ -1,4 +1,4 @@
-import { Button, List } from 'antd';
+import { Button, Collapse, List } from 'antd';
 import { useFormik } from 'formik';
 import * as _ from 'lodash';
 import React from 'react';
@@ -152,10 +152,11 @@ export const DynamicJsonArrayTable: <T extends Record<string, string | number>>(
                 // extra={preview(item)}
               >
                 {/*<List.Item.Meta />*/}
-                <div>
-                  <div>{render({ formik, item, index, fieldOpts: funcs.fieldOpts(formik, item) })}</div>
-                  <div>data: {preview(item, index)}</div>
-                </div>
+                <Collapse bordered={false}>
+                  <Collapse.Panel key={index} header={preview(item, index)}>
+                    {render({ formik, item, index, fieldOpts: funcs.fieldOpts(formik, item) })}
+                  </Collapse.Panel>
+                </Collapse>
               </List.Item>
             )}
           </WithVariable>
