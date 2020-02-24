@@ -47,12 +47,12 @@ export const ImagePreview: React.FC<{ url: string; title?: string; onEdit?: (url
         text-align: right;
       `}
     >
-      <Input.TextArea value={newUrl} onChange={e => setUrl(e.target.value)} autoSize />
+      <Input.TextArea value={newUrl ?? url} onChange={e => setUrl(e.target.value)} autoSize />
       <Divider type="horizontal" dashed style={{ margin: '1rem 0' }} />
       <Button
         type="primary"
         onClick={() => {
-          onEdit(newUrl);
+          onEdit(newUrl ?? url);
           setVisible(false);
         }}
       >
@@ -74,7 +74,7 @@ export const ImagePreview: React.FC<{ url: string; title?: string; onEdit?: (url
             css={css`
               max-width: 100%;
             `}
-            src={newUrl}
+            src={newUrl ?? url}
           />
         </div>
         {editView}

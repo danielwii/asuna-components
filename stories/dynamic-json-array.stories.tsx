@@ -84,7 +84,7 @@ storiesOf('DynamicJsonArray', module)
       </StoreProvider>
     </div>
   ))
-  .add('array', () => (
+  .add('array-string', () => (
     <div style={{ margin: '1rem' }}>
       <StoreProvider
         initialState={{
