@@ -32,6 +32,32 @@ export function ReactViewer({
   );
 }
 
+export const WithModal: React.FC<{
+  title?: string;
+  renderModal: ({ state, setState, setVisible }) => React.ReactNode;
+}> = ({ title, renderModal, children }) => {
+  const [visible, setVisible] = useState(false);
+  const [state, setState] = useState<any>();
+  return (
+    <React.Fragment>
+      <Modal visible={visible} footer={null} onCancel={() => setVisible(false)} closable={false}>
+        {renderModal({ state, setState, setVisible })}
+      </Modal>
+      <Tooltip title={title}>
+        <div
+          css={css`
+            display: inline-block;
+            text-align: center;
+          `}
+          onClick={() => setVisible(true)}
+        >
+          {children}
+        </div>
+      </Tooltip>
+    </React.Fragment>
+  );
+};
+
 export const ImagePreview: React.FC<{ url: string; title?: string; onEdit?: (url: string) => void }> = ({
   title,
   url,

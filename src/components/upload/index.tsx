@@ -11,7 +11,7 @@ import * as util from 'util';
 import { WithVariable } from '../../helper';
 import { WithDebugInfo } from '../debug';
 import { Loading } from '../loading';
-import { AssetsPreview, ImagePreview } from '../preview';
+import { AssetsPreview, ImagePreview, WithModal } from '../preview';
 import { loadReaderAsync, valueToArray, valueToString, wrapFilesToFileList } from './utils';
 
 export interface IUploadedFile {
@@ -133,6 +133,10 @@ export const Uploader: React.FC<IUploaderProps> = ({
       // console.table(info.fileList);
       setFileList(info.fileList);
     },
+    addNetworkAddress: (url: string): void => {
+      setFileList([...fileList, ...wrapFilesToFileList(url)]);
+      onChange(func.valueToSubmit(value, url));
+    },
     handleDelete: (index: number): void => {
       setFileList(fileList.filter((item, i) => i !== index));
 
@@ -175,159 +179,193 @@ export const Uploader: React.FC<IUploaderProps> = ({
   };
 
   return (
-    <div>
-      <Radio.Group size="small" value={layout} onChange={e => setLayout(e.target.value)}>
+    <section
+      className="small"
+      css={css`
+        margin: 0.2rem 0;
+        .ant-upload-drag {
+          display: inline-block;
+          width: 20rem;
+          height: 10rem;
+          padding: 0 0.3rem;
+          .ant-upload {
+            //padding: .1rem;
+          }
+        }
+        .ant-upload-list {
+          margin-top: 1rem;
+        }
+        .upload-list-inline .ant-upload-animate-enter {
+          animation-name: uploadAnimateInlineIn;
+        }
+        .upload-list-inline .ant-upload-animate-leave {
+          animation-name: uploadAnimateInlineOut;
+        }
+      `}
+    >
+      <Radio.Group value={layout} onChange={e => setLayout(e.target.value)}>
         <Radio.Button value="picture">picture</Radio.Button>
         <Radio.Button value="picture-card">picture-card</Radio.Button>
       </Radio.Group>
-      <section
-        className="small"
-        css={css`
-          margin: 0.2rem 0;
-          .ant-upload-drag {
-            display: inline-block;
-            width: 10rem;
-            height: 10rem;
-            padding: 0 0.3rem;
-            .ant-upload {
-              //padding: .1rem;
-            }
-          }
-          .ant-upload-list {
-            margin-top: 1rem;
-          }
-          .upload-list-inline .ant-upload-animate-enter {
-            animation-name: uploadAnimateInlineIn;
-          }
-          .upload-list-inline .ant-upload-animate-leave {
-            animation-name: uploadAnimateInlineOut;
-          }
-        `}
-      >
-        <Upload.Dragger
-          name="avatar"
-          showUploadList
-          listType={layout}
-          customRequest={func.customRequest}
-          fileList={fileList}
-          disabled={disabled}
-          // directory={multiple}
-          multiple={multiple}
-          beforeUpload={func.beforeUpload}
-          onChange={(info: UploadChangeParam) => func.handleChange(info)}
-        >
-          {loading ? (
-            <div style={{ display: 'inline-block' }}>
-              <Loading type="chase" />
-            </div>
-          ) : (
-            <React.Fragment>
-              <p className="ant-upload-drag-icon">
-                <Icon type="inbox" />
-              </p>
-              <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <Button loading={loading}>
-                <Icon type="upload" /> Click to Upload
-              </Button>
-            </React.Fragment>
-          )}
-        </Upload.Dragger>
-        <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
-        <div hidden>
-          {_.map(fileList, file => (
-            <Card key={file.uid}>
-              <pre>{util.inspect(file)}</pre>
-            </Card>
-          ))}
-        </div>
-        <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
-        <div>
-          <AssetsPreview
-            urls={fileList.map(file => file.url ?? file.thumbUrl)}
-            fullWidth
-            renderImage={({ view, index }) => (
-              <div
+      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+      <WithModal
+        renderModal={({ state, setState, setVisible }) => (
+          <div
+            css={css`
+              //margin: 1rem 0;
+              text-align: right;
+            `}
+          >
+            <div
+              css={css`
+                display: flex;
+                justify-content: center;
+                box-shadow: 0 0 1rem #ccc;
+              `}
+            >
+              <img
                 css={css`
-                  @keyframes pulse {
-                    0% {
-                      box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
-                    }
-                    70% {
-                      box-shadow: 0 0 0 0.75rem rgba(204, 169, 44, 0);
-                    }
-                    100% {
-                      box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
-                    }
-                  }
-                  border-radius: 0.2rem;
-                  overflow: hidden;
-                  box-shadow: 0 0 1rem
-                    ${_.cond([
-                      [_.matches({ status: 'uploading' }), _.constant('yellow')],
-                      [_.matches({ status: 'success' }), _.constant('green')],
-                      [_.stubTrue, _.constant('transparent')],
-                    ])(fileList[index])};
-                  animation: ${_.cond([
-                    [_.matches({ status: 'uploading' }), _.constant('pulse 2s infinite')],
-                    [_.matches({ status: 'success' }), _.constant('pulse ease-in')],
-                    [_.stubTrue, _.constant('none')],
-                  ])(fileList[index])};
+                  max-width: 100%;
                 `}
-              >
-                {view}
-              </div>
-            )}
-            renderExtraActions={(url, index, total) => (
-              <WithVariable variable={{ isHead: index === 0, isTail: index === total - 1 }}>
-                {({ isHead, isTail }) => (
-                  <React.Fragment>
-                    <Button.Group size="small">
-                      <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, 0)}>
-                        <Icon type="vertical-right" />
-                      </Button>
-                      <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, index - 1)}>
-                        <Icon type="left" />
-                      </Button>
-                      <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, index + 1)}>
-                        <Icon type="right" />
-                      </Button>
-                      <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, total - 1)}>
-                        <Icon type="vertical-left" />
-                      </Button>
-                    </Button.Group>{' '}
-                    <div
-                      css={css`
+                src={state}
+              />
+            </div>
+            <Divider type="horizontal" dashed style={{ margin: '1rem 0' }} />
+            <Input.TextArea
+              placeholder="请输入网络图片地址"
+              value={state}
+              onChange={e => setState(e.target.value)}
+              autoSize
+            />
+            <Divider type="horizontal" dashed style={{ margin: '1rem 0' }} />
+            <Button
+              type="primary"
+              onClick={() => {
+                func.addNetworkAddress(state);
+                setVisible(false);
+              }}
+            >
+              Confirm
+            </Button>
+          </div>
+        )}
+      >
+        <Button>Add Network Address</Button>
+      </WithModal>
+      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+      <Upload.Dragger
+        name="avatar"
+        showUploadList
+        listType={layout}
+        customRequest={func.customRequest}
+        fileList={fileList}
+        disabled={disabled}
+        // directory={multiple}
+        multiple={multiple}
+        beforeUpload={func.beforeUpload}
+        onChange={(info: UploadChangeParam) => func.handleChange(info)}
+      >
+        {loading ? (
+          <div style={{ display: 'inline-block' }}>
+            <Loading type="chase" />
+          </div>
+        ) : (
+          <React.Fragment>
+            <p className="ant-upload-drag-icon">
+              <Icon type="inbox" />
+            </p>
+            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+            <Button loading={loading}>
+              <Icon type="upload" /> Click to Upload
+            </Button>
+          </React.Fragment>
+        )}
+      </Upload.Dragger>
+      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+      <div hidden>
+        {_.map(fileList, file => (
+          <Card key={file.uid}>
+            <pre>{util.inspect(file)}</pre>
+          </Card>
+        ))}
+      </div>
+      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+      <div>
+        <AssetsPreview
+          urls={fileList.map(file => file.url ?? file.thumbUrl)}
+          fullWidth
+          renderImage={({ view, index }) => (
+            <div
+              css={css`
+                @keyframes pulse {
+                  0% {
+                    box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
+                  }
+                  70% {
+                    box-shadow: 0 0 0 0.75rem rgba(204, 169, 44, 0);
+                  }
+                  100% {
+                    box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+                  }
+                }
+                border-radius: 0.2rem;
+                overflow: hidden;
+                box-shadow: 0 0 1rem
+                  ${_.cond([
+                    [_.matches({ status: 'uploading' }), _.constant('yellow')],
+                    [_.matches({ status: 'success' }), _.constant('green')],
+                    [_.stubTrue, _.constant('transparent')],
+                  ])(fileList[index])};
+                animation: ${_.cond([
+                  [_.matches({ status: 'uploading' }), _.constant('pulse 2s infinite')],
+                  [_.matches({ status: 'success' }), _.constant('pulse ease-in')],
+                  [_.stubTrue, _.constant('none')],
+                ])(fileList[index])};
+              `}
+            >
+              {view}
+            </div>
+          )}
+          renderExtraActions={(url, index, total) => (
+            <WithVariable variable={{ isHead: index === 0, isTail: index === total - 1 }}>
+              {({ isHead, isTail }) => (
+                <React.Fragment>
+                  <Button.Group size="small">
+                    <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, 0)}>
+                      <Icon type="vertical-right" />
+                    </Button>
+                    <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, index - 1)}>
+                      <Icon type="left" />
+                    </Button>
+                    <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, index + 1)}>
+                      <Icon type="right" />
+                    </Button>
+                    <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, total - 1)}>
+                      <Icon type="vertical-left" />
+                    </Button>
+                  </Button.Group>{' '}
+                  <div
+                    css={css`
+                      display: inline;
+                      div {
                         display: inline;
-                        div {
-                          display: inline;
-                        }
-                      `}
-                      hidden={!fileList[index].url}
-                    >
-                      <ImagePreview url={url} onEdit={newUrl => func.handleEdit(index, newUrl)}>
-                        <Button type="primary" icon="edit" size="small" />{' '}
-                      </ImagePreview>
-                    </div>
-                    <Button type="danger" icon="delete" size="small" onClick={() => func.handleDelete(index)} />
-                    <WithDebugInfo info={fileList[index]} debug />
-                  </React.Fragment>
-                )}
-              </WithVariable>
-            )}
-          />
-        </div>
-        <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
-      </section>
-      {enableNetworkAddress ? (
-        <Modal
-          title="网络地址"
-          visible={this.state.visibleNetwork}
-          onOk={() => this.handleModalNetworkOk()}
-          onCancel={() => this.handleModalNetworkCancel()}
-        >
-          <Input placeholder="请输入网络图片地址" value={this.state.networkValue} onChange={this.handleNetworkChange} />
-        </Modal>
-      ) : null}
-    </div>
+                      }
+                    `}
+                    hidden={!fileList[index].url}
+                  >
+                    <ImagePreview url={url} onEdit={newUrl => func.handleEdit(index, newUrl)}>
+                      <Button type="primary" icon="edit" size="small" />{' '}
+                    </ImagePreview>
+                  </div>
+                  <Button type="danger" icon="delete" size="small" onClick={() => func.handleDelete(index)} />
+                  <WithDebugInfo info={fileList[index]} debug />
+                </React.Fragment>
+              )}
+            </WithVariable>
+          )}
+        />
+      </div>
+      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+    </section>
   );
 };
