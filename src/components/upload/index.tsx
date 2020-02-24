@@ -1,300 +1,323 @@
 /** @jsx jsx */
-import { css, Global, jsx } from '@emotion/core';
+import { css, jsx } from '@emotion/core';
+import { Button, Card, Divider, Icon, Input, Modal, Radio, Upload } from 'antd';
+import { RcCustomRequestOptions, RcFile, UploadFile, UploadListType } from 'antd/es/upload/interface';
+import { UploadChangeParam } from 'antd/lib/upload/interface';
+import { AxiosRequestConfig } from 'axios';
+import * as _ from 'lodash';
 import React from 'react';
-import { Upload, Icon, message, Modal, Input } from 'antd';
-import { loadReaderAsync } from './utils';
+import * as util from 'util';
+import { WithVariable } from '../../helper';
+import { WithDebugInfo } from '../debug';
+import { Loading } from '../loading';
+import { AssetsPreview, ImagePreview } from '../preview';
+import { loadReaderAsync, valueToArray, valueToString, wrapFilesToFileList } from './utils';
 
-// import 'antd/dist/antd.css';
-
-export interface IFormData {
-  maxSize: number; // 最大尺寸大小
-  width: number; // 宽度
-  height: number; // 高度
-  maxWidth: number; // 最大宽度
-  maxHeight: number; // 最大高度
+export interface IUploadedFile {
+  bucket: string;
+  path: string;
+  prefix: string;
+  mimetype: string;
+  mode: string;
+  filename: string;
+  fullpath: string;
+  extension: string;
 }
-export interface IProps {
-  action: string; // 图片上传的接口地址，必填，string类型
-  disabled: boolean; // 是否禁用上传功能，选填，默认false，boolean类型
-  value: string; // 单图模式的图片地址，单图模式必须传，必填，string类型
-  formData: IFormData; // 上传图片大小尺寸
-  accept: string; // 文件尺寸，多个以逗号分割，选填，默认：image/jpg,image/png,image/gif，string类型
-  size: 'small' | 'default' | 'large'; // 上传组件样式大小，默认'default‘，string类型
+
+export interface UploaderAdapter {
+  upload(
+    file: File,
+    extra?: { params?: { bucket: string }; requestConfig?: AxiosRequestConfig },
+  ): Promise<IUploadedFile[]>;
+
+  validate(file: File): boolean;
+}
+
+export interface IUploaderProps {
+  adapter: UploaderAdapter;
+  value: string | string[]; // 单图模式的图片地址，单图模式必须传，必填，string类型
   multiple?: boolean; // 是否启用多图上传模式，选填，默认false，boolean类型
-  fileList: any[]; // 多图模式的图片地址集合，必填，格式为[{ value: '' }]，array类型
-  useNetwork?: boolean; // 是否使用网络地址功能，选填，默认false，boolean类型
-  onSuccess: (response: any, fileList?: any[]) => void; // 成功事件回调，必填
-  onDelete: (fileList?: any[]) => void; // 删除事件回调，必填
-  onMove: (fileList?: any[]) => void; // 排序事件回调，必填
-}
-export interface IAntdFileBo {
-  file: {
-    response: any;
-  };
+  jsonMode?: boolean;
+
+  // action?: string; // 图片上传的接口地址，必填，string类型
+  disabled?: boolean; // 是否禁用上传功能，选填，默认false，boolean类型
+  // formData?: Partial<IFormData>; // 上传图片大小尺寸
+  // accept?: string; // 文件尺寸，多个以逗号分割，选填，默认：image/jpg,image/png,image/gif，string类型
+  size?: 'small' | 'default' | 'large'; // 上传组件样式大小，默认'default‘，string类型
+  // fileList?: any[]; // 多图模式的图片地址集合，必填，格式为[{ value: '' }]，array类型
+  enableNetworkAddress?: boolean; // 是否使用网络地址功能，选填，默认false，boolean类型
+  onSuccess?: (response: any, fileList?: any[]) => void; // 成功事件回调，必填
+  // onDelete?: (fileList?: any[]) => void; // 删除事件回调，必填
+  onMove?: (fileList?: any[]) => void; // 排序事件回调，必填
+  onChange: (value: string | string[]) => void;
 }
 
-export default class ImgUpload extends React.Component<IProps> {
-  static defaultProps = {
-    action: '/upload',
-    disabled: false,
-    value: '',
-    formData: {},
-    accept: 'image/jpeg,image/gif,image/png',
-    size: 'default',
-    multiple: false,
-  };
-  public state = {
-    data: {},
-    previewVisible: false,
-    visibleNetwork: false,
-    networkValue: '',
-    networkCurrIndex: 0,
-    imageUrl: '',
-    loading: false,
-  };
-  public isLast: boolean = false;
-  public currIndex: number | undefined;
-  public imgInfo: { width: string; height: string } | undefined;
-  public beforeUpload(file: File, antdFileList: any[], index: number | undefined): any {
-    const { formData, accept, disabled, multiple, fileList } = this.props;
-    if (multiple) {
-      this.isLast = fileList.length - 1 === index;
-      this.currIndex = index;
+export const Uploader: React.FC<IUploaderProps> = ({
+  adapter,
+  value,
+  disabled,
+  multiple,
+  jsonMode,
+  enableNetworkAddress,
+  onChange,
+}) => {
+  const [loading, setLoading] = React.useState(false);
+  const [layout, setLayout] = React.useState<UploadListType>('picture');
+  const [fileList, setFileList] = React.useState<UploadFile[]>([]);
+
+  React.useEffect(() => {
+    if (_.isEmpty(fileList)) {
+      setFileList(wrapFilesToFileList(value));
     }
-    if (formData && file.size > formData.maxSize) {
-      message.error(`上传的文件不能超过${formData.maxSize / 1024}kb`);
-      return false;
-    }
-    if ((accept && accept.indexOf(file.type) === -1) || !file.type) {
-      message.error('格式不正确,请重新上传');
-      return false;
-    }
-    if (disabled) {
-      return false;
-    }
-    if (file.type.indexOf('video/')) {
-      return true;
-    }
-    if (formData && file.type.indexOf('image/')) {
-      this.setState({ data: formData });
-      return loadReaderAsync(file, this);
-    }
-  }
-  public handleCancel = () => {
-    this.setState({ previewVisible: false });
-  };
-  public handleChange(fileBo: IAntdFileBo) {
-    if (fileBo.file.response) {
-      const { multiple } = this.props;
-      if (multiple) {
-        const list: any[] = this.props.fileList;
-        if (this.isLast) {
-          list.splice(list.length - 1, 1);
-          this.props.onSuccess(fileBo.file.response, [...list, { value: fileBo.file.response.url }, { value: '' }]);
-        } else {
-          list[this.currIndex || 0] = { value: fileBo.file.response.url };
-          this.props.onSuccess(fileBo.file.response, [...list]);
-        }
-      } else {
-        this.props.onSuccess(fileBo.file.response);
+  }, [value]);
+
+  const func = {
+    beforeUpload: (file: RcFile, files: RcFile[]): boolean | PromiseLike<void> => {
+      // console.log('[beforeUpload]', file, files);
+      // this.setState({ ...this.state, fileList: [...fileList, ...files] });
+      // console.table(files);
+
+      if (disabled) {
+        return false;
       }
-    }
-  }
-  public handleDelete(index: number | undefined) {
-    const { multiple } = this.props;
-    if (multiple) {
-      const list: any[] = this.props.fileList;
-      list.splice(this.currIndex || 0, 1);
-      this.props.onDelete([...list]);
-    } else {
-      this.props.onDelete();
-    }
-  }
-  public handleEnlarge() {
-    this.setState({ previewVisible: true });
-  }
-  public handleMove(position: string, index: number | undefined) {
-    index = index || 0;
-    const { fileList, onMove } = this.props;
-    const currItem = fileList[index];
 
-    switch (position) {
-      case 'left':
-        const leftItem = fileList[index - 1];
-        fileList.splice(index - 1, 2, currItem, leftItem);
-        break;
-      case 'right':
-        const rightItem = fileList[index + 1];
-        fileList.splice(index, 2, rightItem, currItem);
-        break;
-    }
-    if (typeof onMove === 'function') {
-      onMove(fileList);
-    }
-  }
-  public handleEditNetwork(index: number | undefined) {
-    index = index || 0;
-    const { fileList } = this.props;
-    this.setState(
-      {
-        ...this.state,
-        visibleNetwork: true,
-        networkCurrIndex: index,
-        networkValue: fileList[index].value,
-      },
-      () => {},
-    );
-  }
-  public handleModalNetworkOk() {
-    const { fileList, onSuccess } = this.props;
-    const { networkCurrIndex, networkValue } = this.state;
-    if (networkCurrIndex === fileList.length - 1) {
-      fileList.push({ value: '' });
-    }
-    fileList[networkCurrIndex].value = networkValue;
-    onSuccess(null, fileList);
-    this.setState({
-      ...this.state,
-      visibleNetwork: false,
-      networkValue: '',
-    });
-  }
-  public handleNetworkChange = (event: any) => {
-    this.setState({
-      ...this.state,
-      networkValue: event.target.value,
-    });
-  };
-  public handleModalNetworkCancel() {
-    // visibleNetwork: false,
-    this.setState(
-      {
-        ...this.state,
-        visibleNetwork: false,
-        networkValue: '',
-      },
-      () => {
-        console.log(this.state, 1);
-      },
-    );
-  }
-  public render() {
-    const uploadButton = (
-      <div>
-        <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">Upload</div>
-      </div>
-    );
-    const { size, action, disabled, multiple, useNetwork, fileList } = this.props;
-    const uploadItem = (forFile: any, index?: number) => {
-      return (
-        <section
-          className={size}
-          key={index}
-          css={css`
-            position: relative;
-            display: inline-block;
-            &.small {
-              width: 104px;
-              height: 104px;
-            }
-            &.default {
-              width: 154px;
-              height: 154px;
-            }
-            &.large {
-              width: 204px;
-              height: 204px;
-            }
-            .ant-upload.ant-upload-select-picture-card {
-              width: 100%;
-              height: 100%;
-              img {
-                width: 100%;
-              }
-            }
-            .ant-upload-picture-card-wrapper {
-              height: 100%;
-            }
+      const validated = adapter.validate(file);
+      if (file.type.indexOf('image/')) {
+        loadReaderAsync(file, this).catch(reason => console.error(reason));
+      }
 
-            .upload-operate {
-              position: absolute;
-              bottom: 0;
-              left: 0;
-              width: 100%;
-              background-color: rgba(0, 0, 0, 0.5);
-              color: #fff;
-              text-align: center;
-              display: none;
-              .anticon {
-                margin-left: 10px;
-                cursor: pointer;
-              }
-            }
-            &:hover {
-              .upload-operate {
-                display: block;
-              }
-            }
-          `}
-        >
-          <Upload
-            name="avatar"
-            listType="picture-card"
-            action={action}
-            showUploadList={false}
-            disabled={disabled}
-            multiple={multiple}
-            beforeUpload={(file: File, fileList: any[]) => this.beforeUpload(file, fileList, index)}
-            onChange={(file: any) => this.handleChange(file)}
-          >
-            {forFile.value ? <img alt="" src={forFile.value} /> : uploadButton}
-          </Upload>
-          {forFile.value ? (
-            <div className="upload-operate">
-              <Icon type="delete" onClick={() => this.handleDelete(index)} />
-              <Icon type="eye" onClick={() => this.handleEnlarge()} />
-              {multiple && fileList.length - 2 === index ? null : (
-                <Icon type="arrow-right" onClick={() => this.handleMove('right', index)} />
-              )}
-              {multiple && index !== 0 ? (
-                <Icon type="arrow-left" onClick={() => this.handleMove('left', index)} />
-              ) : null}
-              {useNetwork ? <Icon type="area-chart" onClick={() => this.handleEditNetwork(index)} /> : null}
-            </div>
-          ) : null}
-          {!forFile.value && useNetwork ? (
-            <div className="upload-operate">
-              {useNetwork ? <Icon type="area-chart" onClick={() => this.handleEditNetwork(index)} /> : null}
-            </div>
-          ) : null}
-        </section>
+      // TODO return false to support upload on manual
+      return validated;
+    },
+    customRequest: (options: RcCustomRequestOptions): void => {
+      setLoading(true);
+      // console.log('[customRequest]', options);
+
+      const { file, onProgress } = options;
+      adapter
+        .upload(file, {
+          requestConfig: {
+            onUploadProgress: ({ total, loaded }) =>
+              onProgress({ percent: +Math.round((loaded / total) * 100).toFixed(2) }, file),
+          },
+        })
+        .then(uploaded => {
+          const uploadedFile = _.head(uploaded);
+          // console.table(uploadedFile);
+          if (uploadedFile) {
+            const result = func.valueToSubmit(value, uploadedFile.fullpath);
+            onChange(result);
+          }
+        })
+        .finally(() => setLoading(false));
+    },
+    handleChange: (info: UploadChangeParam) => {
+      // console.log('[handleChange]', info);
+      if (info.file && info.event?.percent === 100) {
+        const inList = info.fileList.find(_.matches({ uid: info.file.uid }));
+        if (inList) {
+          inList.status = 'done';
+          inList['new'] = true;
+        }
+      }
+      setFileList(info.fileList);
+    },
+    handleDelete: (index: number): void => {
+      setFileList(fileList.filter((item, i) => i !== index));
+
+      const array = [...valueToArray(value)];
+      array.splice(index, 1);
+      onChange(valueToString(array, multiple, jsonMode));
+    },
+    handleEdit: (index: number, newUrl: string): void => {
+      // console.log('[handleEdit]', index, newUrl);
+      const file = fileList.find((item, i) => i === index);
+      file.uid = newUrl;
+      file.name = newUrl;
+      file.url = newUrl;
+      setFileList([...fileList]);
+
+      const array = [...valueToArray(value)];
+      array[index] = newUrl;
+      onChange(valueToString(array, multiple, jsonMode));
+    },
+    handleMove: (index: number, to: number) => {
+      const item = fileList.splice(index, 1);
+      const moved = [...fileList.slice(0, to), ...item, ...fileList.slice(to)];
+      setFileList(moved);
+      onChange(
+        valueToString(
+          moved.map(file => file.url),
+          multiple,
+          jsonMode,
+        ),
       );
-    };
-    return (
-      <div
+    },
+    valueToSubmit: (value?: string | string[], uploaded?: string): string | string[] => {
+      const array = valueToArray(value);
+      let files: any = _.compact(_.flattenDeep([array, uploaded]));
+      if (!multiple) files = _.takeRight(files);
+      if (!jsonMode && _.isArray(files)) files = files.join(',');
+      return files;
+    },
+  };
+
+  return (
+    <div>
+      <Radio.Group size="small" value={layout} onChange={e => setLayout(e.target.value)}>
+        <Radio.Button value="picture">picture</Radio.Button>
+        <Radio.Button value="picture-card">picture-card</Radio.Button>
+      </Radio.Group>
+      <section
+        className="small"
         css={css`
-          display: inline-block;
+          margin: 0.2rem 0;
+          .ant-upload-drag {
+            display: inline-block;
+            width: 10rem;
+            height: 10rem;
+            padding: 0 0.3rem;
+            .ant-upload {
+              //padding: .1rem;
+            }
+          }
+          .ant-upload-list {
+            margin-top: 1rem;
+          }
+          .upload-list-inline .ant-upload-animate-enter {
+            animation-name: uploadAnimateInlineIn;
+          }
+          .upload-list-inline .ant-upload-animate-leave {
+            animation-name: uploadAnimateInlineOut;
+          }
         `}
       >
-        {multiple
-          ? fileList.map((file: any[], index: number) => uploadItem(file, index))
-          : uploadItem({ ...this.props })}
-        {useNetwork ? (
-          <Modal
-            title="网络地址"
-            visible={this.state.visibleNetwork}
-            onOk={() => this.handleModalNetworkOk()}
-            onCancel={() => this.handleModalNetworkCancel()}
-          >
-            <Input
-              placeholder="请输入网络图片地址"
-              value={this.state.networkValue}
-              onChange={this.handleNetworkChange}
-            />
-          </Modal>
-        ) : null}
-      </div>
-    );
-  }
-}
+        <Upload.Dragger
+          name="avatar"
+          showUploadList
+          listType={layout}
+          customRequest={func.customRequest}
+          fileList={fileList}
+          disabled={disabled}
+          // directory={multiple}
+          multiple={multiple}
+          beforeUpload={func.beforeUpload}
+          onChange={(info: UploadChangeParam) => func.handleChange(info)}
+        >
+          {loading ? (
+            <div style={{ display: 'inline-block' }}>
+              <Loading type="chase" />
+            </div>
+          ) : (
+            <React.Fragment>
+              <p className="ant-upload-drag-icon">
+                <Icon type="inbox" />
+              </p>
+              <p className="ant-upload-text">Click or drag file to this area to upload</p>
+              <Button loading={loading}>
+                <Icon type="upload" /> Click to Upload
+              </Button>
+            </React.Fragment>
+          )}
+        </Upload.Dragger>
+        <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+        <div hidden>
+          {_.map(fileList, file => (
+            <Card key={file.uid}>
+              <pre>{util.inspect(file)}</pre>
+            </Card>
+          ))}
+        </div>
+        <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+        <div>
+          <AssetsPreview
+            urls={fileList.map(file => file.url ?? file.thumbUrl)}
+            fullWidth
+            renderImage={({ view, index }) => (
+              <div
+                css={css`
+                  @keyframes pulse {
+                    0% {
+                      box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
+                    }
+                    70% {
+                      box-shadow: 0 0 0 0.75rem rgba(204, 169, 44, 0);
+                    }
+                    100% {
+                      box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+                    }
+                  }
+                  border-radius: 0.2rem;
+                  overflow: hidden;
+                  box-shadow: 0 0 1rem
+                    ${_.cond([
+                      [_.matches({ status: 'uploading' }), _.constant('yellow')],
+                      [_.matches({ status: 'done', new: true }), _.constant('green')],
+                      [_.stubTrue, _.constant('transparent')],
+                    ])(fileList[index])};
+                  animation: ${_.cond([
+                    [_.matches({ status: 'uploading' }), _.constant('pulse 2s infinite')],
+                    [_.matches({ status: 'done' }), _.constant('pulse ease-in')],
+                    [_.stubTrue, _.constant('none')],
+                  ])(fileList[index])};
+                `}
+              >
+                {view}
+              </div>
+            )}
+            renderExtraActions={(url, index, total) => (
+              <WithVariable variable={{ isHead: index === 0, isTail: index === total - 1 }}>
+                {({ isHead, isTail }) => (
+                  <React.Fragment>
+                    <Button.Group size="small">
+                      <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, 0)}>
+                        <Icon type="vertical-right" />
+                      </Button>
+                      <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, index - 1)}>
+                        <Icon type="left" />
+                      </Button>
+                      <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, index + 1)}>
+                        <Icon type="right" />
+                      </Button>
+                      <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, total - 1)}>
+                        <Icon type="vertical-left" />
+                      </Button>
+                    </Button.Group>{' '}
+                    {enableNetworkAddress ? (
+                      <Icon type="area-chart" onClick={() => this.handleEditNetwork(index)} />
+                    ) : null}
+                    <div
+                      css={css`
+                        display: inline;
+                        div {
+                          display: inline;
+                        }
+                      `}
+                    >
+                      <ImagePreview url={url} onEdit={newUrl => func.handleEdit(index, newUrl)}>
+                        <Button type="primary" icon="edit" size="small" />{' '}
+                      </ImagePreview>
+                    </div>
+                    <Button type="danger" icon="delete" size="small" onClick={() => func.handleDelete(index)} />
+                    <WithDebugInfo info={fileList[index]} debug />
+                  </React.Fragment>
+                )}
+              </WithVariable>
+            )}
+          />
+        </div>
+        <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+      </section>
+      {enableNetworkAddress ? (
+        <Modal
+          title="网络地址"
+          visible={this.state.visibleNetwork}
+          onOk={() => this.handleModalNetworkOk()}
+          onCancel={() => this.handleModalNetworkCancel()}
+        >
+          <Input placeholder="请输入网络图片地址" value={this.state.networkValue} onChange={this.handleNetworkChange} />
+        </Modal>
+      ) : null}
+    </div>
+  );
+};

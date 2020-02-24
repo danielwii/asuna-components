@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/react';
-import { Card, Input } from 'antd';
+import { Button, Card, Input } from 'antd';
 
 import 'antd/dist/antd.css';
 import { Field, Form, Formik } from 'formik';
@@ -71,6 +71,9 @@ storiesOf('DynamicJsonArray', module)
                     </Field>
                   </Form>
                   <DebugInfo data={formikBag.values} divider debug type="util" />
+                  <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
+                    Submit
+                  </Button>
                 </>
               )}
             </Formik>

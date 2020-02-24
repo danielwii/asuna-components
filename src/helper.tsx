@@ -1,19 +1,25 @@
+import { Button, Icon, Result, Tooltip, Typography } from 'antd';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
+import { useLogger } from 'react-use';
+import * as util from 'util';
+import { Loading } from './components';
 
 /* class decorator */
 export function StaticImplements<T>() {
   return (constructor: T) => {};
 }
 
-export interface StateFunctionComponent<P = {}, S = {}> {
-  (props: P & { children?: (state: S, setState: (state: S) => void) => ReactNode }, context?: any): ReactElement | null;
+export interface CustomFC<P = {}, R = () => React.ReactNode> {
+  (props: P & { children?: R }, context?: any): ReactElement | null;
   propTypes?: WeakValidationMap<P>;
   contextTypes?: ValidationMap<any>;
   defaultProps?: Partial<P>;
   displayName?: string;
 }
 
+export type StateChildren<S> = (state: S, setState: (state: S) => void) => ReactNode;
+export type StateFunctionComponent<P = {}, S = {}> = CustomFC<P, StateChildren<S>>;
 export type StateFC<State> = StateFunctionComponent<{ initialState: State }, State>;
 
 export function parseJSONIfCould(value?: string): any {
@@ -21,6 +27,119 @@ export function parseJSONIfCould(value?: string): any {
     if (value) return JSON.parse(value);
   } catch (e) {}
   return value;
+}
+
+export function isJson(value): boolean {
+  try {
+    JSON.parse(value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+export function castToArrays(value: string): string[] {
+  return isJson(value) ? JSON.parse(value) : _.compact(value.split(','));
+}
+
+// export function valueToArrays(value: string | string[]): string[] {
+//   return value ? (_.isArray(value) ? value : castToArrays(value)) : [];
+// }
+
+export interface IErrorInfoProps {
+  title?: React.ReactNode;
+  subTitle?: React.ReactNode;
+  extra?: React.ReactNode;
+}
+
+export function ErrorInfo(props: IErrorInfoProps & { children?: React.ReactNode }) {
+  const { title, subTitle, extra, children } = props;
+  return (
+    <Result status="error" title={title || 'Error'} subTitle={subTitle} extra={extra}>
+      <div className="desc">
+        <Typography.Paragraph>
+          <Icon style={{ color: 'red' }} type="close-circle" /> {children}
+        </Typography.Paragraph>
+      </div>
+    </Result>
+  );
+}
+
+export function TooltipContent({ value, link }: { value: any; link?: boolean }) {
+  let component = _.isObject(value) ? util.inspect(value) : value;
+  const length = 30;
+  if (typeof value === 'string' && value.length > length) {
+    const shortValue = `${value.slice(0, length)}...`;
+    if (link) {
+      return <TextLink url={value} text={shortValue} />;
+    }
+    component = (
+      <Tooltip title={value}>
+        <div style={{ maxWidth: '15rem' }}>{shortValue}</div>
+      </Tooltip>
+    );
+    return <>{component}</>;
+  }
+  return link ? <TextLink url={component} text={component} /> : <>{component}</>;
+}
+
+function TextLink({ url, text }: { url: string; text?: string }) {
+  return (
+    <a href={url} target={'_blank'}>
+      {text || url}
+    </a>
+  );
+}
+
+export const WithLoading: React.FC<{ loading: boolean; error: any; retry? }> = ({
+  loading,
+  error,
+  retry,
+  children,
+}) => {
+  if (loading) return <Loading type="fold" />;
+  if (error)
+    return (
+      <ErrorInfo>
+        {retry && <Button onClick={() => retry()}>Reload</Button>}
+        <pre>{util.inspect(error)}</pre>
+      </ErrorInfo>
+    );
+
+  if (_.isFunction(children)) {
+    const Component = children as React.FC;
+    return <Component />;
+  }
+
+  return <>{children}</>;
+};
+
+export function WithFuture<R>({
+  future,
+  fallback,
+  children,
+}: {
+  future: () => Promise<R>;
+  fallback?: React.ReactElement;
+  children: ((props: R) => React.ReactNode) | React.ReactNode;
+}): React.ReactElement {
+  const Component = React.lazy(
+    () =>
+      new Promise(async resolve => {
+        const data = await future();
+        resolve({
+          default: () => (_.isFunction(children) ? <>{children(data)}</> : <>{children}</>),
+        } as any);
+      }),
+  );
+
+  useLogger(WithFuture.name);
+
+  return (
+    <React.Suspense fallback={fallback ?? <Loading type="circle" />}>
+      <Component />
+    </React.Suspense>
+  );
 }
 
 export function WithVariable<V>({
