@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
-import { Button, Card, Divider, Icon, Input, Modal, Radio, Upload } from 'antd';
+import { Button, Card, Divider, Icon, Input, Modal, Radio, Upload, Tag } from 'antd';
 import { RcCustomRequestOptions, RcFile, UploadFile, UploadListType } from 'antd/es/upload/interface';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import { AxiosRequestConfig } from 'axios';
@@ -103,7 +103,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
       setLoading(true);
       // console.log('[customRequest]', options, fileList);
 
-      const { file, onProgress, onSuccess } = options;
+      const { file, onProgress } = options;
       adapter
         .upload(file, {
           requestConfig: {
@@ -245,7 +245,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
                 setVisible(false);
               }}
             >
-              Confirm
+              Insert
             </Button>
           </div>
         )}
@@ -281,14 +281,6 @@ export const Uploader: React.FC<IUploaderProps> = ({
           </React.Fragment>
         )}
       </Upload.Dragger>
-      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
-      <div hidden>
-        {_.map(fileList, file => (
-          <Card key={file.uid}>
-            <pre>{util.inspect(file)}</pre>
-          </Card>
-        ))}
-      </div>
       <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
       <div>
         <AssetsPreview
@@ -330,35 +322,42 @@ export const Uploader: React.FC<IUploaderProps> = ({
             <WithVariable variable={{ isHead: index === 0, isTail: index === total - 1 }}>
               {({ isHead, isTail }) => (
                 <React.Fragment>
-                  <Button.Group size="small">
-                    <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, 0)}>
-                      <Icon type="vertical-right" />
-                    </Button>
-                    <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, index - 1)}>
-                      <Icon type="left" />
-                    </Button>
-                    <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, index + 1)}>
-                      <Icon type="right" />
-                    </Button>
-                    <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, total - 1)}>
-                      <Icon type="vertical-left" />
-                    </Button>
-                  </Button.Group>{' '}
-                  <div
-                    css={css`
-                      display: inline;
-                      div {
+                  <div>
+                    <Button.Group size="small">
+                      <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, 0)}>
+                        <Icon type="vertical-right" />
+                      </Button>
+                      <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, index - 1)}>
+                        <Icon type="left" />
+                      </Button>
+                      <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, index + 1)}>
+                        <Icon type="right" />
+                      </Button>
+                      <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, total - 1)}>
+                        <Icon type="vertical-left" />
+                      </Button>
+                    </Button.Group>{' '}
+                    <div
+                      css={css`
                         display: inline;
-                      }
-                    `}
-                    hidden={!fileList[index].url}
-                  >
-                    <ImagePreview url={url} onEdit={newUrl => func.handleEdit(index, newUrl)}>
-                      <Button type="primary" icon="edit" size="small" />{' '}
-                    </ImagePreview>
+                        div {
+                          display: inline;
+                        }
+                      `}
+                      hidden={!fileList[index].url}
+                    >
+                      <ImagePreview url={url} onEdit={newUrl => func.handleEdit(index, newUrl)}>
+                        <Button type="primary" icon="edit" size="small" />{' '}
+                      </ImagePreview>
+                    </div>
+                    <Button type="danger" icon="delete" size="small" onClick={() => func.handleDelete(index)} />
+                    <WithDebugInfo info={fileList[index]} debug />
                   </div>
-                  <Button type="danger" icon="delete" size="small" onClick={() => func.handleDelete(index)} />
-                  <WithDebugInfo info={fileList[index]} debug />
+                  {fileList[index]?.size && (
+                    <Tag color="magenta" style={{ margin: '.2rem 0' }}>
+                      {(fileList[index].size / 1024 / 1024).toFixed(3)}mb
+                    </Tag>
+                  )}
                 </React.Fragment>
               )}
             </WithVariable>
