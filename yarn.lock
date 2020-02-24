@@ -9246,13 +9246,6 @@ react-use@^13.26.1:
     ts-easing "^0.2.0"
     tslib "^1.10.0"
 
-react-viewer@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/react-viewer/-/react-viewer-3.1.0.tgz#bd968d7fcfce77587ae01c350f161c9b16dee9dc"
-  integrity sha512-UwlK+xxP70cP1OE1omk9DSXNJCpHFbUDgyJ1pihUMUV6YfgVkBZhlSbXozn81oBV9cOx/7FEQ6D842sfnsUzcQ==
-  dependencies:
-    classnames "^2.2.5"
-
 react@^16.12.0, react@^16.8.3:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.12.0.tgz#0c0a9c6a142429e3614834d5a778e18aa78a0b83"

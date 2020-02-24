@@ -4,33 +4,8 @@ import { Button, Divider, Icon, Input, Modal, Tooltip } from 'antd';
 import * as _ from 'lodash';
 import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
-import Viewer from 'react-viewer';
-import { ImageDecorator } from 'react-viewer/lib/ViewerProps';
 import { WithDebugInfo } from './debug';
 import { FlexCenterBox, ThumbImage } from './styled';
-
-export function ReactViewer({
-  images,
-  index,
-  children,
-}: { images: ImageDecorator[]; index: number } & { children?: React.ReactNode }) {
-  const [visible, setVisible] = React.useState(false);
-
-  return (
-    <React.Fragment>
-      <a onClick={() => setVisible(true)}>{children}</a>
-      <Viewer
-        activeIndex={index}
-        visible={visible}
-        onClose={() => setVisible(false)}
-        onMaskClick={() => setVisible(false)}
-        images={images}
-        downloadable
-        downloadInNewWindow
-      />
-    </React.Fragment>
-  );
-}
 
 export const WithModal: React.FC<{
   title?: string;
@@ -143,36 +118,31 @@ export function AssetsPreview({
   host?: string;
   urls: string[];
   showPdf?: boolean;
-  viewer?: 'modal' | 'react-viewer';
+  viewer?: 'modal';
   fullWidth?: boolean;
   renderExtraActions?: (url: string, index: number, total: number) => React.ReactNode;
   renderImage?: (props: { view: React.ReactNode; index: number }) => React.ReactNode;
   children?: (props: { view: React.ReactNode; index: number }) => React.ReactNode;
 }) {
-  const renderView = (url: string, index: number) =>
-    viewer === 'react-viewer' ? (
-      <ReactViewer key={index} index={index} images={urls.map(url => ({ src: url, downloadUrl: url }))}>
-        <AssetPreview key={url} host={host} url={url} showPdf={showPdf} />
-      </ReactViewer>
-    ) : (
-      <ImagePreview key={index} url={url}>
-        <div
-          css={css`
-            display: inline-block;
-            cursor: pointer;
-            margin: 0.5rem;
-            //border-radius: 0.2rem;
-            //overflow: hidden;
-            box-shadow: 0 0 0.1rem #eee;
-            :hover {
-              box-shadow: 0 0 0.5rem #ccc;
-            }
-          `}
-        >
-          {renderImage ? renderImage({ view: <ThumbImage src={url} />, index }) : <ThumbImage src={url} />}
-        </div>
-      </ImagePreview>
-    );
+  const renderView = (url: string, index: number) => (
+    <ImagePreview key={index} url={url}>
+      <div
+        css={css`
+          display: inline-block;
+          cursor: pointer;
+          margin: 0.5rem;
+          //border-radius: 0.2rem;
+          //overflow: hidden;
+          box-shadow: 0 0 0.1rem #eee;
+          :hover {
+            box-shadow: 0 0 0.5rem #ccc;
+          }
+        `}
+      >
+        {renderImage ? renderImage({ view: <ThumbImage src={url} />, index }) : <ThumbImage src={url} />}
+      </div>
+    </ImagePreview>
+  );
 
   return (
     <div
