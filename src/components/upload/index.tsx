@@ -1,13 +1,13 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
-import { Button, Card, Divider, Icon, Input, Modal, Radio, Upload, Tag } from 'antd';
+import { Button, Divider, Icon, Input, Radio, Tag, Upload } from 'antd';
 import { RcCustomRequestOptions, RcFile, UploadFile, UploadListType } from 'antd/es/upload/interface';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import { AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
+import * as fp from 'lodash/fp';
 import React from 'react';
 import { useLogger } from 'react-use';
-import * as util from 'util';
 import { WithVariable } from '../../helper';
 import { WithDebugInfo } from '../debug';
 import { Loading } from '../loading';
@@ -44,38 +44,26 @@ export interface IUploaderProps {
   disabled?: boolean; // 是否禁用上传功能，选填，默认false，boolean类型
   // formData?: Partial<IFormData>; // 上传图片大小尺寸
   // accept?: string; // 文件尺寸，多个以逗号分割，选填，默认：image/jpg,image/png,image/gif，string类型
-  size?: 'small' | 'default' | 'large'; // 上传组件样式大小，默认'default‘，string类型
+  // size?: 'small' | 'default' | 'large'; // 上传组件样式大小，默认'default‘，string类型
   // fileList?: any[]; // 多图模式的图片地址集合，必填，格式为[{ value: '' }]，array类型
-  enableNetworkAddress?: boolean; // 是否使用网络地址功能，选填，默认false，boolean类型
-  onSuccess?: (response: any, fileList?: any[]) => void; // 成功事件回调，必填
+  // enableNetworkAddress?: boolean; // 是否使用网络地址功能，选填，默认false，boolean类型
+  // onSuccess?: (response: any, fileList?: any[]) => void; // 成功事件回调，必填
   // onDelete?: (fileList?: any[]) => void; // 删除事件回调，必填
-  onMove?: (fileList?: any[]) => void; // 排序事件回调，必填
+  // onMove?: (fileList?: any[]) => void; // 排序事件回调，必填
   onChange: (value: string | string[]) => void;
 }
 
-export const Uploader: React.FC<IUploaderProps> = ({
-  adapter,
-  value,
-  disabled,
-  multiple,
-  jsonMode,
-  enableNetworkAddress,
-  onChange,
-}) => {
+export const Uploader: React.FC<IUploaderProps> = ({ adapter, value, disabled, multiple, jsonMode, onChange }) => {
+  // const [refreshFlag, updateRefreshFlag] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [layout, setLayout] = React.useState<UploadListType>('picture');
   const [fileList, setFileList] = React.useState<UploadFile[]>([]);
 
+  // if (value) console.table(valueToArray(value));
+
   React.useEffect(() => {
     if (_.isEmpty(fileList)) {
       setFileList(wrapFilesToFileList(value));
-    } else {
-      const arr = valueToArray(value);
-      arr.forEach((url, index) => {
-        fileList[index].url = url;
-      });
-      // setFileList([...fileList]);
-      // console.table(fileList);
     }
   }, [value]);
 
@@ -83,17 +71,13 @@ export const Uploader: React.FC<IUploaderProps> = ({
 
   const func = {
     beforeUpload: (file: RcFile, files: RcFile[]): boolean | PromiseLike<void> => {
-      // console.log('[beforeUpload]', file, files);
-      // this.setState({ ...this.state, fileList: [...fileList, ...files] });
-      // console.table(files);
-
       if (disabled) {
         return false;
       }
 
       const validated = adapter.validate(file);
       if (file.type.indexOf('image/')) {
-        loadReaderAsync(file, this).catch(reason => console.error(reason));
+        // loadReaderAsync(file, this).catch(reason => console.error(reason));
       }
 
       // TODO return false to support upload on manual
@@ -103,7 +87,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
       setLoading(true);
       // console.log('[customRequest]', options, fileList);
 
-      const { file, onProgress } = options;
+      const { file, onProgress, onSuccess, onError } = options;
       adapter
         .upload(file, {
           requestConfig: {
@@ -111,18 +95,24 @@ export const Uploader: React.FC<IUploaderProps> = ({
               onProgress({ percent: +Math.round((loaded / total) * 100).toFixed(2) }, file),
           },
         })
-        .then(uploaded => {
-          if (!_.isEmpty(uploaded)) {
-            const result = func.valueToSubmit(
-              value,
-              uploaded.map(uploadedFile => uploadedFile.fullpath),
-            );
-            onChange(result);
-          }
+        .then(([uploaded]) => {
+          const combined = func.valueToSubmit(
+            fileList.map(file => file.url || _.get(file, 'response.fullpath')),
+            uploaded.fullpath,
+          );
+          // console.log('[customRequest]', fileList.length, { value, combined });
+          // console.log('[customRequest]', result, value, uploaded);
+          // console.table((combined as string).split(','));
+          onChange(combined);
+
+          // file['new'] = true;
+          onSuccess(uploaded, file); // update status to done
+          // setTimeout(() => updateRefreshFlag(refreshFlag + 1), fileList.length * 10);
         })
+        .catch(onError)
         .finally(() => setLoading(false));
     },
-    handleChange: (info: UploadChangeParam) => {
+    handleChange: (info: UploadChangeParam): void => {
       // console.log('[handleChange]', info, valueToArray(value));
       if (info.file && info.event?.percent === 100) {
         const inList = info.fileList.find(_.matches({ uid: info.file.uid }));
@@ -131,7 +121,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
         }
       }
       // console.table(info.fileList);
-      setFileList(info.fileList);
+      setFileList(info.fileList); // update progress
     },
     addNetworkAddress: (url: string): void => {
       setFileList([...fileList, ...wrapFilesToFileList(url)]);
@@ -142,7 +132,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
 
       const array = [...valueToArray(value)];
       array.splice(index, 1);
-      onChange(valueToString(array, multiple, jsonMode));
+      onChange(func.valueToSubmit(value, valueToString(array, multiple, jsonMode)));
     },
     handleEdit: (index: number, newUrl: string): void => {
       // console.log('[handleEdit]', index, newUrl);
@@ -154,17 +144,20 @@ export const Uploader: React.FC<IUploaderProps> = ({
 
       const array = [...valueToArray(value)];
       array[index] = newUrl;
-      onChange(valueToString(array, multiple, jsonMode));
+      onChange(func.valueToSubmit(value, valueToString(array, multiple, jsonMode)));
     },
-    handleMove: (index: number, to: number) => {
+    handleMove: (index: number, to: number): void => {
       const item = fileList.splice(index, 1);
       const moved = [...fileList.slice(0, to), ...item, ...fileList.slice(to)];
       setFileList(moved);
       onChange(
-        valueToString(
-          moved.map(file => file.url),
-          multiple,
-          jsonMode,
+        func.valueToSubmit(
+          value,
+          valueToString(
+            moved.map(file => file.url),
+            multiple,
+            jsonMode,
+          ),
         ),
       );
     },
@@ -174,40 +167,13 @@ export const Uploader: React.FC<IUploaderProps> = ({
       let files: any = _.compact(_.flattenDeep([array, uploadedArray]));
       if (!multiple) files = _.takeRight(files);
       if (!jsonMode && _.isArray(files)) files = files.join(',');
+      // console.log('[valueToSubmit]', files, { multiple, jsonMode });
       return files;
     },
   };
 
-  return (
-    <section
-      className="small"
-      css={css`
-        margin: 0.2rem 0;
-        .ant-upload-drag {
-          display: inline-block;
-          width: 20rem;
-          height: 10rem;
-          padding: 0 0.3rem;
-          .ant-upload {
-            //padding: .1rem;
-          }
-        }
-        .ant-upload-list {
-          margin-top: 1rem;
-        }
-        .upload-list-inline .ant-upload-animate-enter {
-          animation-name: uploadAnimateInlineIn;
-        }
-        .upload-list-inline .ant-upload-animate-leave {
-          animation-name: uploadAnimateInlineOut;
-        }
-      `}
-    >
-      <Radio.Group value={layout} onChange={e => setLayout(e.target.value)}>
-        <Radio.Button value="picture">picture</Radio.Button>
-        <Radio.Button value="picture-card">picture-card</Radio.Button>
-      </Radio.Group>
-      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+  const views = {
+    renderedAddNetworkAddressButton: (
       <WithModal
         renderModal={({ state, setState, setVisible }) => (
           <div
@@ -252,6 +218,41 @@ export const Uploader: React.FC<IUploaderProps> = ({
       >
         <Button>Add Network Address</Button>
       </WithModal>
+    ),
+  };
+
+  return (
+    <section
+      className="small"
+      css={css`
+        margin: 0.2rem 0;
+        .ant-upload-drag {
+          display: inline-block;
+          width: 20rem;
+          height: 10rem;
+          padding: 0 0.3rem;
+          .ant-upload {
+            //padding: .1rem;
+          }
+        }
+        .ant-upload-list {
+          margin-top: 1rem;
+        }
+        .upload-list-inline .ant-upload-animate-enter {
+          animation-name: uploadAnimateInlineIn;
+        }
+        .upload-list-inline .ant-upload-animate-leave {
+          animation-name: uploadAnimateInlineOut;
+        }
+      `}
+    >
+      {/*<Tag>{refreshFlag}</Tag>*/}
+      <Radio.Group value={layout} onChange={e => setLayout(e.target.value)}>
+        <Radio.Button value="picture">picture</Radio.Button>
+        <Radio.Button value="picture-card">picture-card</Radio.Button>
+      </Radio.Group>
+      <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
+      {views.renderedAddNetworkAddressButton}
       <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
       <Upload.Dragger
         name="avatar"
@@ -260,10 +261,9 @@ export const Uploader: React.FC<IUploaderProps> = ({
         customRequest={func.customRequest}
         fileList={fileList}
         disabled={disabled}
-        // directory={multiple}
         multiple={multiple}
         beforeUpload={func.beforeUpload}
-        onChange={(info: UploadChangeParam) => func.handleChange(info)}
+        onChange={func.handleChange}
       >
         {loading ? (
           <div style={{ display: 'inline-block' }}>
@@ -284,7 +284,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
       <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
       <div>
         <AssetsPreview
-          urls={fileList.map(file => file.url ?? file.thumbUrl)}
+          urls={fileList.map(file => file.url ?? _.get(file, 'response.fullpath') ?? file.thumbUrl)}
           fullWidth
           renderImage={({ view, index }) => (
             <div
@@ -305,12 +305,12 @@ export const Uploader: React.FC<IUploaderProps> = ({
                 box-shadow: 0 0 1rem
                   ${_.cond([
                     [_.matches({ status: 'uploading' }), _.constant('yellow')],
-                    [_.matches({ status: 'success' }), _.constant('green')],
+                    [_.matches({ status: 'done', percent: 100 }), _.constant('green')],
                     [_.stubTrue, _.constant('transparent')],
                   ])(fileList[index])};
                 animation: ${_.cond([
                   [_.matches({ status: 'uploading' }), _.constant('pulse 2s infinite')],
-                  [_.matches({ status: 'success' }), _.constant('pulse ease-in')],
+                  // [_.matches({ status: 'done' }), _.constant('ease-in infinite')],
                   [_.stubTrue, _.constant('none')],
                 ])(fileList[index])};
               `}
@@ -319,8 +319,15 @@ export const Uploader: React.FC<IUploaderProps> = ({
             </div>
           )}
           renderExtraActions={(url, index, total) => (
-            <WithVariable variable={{ isHead: index === 0, isTail: index === total - 1 }}>
-              {({ isHead, isTail }) => (
+            <WithVariable
+              variable={{
+                item: fileList[index],
+                hasUrl: fileList[index].url || _.get(fileList[index], 'response.fullpath'),
+                isHead: index === 0,
+                isTail: index === total - 1,
+              }}
+            >
+              {({ item, hasUrl, isHead, isTail }) => (
                 <React.Fragment>
                   <div>
                     <Button.Group size="small">
@@ -344,18 +351,18 @@ export const Uploader: React.FC<IUploaderProps> = ({
                           display: inline;
                         }
                       `}
-                      hidden={!fileList[index].url}
+                      hidden={!hasUrl}
                     >
                       <ImagePreview url={url} onEdit={newUrl => func.handleEdit(index, newUrl)}>
                         <Button type="primary" icon="edit" size="small" />{' '}
                       </ImagePreview>
                     </div>
                     <Button type="danger" icon="delete" size="small" onClick={() => func.handleDelete(index)} />
-                    <WithDebugInfo info={fileList[index]} debug />
+                    <WithDebugInfo info={item} />
                   </div>
-                  {fileList[index]?.size && (
+                  {item?.size && (
                     <Tag color="magenta" style={{ margin: '.2rem 0' }}>
-                      {(fileList[index].size / 1024 / 1024).toFixed(3)}mb
+                      {(item.size / 1024 / 1024).toFixed(3)}MB
                     </Tag>
                   )}
                 </React.Fragment>
