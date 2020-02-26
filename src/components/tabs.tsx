@@ -74,7 +74,7 @@ const RenderTabNode: React.FC<{
   onClose: (pane: SubPaneType) => void;
 }> = ({ title, activeKey, subPanes, onClick, onClose }) => {
   const panes = subPanes.map((pane, index) => (
-    <>
+    <div key={index}>
       <Button
         size="small"
         type={activeKey === pane.key ? 'default' : 'dashed'}
@@ -87,7 +87,7 @@ const RenderTabNode: React.FC<{
         </Button>
       </Button>
       {subPanes.length - 1 !== index && <Divider type="vertical" dashed />}
-    </>
+    </div>
   ));
   return (
     <>
