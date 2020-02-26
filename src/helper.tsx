@@ -39,7 +39,7 @@ export function isJson(value): boolean {
 }
 
 export function castToArrays(value: string): string[] {
-  return isJson(value) ? JSON.parse(value) : _.compact(value.split(','));
+  return isJson(value) ? JSON.parse(value) : _.compact(value?.split(','));
 }
 
 // export function valueToArrays(value: string | string[]): string[] {

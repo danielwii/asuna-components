@@ -126,13 +126,14 @@ export const Uploader: React.FC<IUploaderProps> = ({
       // console.log('[handleChange]', info, valueToArray(value));
       if (info.file && info.event?.percent === 100) {
         const inList = info.fileList.find(_.matches({ uid: info.file.uid }));
-        if (inList) {
+        if (inList && inList.status !== 'done') {
           inList.status = 'success';
         }
-        setFileList(_.takeRight(info.fileList));
+        if (!multiple) setFileList(_.takeRight(info.fileList));
+        else setFileList([...info.fileList]); // update progress
       } else {
         // console.table(info.fileList);
-        setFileList(info.fileList); // update progress
+        setFileList([...info.fileList]); // update progress
       }
     },
     addNetworkAddress: (url: string): void => {
