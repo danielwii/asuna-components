@@ -20,24 +20,24 @@
     "storybook": "start-storybook -p 9009 -s public"
   },
   "dependencies": {
-    "antd": "^3.26.12",
+    "antd": "^4.0.0",
     "axios": "^0.19.2",
     "emotion": "^10.0.27",
     "formik": "^2.1.4",
     "lodash": "^4.17.15",
     "qrcode.react": "^1.0.0",
     "rc-tween-one": "^2.6.8",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
     "react-json-tree": "^0.11.2",
     "react-pdf": "^4.1.0",
-    "react-use": "^13.26.3",
+    "react-use": "^13.26.4",
     "spinkit": "^2.0.1",
     "styled-components": "^5.0.1",
-    "typescript": "~3.8.2"
+    "typescript": "^3.8.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
+    "@babel/core": "^7.8.6",
     "@babel/plugin-transform-react-jsx": "^7.8.3",
     "@babel/preset-typescript": "^7.8.3",
     "@storybook/preset-create-react-app": "^1.5.2",
@@ -54,7 +54,7 @@
     "babel-loader": "^8.0.6",
     "babel-preset-react-app": "^9.1.1",
     "eslint-config-react-app": "^5.2.0",
-    "http-proxy-middleware": "^1.0.0",
+    "http-proxy-middleware": "^1.0.1",
     "husky": "^4.2.3",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1"
