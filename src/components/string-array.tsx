@@ -1,4 +1,5 @@
-import { Button, Divider, Icon, Input, Tag } from 'antd';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, Input, Tag } from 'antd';
 import * as React from 'react';
 import { TweenOneGroup } from 'rc-tween-one';
 import * as _ from 'lodash';
@@ -65,7 +66,7 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
         )}
         {!inputVisible && (
           <Tag onClick={func.showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
-            <Icon type="plus" /> 添加
+            <PlusOutlined /> 添加
           </Tag>
         )}
       </div>
@@ -82,7 +83,7 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
               items[index] = e.target.value;
               onChange(items);
             }}
-            addonAfter={<Icon type="close" onClick={() => func.remove(index)} />}
+            addonAfter={<CloseOutlined onClick={() => func.remove(index)} />}
           />
           <Divider dashed style={{ margin: '.1rem' }} />
         </React.Fragment>

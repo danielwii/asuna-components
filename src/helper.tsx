@@ -1,4 +1,5 @@
-import { Button, Icon, Result, Tooltip, Typography } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { Button, Result, Tooltip, Typography } from 'antd';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
 import { useLogger } from 'react-use';
@@ -58,7 +59,7 @@ export function ErrorInfo(props: IErrorInfoProps & { children?: React.ReactNode 
     <Result status="error" title={title || 'Error'} subTitle={subTitle} extra={extra}>
       <div className="desc">
         <Typography.Paragraph>
-          <Icon style={{ color: 'red' }} type="close-circle" /> {children}
+          <CloseCircleOutlined style={{ color: 'red' }} /> {children}
         </Typography.Paragraph>
       </div>
     </Result>

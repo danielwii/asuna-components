@@ -1,4 +1,5 @@
-import { Button, Divider, Icon, Popover } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Divider, Popover } from 'antd';
 import * as React from 'react';
 import { useState } from 'react';
 import JSONTree from 'react-json-tree';
@@ -10,7 +11,7 @@ export const WithDebugInfo: React.FC<{ info: any; debug?: boolean }> = ({ info, 
       <>
         {children}
         <Popover content={<pre>{util.inspect(info, { depth: 5 })}</pre>} trigger={'click'}>
-          <Icon type="info-circle" style={{ margin: '0 0.2rem' }} />
+          <InfoCircleOutlined style={{ margin: '0 0.2rem' }} />
         </Popover>
       </>
     );

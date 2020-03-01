@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
-import { Button, Divider, Icon, Input, Modal, Tooltip } from 'antd';
+import { FilePdfOutlined } from '@ant-design/icons';
+import { Button, Divider, Input, Modal, Tooltip } from 'antd';
 import * as _ from 'lodash';
 import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
@@ -213,7 +214,7 @@ export function AssetPreview({ url, width, height, showPdf, fullWidth }: IAssetP
         {!state.loading && (
           <div>
             <a href={href} target="_blank">
-              <Icon type="file-pdf" style={{ fontSize: '2rem', padding: '1rem' }} />
+              <FilePdfOutlined style={{ fontSize: '2rem', padding: '1rem' }} />
             </a>
             {state.numPages} pages in total.
           </div>
@@ -229,7 +230,7 @@ export function AssetPreview({ url, width, height, showPdf, fullWidth }: IAssetP
     ) : (
       <FlexCenterBox>
         <a href={href} target="_blank">
-          <Icon type="file-pdf" style={{ fontSize: '2rem', padding: '1rem' }} />
+          <FilePdfOutlined style={{ fontSize: '2rem', padding: '1rem' }} />
         </a>
       </FlexCenterBox>
     );

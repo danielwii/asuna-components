@@ -1,6 +1,21 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
-import { Button, Divider, Icon, Input, Radio, Tag, Upload } from 'antd';
+
+import {
+  CloudUploadOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  InboxOutlined,
+  LeftOutlined,
+  PictureOutlined,
+  RightOutlined,
+  UnorderedListOutlined,
+  UploadOutlined,
+  VerticalLeftOutlined,
+  VerticalRightOutlined,
+} from '@ant-design/icons';
+
+import { Button, Divider, Input, Radio, Tag, Upload } from 'antd';
 import { RcCustomRequestOptions, RcFile, UploadFile, UploadListType } from 'antd/es/upload/interface';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import { AxiosRequestConfig } from 'axios';
@@ -230,7 +245,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
         )}
       >
         <Button>
-          <Icon type="cloud-upload" /> Add Network Address
+          <CloudUploadOutlined /> Add Network Address
         </Button>
       </WithModal>
     ),
@@ -266,10 +281,10 @@ export const Uploader: React.FC<IUploaderProps> = ({
         {views.renderedAddNetworkAddressButton}
         <Radio.Group value={layout} onChange={e => setLayout(e.target.value)}>
           <Radio.Button value="picture">
-            picture <Icon type="picture" />
+            picture <PictureOutlined />
           </Radio.Button>
           <Radio.Button value="picture-card">
-            picture-card <Icon type="unordered-list" />
+            picture-card <UnorderedListOutlined />
           </Radio.Button>
         </Radio.Group>
       </div>
@@ -293,11 +308,11 @@ export const Uploader: React.FC<IUploaderProps> = ({
           ) : (
             <React.Fragment>
               <p className="ant-upload-drag-icon">
-                <Icon type="inbox" />
+                <InboxOutlined />
               </p>
               <p className="ant-upload-text">Click or drag file to this area to upload</p>
               <Button loading={loading}>
-                <Icon type="upload" /> Click to Upload
+                <UploadOutlined /> Click to Upload
               </Button>
             </React.Fragment>
           )}
@@ -320,7 +335,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
             </div>
           ) : (
             <Button>
-              <Icon type="upload" /> upload
+              <UploadOutlined /> upload
             </Button>
           )}
         </Upload>
@@ -376,16 +391,16 @@ export const Uploader: React.FC<IUploaderProps> = ({
                   <div>
                     <Button.Group size="small">
                       <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, 0)}>
-                        <Icon type="vertical-right" />
+                        <VerticalRightOutlined />
                       </Button>
                       <Button type="primary" disabled={isHead} onClick={() => func.handleMove(index, index - 1)}>
-                        <Icon type="left" />
+                        <LeftOutlined />
                       </Button>
                       <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, index + 1)}>
-                        <Icon type="right" />
+                        <RightOutlined />
                       </Button>
                       <Button type="primary" disabled={isTail} onClick={() => func.handleMove(index, total - 1)}>
-                        <Icon type="vertical-left" />
+                        <VerticalLeftOutlined />
                       </Button>
                     </Button.Group>{' '}
                     <div
@@ -398,10 +413,15 @@ export const Uploader: React.FC<IUploaderProps> = ({
                       hidden={!hasUrl}
                     >
                       <ImagePreview url={url} onEdit={newUrl => func.handleEdit(index, newUrl)}>
-                        <Button type="primary" icon="edit" size="small" />{' '}
+                        <Button type="primary" icon={<EditOutlined />} size="small" />{' '}
                       </ImagePreview>
                     </div>
-                    <Button type="danger" icon="delete" size="small" onClick={() => func.handleDelete(index)} />
+                    <Button
+                      type="danger"
+                      icon={<DeleteOutlined />}
+                      size="small"
+                      onClick={() => func.handleDelete(index)}
+                    />
                     <WithDebugInfo info={item} />
                   </div>
                   {item?.size && (
