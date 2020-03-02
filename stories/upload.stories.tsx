@@ -3,9 +3,8 @@ import { Divider } from 'antd';
 import 'antd/dist/antd.css';
 import React from 'react';
 import * as util from 'util';
-import { Uploader } from '../src/components/upload';
-import { DefaultFileUploaderAdapterImpl } from '../src/components/upload/utils';
-import { StateFC } from '../src/helper';
+
+import { DefaultFileUploaderAdapterImpl, StateFC, Uploader } from '../src';
 
 const StoreProvider: StateFC<string | string[]> = ({ initialState, children }) => {
   const [state, setState] = React.useState(initialState);

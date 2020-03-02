@@ -10,10 +10,11 @@ import {
   DynamicJsonArrayTable,
   ObjectArrayJsonTableHelper,
   ObjectJsonTableHelper,
+  StateFC,
   StringArrayJsonTableHelper,
   WithDebugInfo,
-} from '../src/components';
-import { StateFC, WithVariable } from '../src/helper';
+  WithVariable,
+} from '../src';
 
 const StoreProvider: StateFC<{}> = ({ initialState, children }) => {
   const [state, setState] = React.useState(initialState);

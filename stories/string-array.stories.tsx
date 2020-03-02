@@ -1,10 +1,9 @@
-import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { Divider } from 'antd';
 
 import 'antd/dist/antd.css';
-import { StringArray } from '../src/components';
-import { Divider } from 'antd';
-import { StateFC } from '../src/helper';
+import React from 'react';
+import { StateFC, StringArray } from '../src';
 
 const StoreProvider: StateFC<{ items: string[] }> = ({ initialState, children }) => {
   const [state, setState] = React.useState(initialState);

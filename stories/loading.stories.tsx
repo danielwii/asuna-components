@@ -1,9 +1,9 @@
-import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { Divider } from 'antd';
+import React from 'react';
 
 import 'spinkit/spinkit.min.css';
-import { Loading } from '../src/components';
-import { Divider } from 'antd';
+import { Loading } from '../src';
 
 storiesOf('Loading', module).add('default', () => (
   <React.Fragment>
