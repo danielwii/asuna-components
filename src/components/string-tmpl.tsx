@@ -71,7 +71,7 @@ const Editable: React.FC<{
             {text ? (
               <pre
                 css={css`
-                  white-space: pre;
+                  white-space: pre-wrap;
                   .tmpl__field {
                     background-color: whitesmoke;
                     line-height: 1.5rem;
@@ -164,7 +164,7 @@ export const StringTmpl: React.FC<{
       <Col span={12}>
         <pre
           css={css`
-            white-space: pre;
+            white-space: pre-wrap;
             background-color: ghostwhite;
             .tmpl__field {
               background-color: yellowgreen;
