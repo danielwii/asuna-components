@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
-import { Button, Col, Divider, Input, Row, Tooltip } from 'antd';
+import { Button, Col, Divider, Input, Row, Tooltip, Card } from 'antd';
 import faker from 'faker';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -48,7 +48,15 @@ const Editable: React.FC<{
     >
       {isEditing ? (
         <div onKeyDown={e => handleKeyDown(e, type)}>
-          <i>press ESC to exit editing.</i>
+          <div style={{ marginBottom: '.5rem' }}>
+            <i>
+              press{' '}
+              <Button type="danger" size="small" onClick={() => setEditing(false)}>
+                ESC
+              </Button>{' '}
+              to exit editing.
+            </i>
+          </div>
           {children}
         </div>
       ) : (
@@ -63,7 +71,7 @@ const Editable: React.FC<{
             {text ? (
               <pre
                 css={css`
-                  white-space: normal;
+                  white-space: pre;
                   .tmpl__field {
                     background-color: whitesmoke;
                     line-height: 1.5rem;
@@ -128,19 +136,36 @@ export const StringTmpl: React.FC<{
                 key={field.name}
                 variable={
                   <Button type="dashed" size="small" onClick={() => func.insert(field)}>
-                    {field.fake ? `${field.name} [fake=${field.fake}]` : field.name}
+                    {field.name}
                   </Button>
                 }
               >
-                {rendered => (field.help ? <Tooltip title={field.help}>{rendered}</Tooltip> : rendered)}
+                {rendered =>
+                  field.help ? (
+                    <Tooltip
+                      title={
+                        <div>
+                          {field.help}
+                          {field.fake && <div>{`[fake=${field.fake}]`}</div>}
+                        </div>
+                      }
+                    >
+                      {rendered}
+                    </Tooltip>
+                  ) : (
+                    rendered
+                  )
+                }
               </WithVariable>
             ))}
           </div>
         </Editable>
       </Col>
       <Col span={12}>
-        <div
+        <pre
           css={css`
+            white-space: pre;
+            background-color: ghostwhite;
             .tmpl__field {
               background-color: yellowgreen;
               line-height: 1.5rem;
