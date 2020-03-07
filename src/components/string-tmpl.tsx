@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
-import { Button, Col, Divider, Input, Row, Tooltip, Card } from 'antd';
+import { Button, Col, Divider, Input, Row, Tooltip } from 'antd';
 import faker from 'faker';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -185,7 +185,7 @@ export const StringTmpl: React.FC<{
               try {
                 rendered = faker.fake(`{{${field.fake}}}`);
               } catch (e) {}
-              return `<span class="tmpl__field ${field ? '' : 'warning'}" ">${rendered}</span>`;
+              return `<span class="tmpl__field ${field ? '' : 'warning'}">${rendered}</span>`;
             }),
           }}
         />
