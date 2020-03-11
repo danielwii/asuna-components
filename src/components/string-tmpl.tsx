@@ -1,12 +1,9 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
-import { Button, Col, Divider, Input, Row, Tooltip } from 'antd';
-import faker from 'faker';
-import _ from 'lodash';
-import React, { useState } from 'react';
+import { Alert, Button, Col, Divider, Input, Row, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { WithVariable } from '../helper';
-
-const MATCH_REGEX = /{{([^{}]+)}}/g;
+import { MATCH_REGEX, Preview } from './preview';
 
 const Editable: React.FC<{
   text: string;
@@ -30,7 +27,7 @@ const Editable: React.FC<{
       - For textarea, check only Escape and Tab key and set the state to false
       - For everything else, all three keys will set the state to false
     */
-    if ((type === 'textarea' && keys.indexOf(key) > -1) || (type !== 'textarea' && allKeys.indexOf(key) > -1)) {
+    if ((type === 'textarea' && keys.includes(key)) || (type !== 'textarea' && allKeys.includes(key))) {
       setEditing(false);
     }
   };
@@ -99,9 +96,20 @@ export const StringTmpl: React.FC<{
   tmpl: string;
   fields: { name: string; help?: string; fake?: string }[];
   onChange: (tmpl) => void;
-}> = ({ tmpl, fields, onChange }) => {
+  jsonMode?: boolean;
+}> = ({ tmpl, fields, onChange, jsonMode }) => {
   let ref;
   let pos;
+  const [error, setError] = React.useState<Error>();
+
+  useEffect(() => {
+    try {
+      if (tmpl && jsonMode) JSON.parse(tmpl);
+      setError(null);
+    } catch (e) {
+      setError(e);
+    }
+  }, [tmpl]);
 
   const func = {
     insert: ({ name }: { name: string }) => {
@@ -162,34 +170,10 @@ export const StringTmpl: React.FC<{
         </Editable>
       </Col>
       <Col span={12}>
-        <pre
-          css={css`
-            white-space: pre-wrap;
-            background-color: ghostwhite;
-            .tmpl__field {
-              background-color: yellowgreen;
-              line-height: 1.5rem;
-              border: 1px dashed #d9d9d9;
-              border-radius: 2px;
-              padding: 0.1rem 0.2rem;
-              margin: 0 0.1rem;
-              &.warning {
-                background-color: goldenrod;
-              }
-            }
-          `}
-          dangerouslySetInnerHTML={{
-            __html: tmpl?.replace(MATCH_REGEX, substring => {
-              const field = _.find(fields, field => `{{${field.name}}}` === substring);
-              let rendered = substring;
-              try {
-                rendered = faker.fake(`{{${field.fake}}}`);
-              } catch (e) {}
-              return `<span class="tmpl__field ${field ? '' : 'warning'}">${rendered}</span>`;
-            }),
-          }}
-        />
+        <Preview text={tmpl} tmplFields={fields} jsonMode={jsonMode} />
       </Col>
+
+      {error && <Alert message={error.message} type="error" showIcon />}
     </Row>
   );
 };

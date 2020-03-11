@@ -1,10 +1,13 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
 import { FilePdfOutlined } from '@ant-design/icons';
+import { css, jsx } from '@emotion/core';
 import { Button, Divider, Input, Modal, Tooltip } from 'antd';
+import faker from 'faker';
 import * as _ from 'lodash';
+import styles from 'prism-themes/themes/prism-synthwave84.css';
 import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { WithDebugInfo } from './debug';
 import { FlexCenterBox, ThumbImage } from './styled';
 
@@ -241,3 +244,67 @@ export function AssetPreview({ url, width, height, showPdf, fullWidth }: IAssetP
     </FlexCenterBox>
   );
 }
+
+export const MATCH_REGEX = /{{([^{}]+)}}/g;
+
+export const Preview: React.FC<{
+  text: string;
+  tmplFields?: { name: string; help?: string; fake?: string }[];
+  jsonMode?: boolean;
+}> = ({ text, tmplFields, jsonMode }) => {
+  const rendered = text?.replace(MATCH_REGEX, substring => {
+    const field = _.find(tmplFields, field => `{{${field.name}}}` === substring);
+    let rendered = substring;
+    try {
+      rendered = faker.fake(`{{${field.fake}}}`);
+    } catch (e) {}
+    return rendered;
+  });
+
+  if (jsonMode) {
+    let wrapped = rendered;
+    let customStyle = { backgroundColor: 'gray', whiteSpace: 'pre-wrap', wordBreak: 'break-word' };
+    try {
+      wrapped = JSON.stringify(JSON.parse(rendered), null, 2);
+      customStyle = { backgroundColor: '#272336', whiteSpace: 'pre-wrap', wordBreak: 'break-word' };
+    } catch (e) {}
+
+    return (
+      <React.Fragment>
+        <SyntaxHighlighter language="json" style={styles} customStyle={customStyle}>
+          {wrapped}
+        </SyntaxHighlighter>
+      </React.Fragment>
+    );
+  }
+
+  return (
+    <pre
+      css={css`
+        white-space: pre-wrap;
+        background-color: ghostwhite;
+        .tmpl__field {
+          background-color: yellowgreen;
+          line-height: 1.5rem;
+          border: 1px dashed #d9d9d9;
+          border-radius: 2px;
+          padding: 0.1rem 0.2rem;
+          margin: 0 0.1rem;
+          &.warning {
+            background-color: goldenrod;
+          }
+        }
+      `}
+      dangerouslySetInnerHTML={{
+        __html: text?.replace(MATCH_REGEX, substring => {
+          const field = _.find(tmplFields, field => `{{${field.name}}}` === substring);
+          let rendered = substring;
+          try {
+            rendered = faker.fake(`{{${field.fake}}}`);
+          } catch (e) {}
+          return `<span class="tmpl__field ${field ? '' : 'warning'}">${rendered}</span>`;
+        }),
+      }}
+    />
+  );
+};

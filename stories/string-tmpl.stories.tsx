@@ -11,33 +11,53 @@ const StoreProvider: StateFC<{ tmpl: string }> = ({ initialState, children }) =>
   return <div>{children(state, setState)}</div>;
 };
 
-storiesOf('StringTmpl', module).add('default', () => (
-  <div style={{ margin: '1rem' }}>
-    <StoreProvider
-      initialState={{
-        tmpl: 'a={{n1}}&b={{n2}}&n3={{n3}}&n4={{n4}}&n5={{n5}}&n6={{n6}}&n7={{n7}}&no-fake={{no-fake}}&error={{error}}',
-      }}
-    >
-      {(state, setState) => (
-        <>
-          <StringTmpl
-            tmpl={state.tmpl}
-            fields={[
-              { name: 'n1', help: 'i am a help', fake: 'name.findName' },
-              { name: 'n2', fake: 'date.recent' },
-              { name: 'n3', fake: 'address.city' },
-              { name: 'n4', fake: 'commerce.product' },
-              { name: 'n5', fake: 'internet.email' },
-              { name: 'n6', fake: 'internet.ipv6' },
-              { name: 'n7', fake: 'lorem.words' },
-              { name: 'no-fake' },
-            ]}
-            onChange={tmpl => setState({ tmpl })}
-          />
-          <Divider />
-          {JSON.stringify(state)}
-        </>
-      )}
-    </StoreProvider>
-  </div>
-));
+storiesOf('StringTmpl', module)
+  .add('default', () => (
+    <div style={{ margin: '1rem' }}>
+      <StoreProvider
+        initialState={{
+          tmpl:
+            'a={{n1}}&b={{n2}}&n3={{n3}}&n4={{n4}}&n5={{n5}}&n6={{n6}}&n7={{n7}}&no-fake={{no-fake}}&error={{error}}',
+        }}
+      >
+        {(state, setState) => (
+          <>
+            <StringTmpl
+              tmpl={state.tmpl}
+              fields={[
+                { name: 'n1', help: 'i am a help', fake: 'name.findName' },
+                { name: 'n2', fake: 'date.recent' },
+                { name: 'n3', fake: 'address.city' },
+                { name: 'n4', fake: 'commerce.product' },
+                { name: 'n5', fake: 'internet.email' },
+                { name: 'n6', fake: 'internet.ipv6' },
+                { name: 'n7', fake: 'lorem.words' },
+                { name: 'no-fake' },
+              ]}
+              onChange={tmpl => setState({ tmpl })}
+            />
+            <Divider />
+            {JSON.stringify(state)}
+          </>
+        )}
+      </StoreProvider>
+    </div>
+  ))
+  .add('default-json-preview', () => (
+    <div style={{ margin: '1rem' }}>
+      <StoreProvider initialState={{ tmpl: '{"a": "a", "b": 1, "c": true, "date": "{{n2}}"}' }}>
+        {(state, setState) => (
+          <>
+            <StringTmpl
+              tmpl={state.tmpl}
+              fields={[{ name: 'n2', fake: 'date.recent' }]}
+              onChange={tmpl => setState({ tmpl })}
+              jsonMode
+            />
+            <Divider />
+            {JSON.stringify(state)}
+          </>
+        )}
+      </StoreProvider>
+    </div>
+  ));
