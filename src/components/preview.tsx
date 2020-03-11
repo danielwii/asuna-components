@@ -251,7 +251,8 @@ export const Preview: React.FC<{
   text: string;
   tmplFields?: { name: string; help?: string; fake?: string }[];
   jsonMode?: boolean;
-}> = ({ text, tmplFields, jsonMode }) => {
+  language?: string;
+}> = ({ text, tmplFields, jsonMode, language }) => {
   const rendered = text?.replace(MATCH_REGEX, substring => {
     const field = _.find(tmplFields, field => `{{${field.name}}}` === substring);
     let rendered = substring;
@@ -261,17 +262,35 @@ export const Preview: React.FC<{
     return rendered;
   });
 
+  if (language) {
+    return (
+      <React.Fragment>
+        <SyntaxHighlighter
+          language={language}
+          style={styles}
+          customStyle={{ backgroundColor: '#272336', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+        >
+          {rendered}
+        </SyntaxHighlighter>
+      </React.Fragment>
+    );
+  }
+
   if (jsonMode) {
     let wrapped = rendered;
-    let customStyle = { backgroundColor: 'gray', whiteSpace: 'pre-wrap', wordBreak: 'break-word' };
+    let backgroundColor = 'gray';
     try {
       wrapped = JSON.stringify(JSON.parse(rendered), null, 2);
-      customStyle = { backgroundColor: '#272336', whiteSpace: 'pre-wrap', wordBreak: 'break-word' };
+      backgroundColor = '#272336';
     } catch (e) {}
 
     return (
       <React.Fragment>
-        <SyntaxHighlighter language="json" style={styles} customStyle={customStyle}>
+        <SyntaxHighlighter
+          language="json"
+          style={styles}
+          customStyle={{ backgroundColor, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+        >
           {wrapped}
         </SyntaxHighlighter>
       </React.Fragment>
@@ -282,6 +301,7 @@ export const Preview: React.FC<{
     <pre
       css={css`
         white-space: pre-wrap;
+        word-break: break-word;
         background-color: ghostwhite;
         .tmpl__field {
           background-color: yellowgreen;
