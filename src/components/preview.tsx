@@ -4,10 +4,11 @@ import { css, jsx } from '@emotion/core';
 import { Button, Divider, Input, Modal, Tooltip } from 'antd';
 import faker from 'faker';
 import * as _ from 'lodash';
-import styles from 'prism-themes/themes/prism-synthwave84.css';
 import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow as styles } from 'react-syntax-highlighter/dist/esm/styles/prism';
+// import styles from 'prism-themes/themes/prism-synthwave84.css';
 import { WithDebugInfo } from './debug';
 import { FlexCenterBox, ThumbImage } from './styled';
 
@@ -268,7 +269,7 @@ export const Preview: React.FC<{
         <SyntaxHighlighter
           language={language}
           style={styles}
-          customStyle={{ backgroundColor: '#272336', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+          customStyle={{ /*backgroundColor: '#272336',*/ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
         >
           {rendered}
         </SyntaxHighlighter>
@@ -289,7 +290,7 @@ export const Preview: React.FC<{
         <SyntaxHighlighter
           language="json"
           style={styles}
-          customStyle={{ backgroundColor, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+          customStyle={{ /*backgroundColor,*/ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
         >
           {wrapped}
         </SyntaxHighlighter>

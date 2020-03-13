@@ -69,6 +69,7 @@ const Editable: React.FC<{
               <pre
                 css={css`
                   white-space: pre-wrap;
+                  word-break: break-word;
                   .tmpl__field {
                     background-color: whitesmoke;
                     line-height: 1.5rem;
