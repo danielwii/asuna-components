@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow as styles } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 // import styles from 'prism-themes/themes/prism-synthwave84.css';
 import { WithDebugInfo } from './debug';
 import { FlexCenterBox, ThumbImage } from './styled';
