@@ -254,7 +254,7 @@ export const Preview: React.FC<{
   jsonMode?: boolean;
   language?: string;
 }> = ({ text, tmplFields, jsonMode, language }) => {
-  const rendered = text?.replace(MATCH_REGEX, substring => {
+  const rendered = _.replace(text, MATCH_REGEX, substring => {
     const field = _.find(tmplFields, field => `{{${field.name}}}` === substring);
     let rendered = substring;
     try {
@@ -269,7 +269,7 @@ export const Preview: React.FC<{
         <SyntaxHighlighter
           language={language}
           style={styles}
-          customStyle={{ /*backgroundColor: '#272336',*/ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+          customStyle={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 'inherit' }}
         >
           {rendered}
         </SyntaxHighlighter>
@@ -279,10 +279,10 @@ export const Preview: React.FC<{
 
   if (jsonMode) {
     let wrapped = rendered;
-    let backgroundColor = 'gray';
+    // let backgroundColor = 'gray';
     try {
       wrapped = JSON.stringify(JSON.parse(rendered), null, 2);
-      backgroundColor = '#272336';
+      // backgroundColor = '#272336';
     } catch (e) {}
 
     return (
@@ -290,7 +290,7 @@ export const Preview: React.FC<{
         <SyntaxHighlighter
           language="json"
           style={styles}
-          customStyle={{ /*backgroundColor,*/ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+          customStyle={{ /*backgroundColor,*/ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 'inherit' }}
         >
           {wrapped}
         </SyntaxHighlighter>
@@ -317,7 +317,7 @@ export const Preview: React.FC<{
         }
       `}
       dangerouslySetInnerHTML={{
-        __html: text?.replace(MATCH_REGEX, substring => {
+        __html: _.replace(text, MATCH_REGEX, substring => {
           const field = _.find(tmplFields, field => `{{${field.name}}}` === substring);
           let rendered = substring;
           try {
