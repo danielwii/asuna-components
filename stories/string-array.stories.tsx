@@ -17,7 +17,7 @@ storiesOf('StringArray', module)
       <StoreProvider initialState={{ items: ['123', '456', '789'] }}>
         {(state, setState) => (
           <>
-            <StringArray items={state.items} onChange={items => setState({ items })} />
+            <StringArray items={state.items} onChange={(items) => setState({ items })} />
             <Divider />
             {JSON.stringify(state)}
           </>
@@ -30,7 +30,7 @@ storiesOf('StringArray', module)
       <StoreProvider initialState={{ items: ['123', '456', '789'] }}>
         {(state, setState) => (
           <>
-            <StringArray mode="tag" items={state.items} onChange={items => setState({ items })} />
+            <StringArray mode="tag" items={state.items} onChange={(items) => setState({ items })} />
             <Divider />
             {JSON.stringify(state)}
           </>

@@ -20,7 +20,7 @@ storiesOf('Uploader', module).add('default', () => (
           <Uploader
             adapter={new DefaultFileUploaderAdapterImpl()}
             value={state}
-            onChange={files => setState(files)}
+            onChange={(files) => setState(files)}
             multiple
           />
           <Divider />

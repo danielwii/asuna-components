@@ -34,7 +34,7 @@ storiesOf('StringTmpl', module)
                 { name: 'n7', fake: 'lorem.words' },
                 { name: 'no-fake' },
               ]}
-              onChange={tmpl => setState({ tmpl })}
+              onChange={(tmpl) => setState({ tmpl })}
             />
             <Divider />
             {JSON.stringify(state)}
@@ -51,7 +51,7 @@ storiesOf('StringTmpl', module)
             <StringTmpl
               tmpl={state.tmpl}
               fields={[{ name: 'n2', fake: 'date.recent' }]}
-              onChange={tmpl => setState({ tmpl })}
+              onChange={(tmpl) => setState({ tmpl })}
               jsonMode
             />
             <Divider />

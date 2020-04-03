@@ -44,11 +44,11 @@ storiesOf('Tabs', module)
       <Tab
         panes={panes}
         activeKey="1"
-        onChange={opts => {
+        onChange={(opts) => {
           console.log(opts);
         }}
-        onSubClick={pane => console.log('onSubClick', pane)}
-        onSubClose={pane => console.log('onSubClose', pane)}
+        onSubClick={(pane) => console.log('onSubClick', pane)}
+        onSubClose={(pane) => console.log('onSubClose', pane)}
       />
     </div>
   ))
@@ -58,8 +58,8 @@ storiesOf('Tabs', module)
       panes={panes}
       activeKey="1"
       activeSubKey="1-1"
-      onSubClick={pane => console.log('onSubClick', pane)}
-      onSubClose={pane => console.log('onSubClose', pane)}
+      onSubClick={(pane) => console.log('onSubClick', pane)}
+      onSubClose={(pane) => console.log('onSubClose', pane)}
     />
   ))
   .add('union', () => (
@@ -68,7 +68,7 @@ storiesOf('Tabs', module)
       panes={panes}
       activeKey="1"
       activeSubKey="1-1"
-      onSubClick={pane => console.log('onSubClick', pane)}
-      onSubClose={pane => console.log('onSubClose', pane)}
+      onSubClick={(pane) => console.log('onSubClick', pane)}
+      onSubClose={(pane) => console.log('onSubClose', pane)}
     />
   ));

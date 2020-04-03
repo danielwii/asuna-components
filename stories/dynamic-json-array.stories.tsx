@@ -40,7 +40,7 @@ storiesOf('DynamicJsonArray', module)
         {(state, setState) => (
           <>
             <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
-              {formikBag => (
+              {(formikBag) => (
                 <>
                   <Form>
                     <Field name="data">
@@ -48,18 +48,18 @@ storiesOf('DynamicJsonArray', module)
                         <DynamicJsonArrayTable
                           adapter={ObjectJsonTableHelper}
                           value={field.value}
-                          preview={item => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
+                          preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
                           render={({ formik, item, index, fieldOpts }) => (
                             <WithDebugInfo info={{ formik }} debug>
                               <Card>
                                 <Input {...fieldOpts('key', index)} addonBefore="key" />
                                 <Input {...fieldOpts('color', index)} addonBefore="color" />
                                 <WithVariable variable={ObjectJsonTableHelper.fieldParser(item, index)}>
-                                  {current => (
+                                  {(current) => (
                                     <Input
                                       name={current.name('value')}
                                       value={current.value('value')}
-                                      onChange={event => formik.handleChange(event)}
+                                      onChange={(event) => formik.handleChange(event)}
                                       addonBefore="value"
                                     />
                                   )}
@@ -67,7 +67,7 @@ storiesOf('DynamicJsonArray', module)
                               </Card>
                             </WithDebugInfo>
                           )}
-                          onChange={values => form.setFieldValue(field.name, values)}
+                          onChange={(values) => form.setFieldValue(field.name, values)}
                         />
                       )}
                     </Field>
@@ -95,7 +95,7 @@ storiesOf('DynamicJsonArray', module)
         {(state, setState) => (
           <>
             <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
-              {formikBag => (
+              {(formikBag) => (
                 <>
                   <Form>
                     <Field name="data">
@@ -103,9 +103,9 @@ storiesOf('DynamicJsonArray', module)
                         <DynamicJsonArrayTable
                           adapter={StringArrayJsonTableHelper}
                           value={field.value}
-                          preview={item => <div>{util.inspect(StringArrayJsonTableHelper.keyParser(item))}</div>}
+                          preview={(item) => <div>{util.inspect(StringArrayJsonTableHelper.keyParser(item))}</div>}
                           render={({ fieldOpts, index }) => <Input {...fieldOpts('key', index)} addonBefore="text" />}
-                          onChange={values => form.setFieldValue(field.name, values)}
+                          onChange={(values) => form.setFieldValue(field.name, values)}
                         />
                       )}
                     </Field>
@@ -134,24 +134,24 @@ storiesOf('DynamicJsonArray', module)
         {(state, setState) => (
           <>
             <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
-              {formikBag => (
+              {(formikBag) => (
                 <>
                   <Form>
                     <Field name="data">
                       {({ field, form, meta }) => (
                         <WithVariable variable={ObjectArrayJsonTableHelper}>
-                          {helper => (
+                          {(helper) => (
                             <DynamicJsonArrayTable
                               adapter={helper}
                               value={field.value}
-                              preview={item => <div>{util.inspect(helper.keyParser(item))}</div>}
+                              preview={(item) => <div>{util.inspect(helper.keyParser(item))}</div>}
                               render={({ fieldOpts, index }) => (
                                 <>
                                   <Input {...fieldOpts('path', index)} addonBefore="path" />
                                   <Input.TextArea {...fieldOpts('text', index)} placeholder="text" autoSize />
                                 </>
                               )}
-                              onChange={values => form.setFieldValue(field.name, values)}
+                              onChange={(values) => form.setFieldValue(field.name, values)}
                             />
                           )}
                         </WithVariable>
