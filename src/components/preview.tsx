@@ -53,7 +53,7 @@ export const ImagePreview: React.FC<{ url: string; title?: string; onEdit?: (url
         text-align: right;
       `}
     >
-      <Input.TextArea value={newUrl ?? url} onChange={e => setUrl(e.target.value)} autoSize />
+      <Input.TextArea value={newUrl ?? url} onChange={(e) => setUrl(e.target.value)} autoSize />
       <Divider type="horizontal" dashed style={{ margin: '1rem 0' }} />
       <Button
         type="primary"
@@ -252,10 +252,11 @@ export const Preview: React.FC<{
   text: string;
   tmplFields?: { name: string; help?: string; fake?: string }[];
   jsonMode?: boolean;
+  htmlMode?: boolean;
   language?: string;
-}> = ({ text, tmplFields, jsonMode, language }) => {
-  const rendered = _.replace(text, MATCH_REGEX, substring => {
-    const field = _.find(tmplFields, field => `{{${field.name}}}` === substring);
+}> = ({ text, tmplFields, jsonMode, htmlMode, language }) => {
+  const rendered = _.replace(text, MATCH_REGEX, (substring) => {
+    const field = _.find(tmplFields, (field) => `{{${field.name}}}` === substring);
     let rendered = substring;
     try {
       rendered = faker.fake(`{{${field.fake}}}`);
@@ -298,6 +299,34 @@ export const Preview: React.FC<{
     );
   }
 
+  if (htmlMode) {
+    return (
+      <React.Fragment>
+        <Button
+          size="small"
+          type="dashed"
+          onClick={() =>
+            Modal.info({
+              maskClosable: true,
+              width: '80%',
+              content: <div dangerouslySetInnerHTML={{ __html: rendered }} />,
+            })
+          }
+        >
+          预览
+        </Button>
+        <Divider type="horizontal" dashed style={{ margin: '0.5rem 0' }} />
+        <div
+          css={css`
+            border: 1px dashed #d9d9d9;
+            border-radius: 2px;
+          `}
+          dangerouslySetInnerHTML={{ __html: rendered }}
+        />
+      </React.Fragment>
+    );
+  }
+
   return (
     <pre
       css={css`
@@ -317,8 +346,8 @@ export const Preview: React.FC<{
         }
       `}
       dangerouslySetInnerHTML={{
-        __html: _.replace(text, MATCH_REGEX, substring => {
-          const field = _.find(tmplFields, field => `{{${field.name}}}` === substring);
+        __html: _.replace(text, MATCH_REGEX, (substring) => {
+          const field = _.find(tmplFields, (field) => `{{${field.name}}}` === substring);
           let rendered = substring;
           try {
             rendered = faker.fake(`{{${field.fake}}}`);

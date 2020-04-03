@@ -44,7 +44,7 @@ const Editable: React.FC<{
       {...props}
     >
       {isEditing ? (
-        <div onKeyDown={e => handleKeyDown(e, type)}>
+        <div onKeyDown={(e) => handleKeyDown(e, type)}>
           <div style={{ marginBottom: '.5rem' }}>
             <i>
               press{' '}
@@ -70,6 +70,9 @@ const Editable: React.FC<{
                 css={css`
                   white-space: pre-wrap;
                   word-break: break-word;
+                  max-height: 10rem;
+                  max-width: 50%;
+                  overflow-y: auto;
                   .tmpl__field {
                     background-color: whitesmoke;
                     line-height: 1.5rem;
@@ -98,7 +101,8 @@ export const StringTmpl: React.FC<{
   fields: { name: string; help?: string; fake?: string }[];
   onChange: (tmpl) => void;
   jsonMode?: boolean;
-}> = ({ tmpl, fields, onChange, jsonMode }) => {
+  htmlMode?: boolean;
+}> = ({ tmpl, fields, onChange, jsonMode, htmlMode }) => {
   let ref;
   let pos;
   const [error, setError] = React.useState<Error>();
@@ -125,12 +129,12 @@ export const StringTmpl: React.FC<{
       <Col span={12}>
         <Editable text={tmpl} type="textarea">
           <Input.TextArea
-            ref={node => (ref = node)}
+            ref={(node) => (ref = node)}
             autoSize
             autoFocus
             value={tmpl}
-            onSelect={event => (pos = event.currentTarget.selectionStart)}
-            onChange={e => onChange(e.target.value)}
+            onSelect={(event) => (pos = event.currentTarget.selectionStart)}
+            onChange={(e) => onChange(e.target.value)}
           />
           <Divider type="horizontal" dashed style={{ margin: '0.5rem 0' }} />
           <div
@@ -140,7 +144,7 @@ export const StringTmpl: React.FC<{
               }
             `}
           >
-            {fields?.map(field => (
+            {fields?.map((field) => (
               <WithVariable
                 key={field.name}
                 variable={
@@ -149,7 +153,7 @@ export const StringTmpl: React.FC<{
                   </Button>
                 }
               >
-                {rendered =>
+                {(rendered) =>
                   field.help ? (
                     <Tooltip
                       title={
@@ -171,7 +175,7 @@ export const StringTmpl: React.FC<{
         </Editable>
       </Col>
       <Col span={12}>
-        <Preview text={tmpl} tmplFields={fields} jsonMode={jsonMode} />
+        <Preview text={tmpl} tmplFields={fields} jsonMode={jsonMode} htmlMode={htmlMode} />
       </Col>
 
       {error && <Alert message={error.message} type="error" showIcon />}
