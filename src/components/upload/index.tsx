@@ -1,6 +1,4 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
-
 import {
   CloudUploadOutlined,
   DeleteOutlined,
@@ -14,7 +12,7 @@ import {
   VerticalLeftOutlined,
   VerticalRightOutlined,
 } from '@ant-design/icons';
-
+import { css, jsx } from '@emotion/core';
 import { Button, Divider, Input, Radio, Tag, Upload } from 'antd';
 import { RcCustomRequestOptions, RcFile, UploadFile, UploadListType } from 'antd/es/upload/interface';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
@@ -122,7 +120,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
         })
         .then(([uploaded]) => {
           const combined = func.valueToSubmit(
-            fileList.map(file => file.url || _.get(file, 'response.fullpath')),
+            fileList.map((file) => file.url || _.get(file, 'response.fullpath')),
             uploaded.fullpath,
           );
           // console.log('[customRequest]', fileList.length, { value, combined });
@@ -176,13 +174,14 @@ export const Uploader: React.FC<IUploaderProps> = ({
     },
     handleMove: (index: number, to: number): void => {
       const item = fileList.splice(index, 1);
-      const moved = [...fileList.slice(0, to), ...item, ...fileList.slice(to)];
+      const [left, right] = [fileList.slice(0, to), fileList.slice(to)];
+      const moved = _.uniq([...left, ...item, ...right]);
       setFileList(moved);
       onChange(
         func.valueToSubmit(
           value,
           valueToString(
-            moved.map(file => file.url),
+            moved.map((file) => file.url),
             multiple,
             jsonMode,
           ),
@@ -192,7 +191,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
     valueToSubmit: (value?: string | string[], uploaded?: string | string[]): string | string[] => {
       const array = valueToArray(value);
       const uploadedArray = valueToArray(uploaded);
-      let files: any = _.compact(_.flattenDeep([array, uploadedArray]));
+      let files: any = _.compact(_.uniq(_.flattenDeep([array, uploadedArray])));
       if (!multiple) files = _.takeRight(files);
       if (!jsonMode && _.isArray(files)) files = files.join(',');
       // console.log('[valueToSubmit]', files, { multiple, jsonMode });
@@ -228,7 +227,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
             <Input.TextArea
               placeholder="请输入网络图片地址"
               value={state}
-              onChange={e => setState(e.target.value)}
+              onChange={(e) => setState(e.target.value)}
               autoSize
             />
             <Divider type="horizontal" dashed style={{ margin: '1rem 0' }} />
@@ -279,7 +278,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
       {/*<Tag>{refreshFlag}</Tag>*/}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         {views.renderedAddNetworkAddressButton}
-        <Radio.Group value={layout} onChange={e => setLayout(e.target.value)}>
+        <Radio.Group value={layout} onChange={(e) => setLayout(e.target.value)}>
           <Radio.Button value="picture">
             picture <PictureOutlined />
           </Radio.Button>
@@ -343,7 +342,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
       <Divider type="horizontal" dashed={true} style={{ margin: '0.5rem 0' }} />
       <div>
         <AssetsPreview
-          urls={fileList.map(file => file.url ?? _.get(file, 'response.fullpath') ?? file.thumbUrl)}
+          urls={fileList.map((file) => file.url ?? _.get(file, 'response.fullpath') ?? file.thumbUrl)}
           fullWidth
           renderImage={({ view, index }) => (
             <div
@@ -412,7 +411,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
                       `}
                       hidden={!hasUrl}
                     >
-                      <ImagePreview url={url} onEdit={newUrl => func.handleEdit(index, newUrl)}>
+                      <ImagePreview url={url} onEdit={(newUrl) => func.handleEdit(index, newUrl)}>
                         <Button type="primary" icon={<EditOutlined />} size="small" />{' '}
                       </ImagePreview>
                     </div>
