@@ -10,6 +10,7 @@ export function wrapFilesToFileList(value: string | string[]): UploadFile[] {
   const files = valueToArray(value);
   const fileList = _.flow([
     fp.filter<string>(file => typeof file !== 'object'),
+    fp.uniq,
     fp.map<string, Partial<UploadFile>>(file => ({
       uid: `${file}`,
       status: 'done' as UploadFileStatus,
