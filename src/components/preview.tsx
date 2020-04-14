@@ -99,11 +99,11 @@ export const ImagePreview: React.FC<{ url: string; title?: string; onEdit?: (url
   );
 };
 
-export const PdfButton: React.FC<{ pdf?: string }> = ({ pdf }) =>
+export const PdfButton: React.FC<{ pdf?: string; name?: string; title?: string }> = ({ pdf, name, title }) =>
   pdf ? (
     <Tooltip title="按住 option/ctrl 下载">
-      <Button type="dashed" size="small" href={pdf} target="_blank">
-        查看 pdf
+      <Button type="dashed" size="small" href={pdf} target="_blank" download={name}>
+        {title ?? '查看 pdf'}
       </Button>
     </Tooltip>
   ) : (
