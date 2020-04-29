@@ -53,6 +53,12 @@ export interface IErrorInfoProps {
   extra?: React.ReactNode;
 }
 
+export const StateStoreProvider: StateFC<{}> = ({ initialState, children }) => {
+  const [state, setState] = React.useState(initialState);
+
+  return <div>{children(state, setState)}</div>;
+};
+
 export function ErrorInfo(props: IErrorInfoProps & { children?: React.ReactNode }) {
   const { title, subTitle, extra, children } = props;
   return (
@@ -126,7 +132,7 @@ export function WithFuture<R>({
 }): React.ReactElement {
   const Component = React.lazy(
     () =>
-      new Promise(async resolve => {
+      new Promise(async (resolve) => {
         const data = await future();
         resolve({
           default: () => (_.isFunction(children) ? <>{children(data)}</> : <>{children}</>),
