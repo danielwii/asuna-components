@@ -415,12 +415,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
                         <Button type="primary" icon={<EditOutlined />} size="small" />{' '}
                       </ImagePreview>
                     </div>
-                    <Button
-                      type="danger"
-                      icon={<DeleteOutlined />}
-                      size="small"
-                      onClick={() => func.handleDelete(index)}
-                    />
+                    <Button danger icon={<DeleteOutlined />} size="small" onClick={() => func.handleDelete(index)} />
                     <WithDebugInfo info={item} />
                   </div>
                   {item?.size && (

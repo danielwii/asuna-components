@@ -48,7 +48,7 @@ const Editable: React.FC<{
           <div style={{ marginBottom: '.5rem' }}>
             <i>
               press{' '}
-              <Button type="danger" size="small" onClick={() => setEditing(false)}>
+              <Button danger size="small" onClick={() => setEditing(false)}>
                 ESC
               </Button>{' '}
               to exit editing.

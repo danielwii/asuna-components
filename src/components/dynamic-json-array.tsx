@@ -147,7 +147,7 @@ export const DynamicJsonArrayTable: <T extends Record<string, string | number>>(
             {(item) => (
               <List.Item
                 actions={[
-                  <Button size="small" type="danger" onClick={() => funcs.remove(index)}>
+                  <Button size="small" danger onClick={() => funcs.remove(index)}>
                     remove
                   </Button>,
                 ]}
