@@ -4,7 +4,7 @@ import * as React from 'react';
 import { TweenOneGroup } from 'rc-tween-one';
 import * as _ from 'lodash';
 
-interface IStringArrayProps {
+export interface IStringArrayProps {
   mode?: 'input' | 'tag';
   items: string[];
   onChange: (items: string[]) => void;
@@ -16,10 +16,10 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
 
   const func = {
     add: (item: string = '') => onChange([...items, item]),
-    remove: index => onChange(_.remove(items, (item, i) => i !== index)),
+    remove: (index) => onChange(_.remove(items, (item, i) => i !== index)),
     showInput: () => setInputVisible(true),
-    handleInputChange: e => setInputValue(e.target.value),
-    handleInputConfirm: e => {
+    handleInputChange: (e) => setInputValue(e.target.value),
+    handleInputConfirm: (e) => {
       if (!!_.trim(e.target.value)) {
         func.add(e.target.value);
       }
@@ -38,7 +38,7 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
               opacity: 0,
               type: 'from',
               duration: 100,
-              onComplete: e => ((e.target as any).style = ''),
+              onComplete: (e) => ((e.target as any).style = ''),
             }}
             leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
             appear={false}
@@ -79,7 +79,7 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
         <React.Fragment key={index}>
           <Input
             value={item}
-            onChange={e => {
+            onChange={(e) => {
               items[index] = e.target.value;
               onChange(items);
             }}
