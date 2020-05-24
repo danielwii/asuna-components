@@ -2,7 +2,7 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { Button, Result, Tooltip, Typography } from 'antd';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
-import { useLogger } from 'react-use';
+import { useAsync, useLogger } from 'react-use';
 import * as util from 'util';
 import { Loading } from './components';
 
@@ -22,6 +22,10 @@ export interface CustomFC<P = {}, R = () => React.ReactNode> {
 export type StateChildren<S> = (state: S, setState: (state: S) => void) => ReactNode;
 export type StateFunctionComponent<P = {}, S = {}> = CustomFC<P, StateChildren<S>>;
 export type StateFC<State> = StateFunctionComponent<{ initialState: State }, State>;
+
+export function parseString(value?: any): string {
+  return value ? (_.isString(value) ? value : JSON.stringify(value)) : '';
+}
 
 export function parseJSONIfCould(value?: string): any {
   try {
@@ -122,14 +126,30 @@ export const WithLoading: React.FC<{ loading: boolean; error: any; retry? }> = (
 };
 
 export function WithFuture<R>({
+  async,
   future,
   fallback,
   children,
 }: {
+  async?: boolean;
   future: () => Promise<R>;
   fallback?: React.ReactElement;
   children: ((props: R) => React.ReactNode) | React.ReactNode;
 }): React.ReactElement {
+  if (async) {
+    const { loading, value, error } = useAsync(future);
+
+    if (loading) return fallback ?? <Loading type="circle" />;
+    if (error)
+      return (
+        <ErrorInfo>
+          <pre>{util.inspect(error)}</pre>
+        </ErrorInfo>
+      );
+
+    return _.isFunction(children) ? <>{children(value as any)}</> : <>{children}</>;
+  }
+
   const Component = React.lazy(
     () =>
       new Promise(async (resolve) => {

@@ -1,13 +1,14 @@
 /** @jsx jsx */
 import { FilePdfOutlined } from '@ant-design/icons';
 import { css, jsx } from '@emotion/core';
-import { Button, Divider, Input, Modal, Tooltip } from 'antd';
+import { Button, Divider, Input, Modal, Tooltip, Typography } from 'antd';
 import faker from 'faker';
 import * as _ from 'lodash';
 import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { parseJSONIfCould, parseString } from '../helper';
 // import styles from 'prism-themes/themes/prism-synthwave84.css';
 import { WithDebugInfo } from './debug';
 import { FlexCenterBox, ThumbImage } from './styled';
@@ -251,10 +252,11 @@ export const MATCH_REGEX = /{{([^{}]+)}}/g;
 export const Preview: React.FC<{
   text: string;
   tmplFields?: { name: string; help?: string; fake?: string }[];
+  listMode?: boolean;
   jsonMode?: boolean;
   htmlMode?: boolean;
   language?: string;
-}> = ({ text, tmplFields, jsonMode, htmlMode, language }) => {
+}> = ({ text, tmplFields, listMode, jsonMode, htmlMode, language }) => {
   const rendered = _.replace(text, MATCH_REGEX, (substring) => {
     const field = _.find(tmplFields, (field) => `{{${field.name}}}` === substring);
     let rendered = substring;
@@ -275,6 +277,18 @@ export const Preview: React.FC<{
           {rendered}
         </SyntaxHighlighter>
       </React.Fragment>
+    );
+  }
+
+  if (listMode) {
+    return (
+      <ul>
+        {_.map(parseJSONIfCould(text), (value, key) => (
+          <li>
+            <Typography.Text mark>[{key}]</Typography.Text> {value}
+          </li>
+        ))}
+      </ul>
     );
   }
 
