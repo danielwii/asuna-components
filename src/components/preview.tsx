@@ -1,14 +1,15 @@
 /** @jsx jsx */
 import { FilePdfOutlined } from '@ant-design/icons';
 import { css, jsx } from '@emotion/core';
-import { Button, Divider, Input, Modal, Tooltip, Typography } from 'antd';
+import { Button, Divider, Input, List, Modal, Tooltip } from 'antd';
 import faker from 'faker';
 import * as _ from 'lodash';
 import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { parseJSONIfCould, parseString } from '../helper';
+
+import { parseJSONIfCould } from '../helper';
 // import styles from 'prism-themes/themes/prism-synthwave84.css';
 import { WithDebugInfo } from './debug';
 import { FlexCenterBox, ThumbImage } from './styled';
@@ -281,14 +282,17 @@ export const Preview: React.FC<{
   }
 
   if (listMode) {
+    const dataSource = _.map(parseJSONIfCould(text), (description, title) => ({ title, description }));
     return (
-      <ul>
-        {_.map(parseJSONIfCould(text), (value, key) => (
-          <li>
-            <Typography.Text mark>[{key}]</Typography.Text> {value}
-          </li>
-        ))}
-      </ul>
+      <List
+        size="small"
+        dataSource={dataSource}
+        renderItem={({ title, description }) => (
+          <List.Item>
+            {title}: {description}
+          </List.Item>
+        )}
+      />
     );
   }
 
