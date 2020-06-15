@@ -158,7 +158,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
 
       const array = [...valueToArray(value)];
       array.splice(index, 1);
-      onChange(func.valueToSubmit(value, valueToString(array, multiple, jsonMode)));
+      onChange(func.valueToSubmit(valueToString(array, multiple, jsonMode)));
     },
     handleEdit: (index: number, newUrl: string): void => {
       // console.log('[handleEdit]', index, newUrl);
