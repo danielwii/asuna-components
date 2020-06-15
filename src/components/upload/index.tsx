@@ -119,14 +119,14 @@ export const Uploader: React.FC<IUploaderProps> = ({
           },
         })
         .then(([uploaded]) => {
-          const combined = func.valueToSubmit(
-            fileList.map((file) => file.url || _.get(file, 'response.fullpath')),
-            uploaded.fullpath,
-          );
+          // const combined = func.valueToSubmit(
+          //   fileList.map((file) => file.url || _.get(file, 'response.fullpath')),
+          //   uploaded.fullpath,
+          // );
           // console.log('[customRequest]', fileList.length, { value, combined });
-          // console.log('[customRequest]', result, value, uploaded);
+          // console.log('[customRequest]', fileList, wrapFilesToFileList(value), { value, uploaded, combined });
           // console.table((combined as string).split(','));
-          onChange(combined);
+          // onChange(combined);
 
           // file['new'] = true;
           onSuccess(uploaded, file); // update status to done
@@ -136,7 +136,11 @@ export const Uploader: React.FC<IUploaderProps> = ({
         .finally(() => setLoading(false));
     },
     handleChange: (info: UploadChangeParam): void => {
-      // console.log('[handleChange]', info, valueToArray(value));
+      const uploads = _.filter(info.fileList, (file) => _.has(file, 'status'));
+      const status = uploads.map((file: UploadFile) => file.status);
+      const allDone = uploads.filter((file: UploadFile) => file.status === 'done').length === status.length;
+
+      // console.log('[handleChange]', info, valueToArray(value), status, allDone);
       if (info.file && info.event?.percent === 100) {
         const inList = info.fileList.find(_.matches({ uid: info.file.uid }));
         if (inList && inList.status !== 'done') {
@@ -147,6 +151,14 @@ export const Uploader: React.FC<IUploaderProps> = ({
       } else {
         // console.table(info.fileList);
         setFileList([...info.fileList]); // update progress
+      }
+
+      if (allDone && uploads.length > 0) {
+        const combined = func.valueToSubmit(
+          fileList.map((file) => file.url || _.get(file, 'response.fullpath')),
+          uploads.map((uploaded: any) => uploaded.fullpath),
+        );
+        onChange(combined);
       }
     },
     addNetworkAddress: (url: string): void => {
