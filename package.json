@@ -25,7 +25,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.1.0",
     "@projectstorm/react-diagrams": "^6.1.1",
-    "antd": "^4.2.4",
+    "antd": "^4.2.5",
     "axios": "^0.19.2",
     "closest": "^0.0.1",
     "common-tags": "^1.8.0",
