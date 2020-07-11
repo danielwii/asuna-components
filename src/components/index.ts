@@ -7,4 +7,5 @@ export * from './preview';
 export * from './string-array';
 export * from './string-tmpl';
 export * from './styled';
+export * from './buttons';
 // export * from './tabs';
