@@ -1,42 +1,31 @@
-import React from 'react';
 import { storiesOf } from '@storybook/react';
 import 'antd/dist/antd.css';
+import { PopconfirmProps } from 'antd/es/popconfirm';
+import { TooltipProps } from 'antd/es/tooltip';
+import { Promise } from 'bluebird';
+import * as React from 'react';
 import { AdvancedButton } from '../src';
 
-const children = {
-  initial: '点击提交',
-  progressive: '提交中',
-  done: '已提交',
-};
-
-const confirmProps = {
+const confirmProps: PopconfirmProps = {
   title: '确认提交吗？',
   okText: 'Yes',
   cancelText: 'No',
 };
 
-const tooltipProps = {
+const tooltipProps: TooltipProps = {
   placement: 'right',
   color: 'pink',
-  title: 'Sweet potatos',
+  title: 'Sweet potatoes',
 };
 
-const event = new Promise((resolve) => {
-  setTimeout(() => {
-    resolve();
-  }, 4000);
-});
-
-const type = 'primary';
-
 storiesOf('Button', module).add('advanced', () => (
-  <>
+  <div style={{ margin: '1rem' }}>
     <AdvancedButton
-      children={children}
-      event={event}
-      type={type}
+      onClick={() => Promise.delay(2000)}
+      type="primary"
       confirmProps={confirmProps}
       tooltipProps={tooltipProps}
+      disableAfterSubmitted
     />
-  </>
+  </div>
 ));

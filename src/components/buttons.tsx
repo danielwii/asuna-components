@@ -1,53 +1,51 @@
-import React, { useState } from 'react';
 import { Button, Popconfirm, Tooltip } from 'antd';
+import { ButtonProps } from 'antd/es/button';
+import { PopconfirmProps } from 'antd/es/popconfirm';
+import { TooltipProps } from 'antd/es/tooltip';
+import { Promise } from 'bluebird';
+import React, { useState } from 'react';
 
-export function AdvancedButton(props) {
-  const {
-    children: { initial, progressive, done },
-    type,
-    event,
-    confirmProps,
-    tooltipProps,
-  } = props;
+type WordingType = 'Submit' | 'Submitting' | 'Submitted';
 
-  const [loading, setLoading] = useState(false);
-  const [children, setChildren] = useState(initial);
+export const AdvancedButton: React.FC<
+  ButtonProps & {
+    onClick: () => Promise;
+    confirmProps?: PopconfirmProps;
+    tooltipProps?: TooltipProps;
+    disableAfterSubmitted?: boolean;
+  }
+> = (props) => {
+  const { children, onClick, disableAfterSubmitted, confirmProps, tooltipProps, ...buttonProps } = props;
 
-  function handleConfirm() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [wording, setWording] = useState<WordingType>('Submit');
+
+  function handleConfirm(e?: React.MouseEvent<HTMLElement>) {
     setLoading(true);
-    setChildren(progressive);
-    event.then(() => {
+    setWording('Submitting');
+    onClick().then(() => {
       setLoading(false);
-      setChildren(done);
+      setWording('Submitted');
     });
   }
 
-  const button = (
+  const view = (
     <Button
-      type={type}
+      {...buttonProps}
       loading={loading}
-      onClick={() => {
-        !confirmProps && handleConfirm();
-      }}
+      onClick={(e) => !confirmProps && handleConfirm(e)}
+      disabled={disableAfterSubmitted && wording === 'Submitted'}
     >
-      {children}
+      {children ?? wording}
     </Button>
   );
 
-  if (confirmProps) {
-    const popConfirm = (
-      <Popconfirm
-        {...confirmProps}
-        onConfirm={() => {
-          handleConfirm();
-        }}
-      >
-        {tooltipProps ? <Tooltip {...tooltipProps}>{button}</Tooltip> : { button }}
-      </Popconfirm>
-    );
-    return popConfirm;
-  } else if (tooltipProps) {
-    return <Tooltip {...tooltipProps}>{button}</Tooltip>;
-  }
-  return button;
-}
+  const withTooltipView = tooltipProps ? <Tooltip {...tooltipProps}>{view}</Tooltip> : view;
+  return confirmProps ? (
+    <Popconfirm {...confirmProps} onConfirm={(e) => handleConfirm(e)}>
+      {withTooltipView}
+    </Popconfirm>
+  ) : (
+    withTooltipView
+  );
+};
