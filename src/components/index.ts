@@ -8,4 +8,5 @@ export * from './string-array';
 export * from './string-tmpl';
 export * from './styled';
 export * from './buttons';
+export * from './drawer-button';
 // export * from './tabs';
