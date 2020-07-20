@@ -136,3 +136,32 @@ export class Loading extends React.PureComponent<{
     }
   }
 }
+
+export type LoadingType =
+  | 'plane'
+  | 'chase'
+  | 'wander'
+  | 'fold'
+  | 'grid'
+  | 'circle-fade'
+  | 'circle'
+  | 'swing'
+  | 'flow'
+  | 'pulse'
+  | 'wave'
+  | 'bounce';
+
+export const loadingList: LoadingType[] = [
+  'plane',
+  'chase',
+  'wander',
+  'fold',
+  'grid',
+  'circle-fade',
+  'circle',
+  'swing',
+  'flow',
+  'pulse',
+  'wave',
+  'bounce',
+];
