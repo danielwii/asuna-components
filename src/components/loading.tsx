@@ -1,141 +1,5 @@
 import React from 'react';
-
-// import 'spinkit/spinkit.min.css'
-
-export class Loading extends React.PureComponent<{
-  type:
-    | 'plane'
-    | 'chase'
-    | 'wander'
-    | 'fold'
-    | 'grid'
-    | 'circle-fade'
-    | 'circle'
-    | 'swing'
-    | 'flow'
-    | 'pulse'
-    | 'wave'
-    | 'bounce';
-}> {
-  render() {
-    const { type } = this.props;
-    switch (type) {
-      case 'wander':
-        return (
-          <div className="sk-wander">
-            <div className="sk-wander-cube" />
-            <div className="sk-wander-cube" />
-            <div className="sk-wander-cube" />
-          </div>
-        );
-      case 'fold':
-        return (
-          <div className="sk-fold">
-            <div className="sk-fold-cube" />
-            <div className="sk-fold-cube" />
-            <div className="sk-fold-cube" />
-            <div className="sk-fold-cube" />
-          </div>
-        );
-      case 'grid':
-        return (
-          <div className="sk-grid">
-            <div className="sk-grid-cube" />
-            <div className="sk-grid-cube" />
-            <div className="sk-grid-cube" />
-            <div className="sk-grid-cube" />
-            <div className="sk-grid-cube" />
-            <div className="sk-grid-cube" />
-            <div className="sk-grid-cube" />
-            <div className="sk-grid-cube" />
-            <div className="sk-grid-cube" />
-          </div>
-        );
-      case 'circle-fade':
-        return (
-          <div className="sk-circle-fade">
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-            <div className="sk-circle-fade-dot" />
-          </div>
-        );
-      case 'circle':
-        return (
-          <div className="sk-circle">
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-            <div className="sk-circle-dot" />
-          </div>
-        );
-      case 'swing':
-        return (
-          <div className="sk-swing">
-            <div className="sk-swing-dot" />
-            <div className="sk-swing-dot" />
-          </div>
-        );
-      case 'flow':
-        return (
-          <div className="sk-flow">
-            <div className="sk-flow-dot" />
-            <div className="sk-flow-dot" />
-            <div className="sk-flow-dot" />
-          </div>
-        );
-      case 'pulse':
-        return <div className="sk-pulse" />;
-      case 'wave':
-        return (
-          <div className="sk-wave">
-            <div className="sk-wave-rect" />
-            <div className="sk-wave-rect" />
-            <div className="sk-wave-rect" />
-            <div className="sk-wave-rect" />
-            <div className="sk-wave-rect" />
-          </div>
-        );
-      case 'bounce':
-        return (
-          <div className="sk-bounce">
-            <div className="sk-bounce-dot" />
-            <div className="sk-bounce-dot" />
-          </div>
-        );
-      case 'chase':
-        return (
-          <div className="sk-chase">
-            <div className="sk-chase-dot" />
-            <div className="sk-chase-dot" />
-            <div className="sk-chase-dot" />
-            <div className="sk-chase-dot" />
-            <div className="sk-chase-dot" />
-            <div className="sk-chase-dot" />
-          </div>
-        );
-      case 'plane':
-      default:
-        return <div className="sk-plane" />;
-    }
-  }
-}
+import * as _ from 'lodash';
 
 export type LoadingType =
   | 'plane'
@@ -151,17 +15,92 @@ export type LoadingType =
   | 'wave'
   | 'bounce';
 
-export const loadingList: LoadingType[] = [
-  'plane',
-  'chase',
-  'wander',
-  'fold',
-  'grid',
-  'circle-fade',
-  'circle',
-  'swing',
-  'flow',
-  'pulse',
-  'wave',
-  'bounce',
-];
+export const Loading: React.FC<{ type: LoadingType }> = ({ type }) => {
+  switch (type) {
+    case 'wander':
+      return (
+        <div className="sk-wander">
+          {_.range(3).map((item) => {
+            return <div key={item} className="sk-wander-cube" />;
+          })}
+        </div>
+      );
+    case 'fold':
+      return (
+        <div className="sk-fold">
+          {_.range(4).map((item) => {
+            return <div key={item} className="sk-fold-cube" />;
+          })}
+        </div>
+      );
+    case 'grid':
+      return (
+        <div className="sk-grid">
+          {_.range(9).map((item) => {
+            return <div key={item} className="sk-grid-cube" />;
+          })}
+        </div>
+      );
+    case 'circle-fade':
+      return (
+        <div className="sk-circle-fade">
+          {_.range(12).map((item) => {
+            return <div key={item} className="sk-circle-fade-dot" />;
+          })}
+        </div>
+      );
+    case 'circle':
+      return (
+        <div className="sk-circle">
+          {_.range(12).map((item) => {
+            return <div key={item} className="sk-circle-dot" />;
+          })}
+        </div>
+      );
+    case 'swing':
+      return (
+        <div className="sk-swing">
+          {_.range(2).map((item) => {
+            return <div key={item} className="sk-swing-dot" />;
+          })}
+        </div>
+      );
+    case 'flow':
+      return (
+        <div className="sk-flow">
+          {_.range(3).map((item) => {
+            return <div key={item} className="sk-flow-dot" />;
+          })}
+        </div>
+      );
+    case 'pulse':
+      return <div className="sk-pulse" />;
+    case 'wave':
+      return (
+        <div className="sk-wave">
+          {_.range(5).map((item) => {
+            return <div key={item} className="sk-wave-rect" />;
+          })}
+        </div>
+      );
+    case 'bounce':
+      return (
+        <div className="sk-bounce">
+          {_.range(2).map((item) => {
+            return <div key={item} className="sk-bounce-dot" />;
+          })}
+        </div>
+      );
+    case 'chase':
+      return (
+        <div className="sk-chase">
+          {_.range(6).map((item) => {
+            return <div key={item} className="sk-chase-dot" />;
+          })}
+        </div>
+      );
+    case 'plane':
+    default:
+      return <div className="sk-plane" />;
+  }
+};

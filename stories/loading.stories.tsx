@@ -3,7 +3,22 @@ import { Divider } from 'antd';
 import React from 'react';
 
 import 'spinkit/spinkit.min.css';
-import { Loading, loadingList } from '../src';
+import { Loading, LoadingType } from '../src';
+
+const loadingList: LoadingType[] = [
+  'plane',
+  'chase',
+  'wander',
+  'fold',
+  'grid',
+  'circle-fade',
+  'circle',
+  'swing',
+  'flow',
+  'pulse',
+  'wave',
+  'bounce',
+];
 
 const loadingItems = loadingList.map((item, idx) => {
   return (
