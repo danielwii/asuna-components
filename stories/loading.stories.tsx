@@ -1,9 +1,10 @@
 import { storiesOf } from '@storybook/react';
 import { Divider } from 'antd';
 import React from 'react';
+import { Promise } from 'bluebird';
 
 import 'spinkit/spinkit.min.css';
-import { Loading, LoadingType } from '../src';
+import { Loading, LoadingType, LivingLoading } from '../src';
 
 const loadingList: LoadingType[] = [
   'plane',
@@ -30,8 +31,14 @@ const loadingItems = loadingList.map((item, idx) => {
   );
 });
 
-storiesOf('Loading', module).add('default', () => (
-  <React.Fragment>
-    <ul>{loadingItems}</ul>
-  </React.Fragment>
-));
+storiesOf('Loading', module)
+  .add('default', () => (
+    <React.Fragment>
+      <ul>{loadingItems}</ul>
+    </React.Fragment>
+  ))
+  .add('living-loading', () => (
+    <React.Fragment>
+      <LivingLoading heartbeat={true} />
+    </React.Fragment>
+  ));
