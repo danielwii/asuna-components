@@ -1,10 +1,9 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
-import { Button, Result, Tooltip, Typography } from 'antd';
+import { Button, Tooltip } from 'antd';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
 import { useAsync, useLogger } from 'react-use';
 import * as util from 'util';
-import { Loading } from './components';
+import { ErrorInfo, Loading } from './components';
 
 /* class decorator */
 export function StaticImplements<T>() {
@@ -51,30 +50,11 @@ export function castToArrays(value: string): string[] {
 //   return value ? (_.isArray(value) ? value : castToArrays(value)) : [];
 // }
 
-export interface IErrorInfoProps {
-  title?: React.ReactNode;
-  subTitle?: React.ReactNode;
-  extra?: React.ReactNode;
-}
-
 export const StateStoreProvider: StateFC<{}> = ({ initialState, children }) => {
   const [state, setState] = React.useState(initialState);
 
   return <div>{children(state, setState)}</div>;
 };
-
-export function ErrorInfo(props: IErrorInfoProps & { children?: React.ReactNode }) {
-  const { title, subTitle, extra, children } = props;
-  return (
-    <Result status="error" title={title || 'Error'} subTitle={subTitle} extra={extra}>
-      <div className="desc">
-        <Typography.Paragraph>
-          <CloseCircleOutlined style={{ color: 'red' }} /> {children}
-        </Typography.Paragraph>
-      </div>
-    </Result>
-  );
-}
 
 export function TooltipContent({ value, link }: { value: any; link?: boolean }) {
   let component = _.isObject(value) ? util.inspect(value) : value;
