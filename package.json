@@ -34,7 +34,7 @@
     "emotion": "^10.0.27",
     "faker": "^4.1.0",
     "formik": "^2.1.5",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "mathjs": "^7.1.0",
     "ml-matrix": "^6.5.1",
     "pathfinding": "^0.4.18",
