@@ -2,9 +2,11 @@ import { storiesOf } from '@storybook/react';
 import { Divider } from 'antd';
 import React from 'react';
 import { Promise } from 'bluebird';
+import { StateFC } from '../src';
 
 import 'spinkit/spinkit.min.css';
 import { Loading, LoadingType, LivingLoading } from '../src';
+import { set } from 'lodash/fp';
 
 const loadingList: LoadingType[] = [
   'plane',
@@ -31,6 +33,11 @@ const loadingItems = loadingList.map((item, idx) => {
   );
 });
 
+const StoreProvider: StateFC<{ heartbeat: any }> = ({ initialState, children }) => {
+  const [state, setState] = React.useState(initialState);
+  return <div>{children(state, setState)}</div>;
+};
+
 storiesOf('Loading', module)
   .add('default', () => (
     <React.Fragment>
@@ -39,6 +46,13 @@ storiesOf('Loading', module)
   ))
   .add('living-loading', () => (
     <React.Fragment>
-      <LivingLoading heartbeat={true} />
+      <StoreProvider initialState={{ heartbeat: null }}>
+        {(state, setState) => {
+          Promise.delay(2000).then(() => {
+            setState({ heartbeat: true });
+          });
+          return <LivingLoading heartbeat={state.heartbeat} />;
+        }}
+      </StoreProvider>
     </React.Fragment>
   ));

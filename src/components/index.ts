@@ -12,5 +12,6 @@ export * from './drawer-button';
 export * from './snow';
 export * from './sun';
 export * from './living-loading';
+export * from './error';
 
 // export * from './tabs';
