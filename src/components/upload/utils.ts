@@ -9,9 +9,9 @@ import { IUploadedFile, UploaderAdapter } from './index';
 export function wrapFilesToFileList(value: string | string[]): UploadFile[] {
   const files = valueToArray(value);
   const fileList = _.flow([
-    fp.filter<string>(file => typeof file !== 'object'),
+    fp.filter<string>((file) => typeof file !== 'object'),
     fp.uniq,
-    fp.map<string, Partial<UploadFile>>(file => ({
+    fp.map<string, Partial<UploadFile>>((file) => ({
       uid: `${file}`,
       status: 'done' as UploadFileStatus,
       name: file,
@@ -56,20 +56,16 @@ export function valueToString(value: string | string[], multiple: boolean, jsonM
 export class DefaultFileUploaderAdapterImpl implements UploaderAdapter {
   constructor(protected readonly host: string = '') {}
 
-  upload(
-    file: File,
-    extra?: { params?: { bucket: string }; requestConfig?: AxiosRequestConfig },
-  ): Promise<IUploadedFile[]> {
+  upload(file: File, requestConfig?: AxiosRequestConfig): Promise<IUploadedFile[]> {
     const instance = axios.create({ baseURL: this.host, timeout: 60_000 });
     const url = 'api/v1/uploader';
     const config: AxiosRequestConfig = {
-      params: extra?.params,
       headers: { 'content-type': 'multipart/form-data' },
-      ...extra?.requestConfig,
+      ...(requestConfig ?? {}),
     };
     const data = new FormData();
     data.append('files', file, file.name);
-    return instance.post(url, data, config).then(res => res.data);
+    return instance.post(url, data, config).then((res) => res.data);
   }
 
   validate(file: File): boolean {
@@ -166,7 +162,7 @@ function loadImageAsync(url: string, context: any): Promise<void> {
   });
 }
 export function loadReaderAsync(evt: File, context: any): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (src: any) => {
       resolve(loadImageAsync(src.target.result, context));

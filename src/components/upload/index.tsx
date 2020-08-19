@@ -40,10 +40,7 @@ export interface IUploadedFile {
 }
 
 export interface UploaderAdapter {
-  upload(
-    file: File,
-    extra?: { params?: { bucket: string }; requestConfig?: AxiosRequestConfig },
-  ): Promise<IUploadedFile[]>;
+  upload(file: File, requestConfig?: AxiosRequestConfig): Promise<IUploadedFile[]>;
 
   validate(file: File): boolean;
 }
@@ -113,10 +110,8 @@ export const Uploader: React.FC<IUploaderProps> = ({
       const { file, onProgress, onSuccess, onError } = options;
       adapter
         .upload(file, {
-          requestConfig: {
-            onUploadProgress: ({ total, loaded }) =>
-              onProgress({ percent: +Math.round((loaded / total) * 100).toFixed(2) }, file),
-          },
+          onUploadProgress: ({ total, loaded }) =>
+            onProgress({ percent: +Math.round((loaded / total) * 100).toFixed(2) }, file),
         })
         .then(([uploaded]) => {
           // const combined = func.valueToSubmit(
