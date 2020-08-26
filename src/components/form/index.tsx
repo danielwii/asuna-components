@@ -1,6 +1,4 @@
-import { DebugInfo, WithDebugInfo, DynamicJsonArrayTable, ObjectJsonTableHelper, StringTmpl, Uploader } from '..';
-import { WithVariable } from '../../helper';
-import { css, jsx } from '@emotion/core';
+import { css } from '@emotion/core';
 import { FormControl, FormControlLabel, FormHelperText, Switch, TextField } from '@material-ui/core';
 import * as antd from 'antd';
 import { Divider } from 'antd';
@@ -11,7 +9,9 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { SketchPicker } from 'react-color';
 import * as util from 'util';
-import { DefaultFileUploaderAdapterImpl } from '../upload/utils';
+import { DebugInfo, DynamicJsonArrayTable, ObjectJsonTableHelper, StringTmpl, Uploader, WithDebugInfo } from '..';
+import { WithVariable } from '../../helper';
+import { DefaultFileUploaderAdapterImpl } from '../upload';
 import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
 
 export * from './interfaces';
@@ -80,7 +80,8 @@ export function RenderInputComponent({
           <label>{field.name}</label>
           <br />
           <Uploader
-            adapter={new DefaultFileUploaderAdapterImpl()}
+            {...Object.assign({ adapter: new DefaultFileUploaderAdapterImpl() }, fieldDef.field.extra)}
+            // adapter={fieldDef.field.extra?.adapter ?? new DefaultFileUploaderAdapterImpl()}
             value={value}
             onChange={(newValue) => {
               field.onChange({ target: { id: field.name, name: field.name, value: newValue } });

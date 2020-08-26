@@ -1,3 +1,4 @@
+export * from './form';
 export * from './upload';
 export * from './debug';
 export * from './dynamic-json-array';
