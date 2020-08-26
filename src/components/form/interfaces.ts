@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { IUploaderProps } from '../upload';
 
 export enum FormFieldType {
   string = 'string',
@@ -7,15 +8,15 @@ export enum FormFieldType {
   image = 'image',
   text = 'text',
   boolean = 'boolean',
-  stringTmpl = 'string-tmpl',
-  wxTmplData = 'wx-tmpl-data',
-  emailTmplData = 'email-tmpl-data',
-  wxSubscribeData = 'wx-subscribe-data',
+  stringTmpl = 'stringTmpl',
+  wxTmplData = 'wxTmplData',
+  emailTmplData = 'emailTmplData',
+  wxSubscribeData = 'wxSubscribeData',
 }
 
-export type FormField<ExtraProps = any> = {
+type BasicFormField<ExtraProps = undefined> = {
   name: string;
-  type: FormFieldType;
+  type: keyof typeof FormFieldType;
   validate?: (value) => string | null;
   help?: React.ReactChild;
   required?: boolean;
@@ -23,6 +24,12 @@ export type FormField<ExtraProps = any> = {
   extra?: ExtraProps;
 };
 
-export type FormFields<ExtraProps = any> = { [key: string]: FormField<ExtraProps> };
-export type FormFieldDef<ExtraProps = any> = { name: string; field: FormField<ExtraProps> };
-export type FormFieldsGroup<ExtraProps = any> = { name?: string; fields: FormFieldDef<ExtraProps>[] };
+export type UploadableFormField = { type: 'image' } & BasicFormField<
+  Pick<IUploaderProps, 'adapter' | 'multiple' | 'enableDragMode'>
+>;
+
+export type FormField = UploadableFormField | BasicFormField;
+
+export type FormFields = Record<string, FormField>;
+export type FormFieldDef = { name: string; field: FormField };
+export type FormFieldsGroup = { name?: string; fields: FormFieldDef[] };
