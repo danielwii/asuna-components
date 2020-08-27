@@ -2,6 +2,7 @@ import { storiesOf } from '@storybook/react';
 import * as _ from 'lodash';
 import * as React from 'react';
 import { DefaultFileUploaderAdapterImpl, EasyForm, FormFields } from '../src';
+import { StoreProvider } from '../src/helper';
 
 const fieldValues: FormFields = {
   switch: { name: 'switch', defaultValue: true, type: 'boolean' },
@@ -23,13 +24,25 @@ const fieldValues: FormFields = {
 };
 
 storiesOf('Form', module).add('default', () => (
-  <EasyForm
-    fields={fieldValues}
-    onSubmit={(values) => {
-      console.log('submitted', values);
-    }}
-    onClear={() => {
-      console.log('cleared');
-    }}
-  />
+  <div style={{ margin: '1rem' }}>
+    <StoreProvider initialState={{}}>
+      {(state, setState) => (
+        <>
+          <EasyForm
+            fields={fieldValues}
+            onChange={(values) => {
+              setState({ fieldValues: values });
+            }}
+            onSubmit={(values) => {
+              console.log('submitted', values);
+            }}
+            onClear={() => {
+              console.log('cleared');
+            }}
+          />
+          {/* <pre>{util.inspect(state)}</pre> */}
+        </>
+      )}
+    </StoreProvider>
+  </div>
 ));

@@ -3,14 +3,8 @@ import { Divider } from 'antd';
 import 'antd/dist/antd.css';
 import React from 'react';
 import * as util from 'util';
-
+import { StoreProvider } from '../src/helper';
 import { DefaultFileUploaderAdapterImpl, StateFC, Uploader } from '../src';
-
-const StoreProvider: StateFC<string | string[]> = ({ initialState, children }) => {
-  const [state, setState] = React.useState(initialState);
-
-  return <div>{children(state, setState)}</div>;
-};
 
 storiesOf('Uploader', module).add('default', () => (
   <div style={{ margin: '1rem' }}>
@@ -23,8 +17,6 @@ storiesOf('Uploader', module).add('default', () => (
             onChange={(files) => setState(files)}
             multiple
           />
-          <Divider />
-          <pre>{util.inspect(state)}</pre>
         </>
       )}
     </StoreProvider>

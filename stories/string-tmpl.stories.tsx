@@ -1,16 +1,10 @@
 import { storiesOf } from '@storybook/react';
 import { Divider } from 'antd';
-
+import { StoreProvider } from '../src/helper';
 import 'antd/dist/antd.css';
 import { html } from 'common-tags';
 import React from 'react';
 import { StateFC, StringTmpl } from '../src';
-
-const StoreProvider: StateFC<{ tmpl: string }> = ({ initialState, children }) => {
-  const [state, setState] = React.useState(initialState);
-
-  return <div>{children(state, setState)}</div>;
-};
 
 storiesOf('StringTmpl', module)
   .add('default', () => (
@@ -37,8 +31,6 @@ storiesOf('StringTmpl', module)
               ]}
               onChange={(tmpl) => setState({ tmpl })}
             />
-            <Divider />
-            {JSON.stringify(state)}
           </>
         )}
       </StoreProvider>
@@ -55,8 +47,6 @@ storiesOf('StringTmpl', module)
               onChange={(tmpl) => setState({ tmpl })}
               jsonMode
             />
-            <Divider />
-            {JSON.stringify(state)}
           </>
         )}
       </StoreProvider>
@@ -658,8 +648,6 @@ storiesOf('StringTmpl', module)
               onChange={(tmpl) => setState({ tmpl })}
               htmlMode
             />
-            <Divider />
-            {JSON.stringify(state)}
           </>
         )}
       </StoreProvider>

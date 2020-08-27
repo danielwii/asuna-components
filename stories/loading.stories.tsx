@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/react';
 import { Divider } from 'antd';
 import { Promise } from 'bluebird';
 import React from 'react';
-
+import { StoreProvider } from '../src/helper';
 import 'spinkit/spinkit.min.css';
 import { LivingLoading, Loading, LoadingType, StateFC } from '../src';
 
@@ -30,11 +30,6 @@ const loadingItems = loadingList.map((item, idx) => {
     </li>
   );
 });
-
-const StoreProvider: StateFC<{ heartbeat: any }> = ({ initialState, children }) => {
-  const [state, setState] = React.useState(initialState);
-  return <div>{children(state, setState)}</div>;
-};
 
 storiesOf('Loading', module)
   .add('default', () => (
