@@ -2,6 +2,7 @@ import { css } from '@emotion/core';
 import { FormControl, FormControlLabel, FormHelperText, Switch, TextField } from '@material-ui/core';
 import * as antd from 'antd';
 import { Divider } from 'antd';
+import { Promise } from 'bluebird';
 import { changeAntdTheme, generateThemeColor } from 'dynamic-antd-theme';
 import * as formik from 'formik';
 import { FieldInputProps, FormikProps } from 'formik';
@@ -24,8 +25,8 @@ interface FormProps<FieldsType> {
 
 interface EasyFormProps extends FormProps<FormFields> {
   // initialValues(props): any;
-  onSubmit: (values: any) => Promise<any> | void;
-  onClear?: () => Promise<any>;
+  onSubmit: (values: any) => Promise<any> | any;
+  onClear?: () => Promise<any> | any;
 }
 
 export function RenderInputComponent({
@@ -260,14 +261,13 @@ const InnerForm = (props: EasyFormProps & formik.FormikProps<formik.FormikValues
       ),
     });
   },*/
-export const EasyForm = formik.withFormik<EasyFormProps, any>({
+export const EasyForm = formik.withFormik<EasyFormProps, formik.FormikValues>({
   // Transform outer props into form values
   mapPropsToValues: (props) =>
     Object.assign({}, ..._.map(props.fields, (field: FormField, name: string) => ({ [name]: field.defaultValue }))),
 
   validate: (values: formik.FormikValues, props) => {
     const errors: formik.FormikErrors<formik.FormikValues> = {};
-
     _.forEach(props.fields, (field: FormField, name: string) => {
       if (field.required && !values[name]) {
         errors[name] = 'Required';
@@ -277,11 +277,17 @@ export const EasyForm = formik.withFormik<EasyFormProps, any>({
       }
     });
 
+    if (!_.isEmpty(errors)) console.warn(errors);
+
     return errors;
   },
 
   handleSubmit: (values, { props, setSubmitting }) => {
     const submitted = props.onSubmit(values);
-    if (submitted && submitted.then) submitted.finally(() => setSubmitting(false));
+    if (submitted?.then) {
+      submitted.finally(() => setSubmitting(false));
+    } else {
+      Promise.delay(200).then(() => setSubmitting(false));
+    }
   },
-})(InnerForm) as any;
+})(InnerForm);
