@@ -1,9 +1,10 @@
-import { Button, Tooltip } from 'antd';
+import { Button, Tooltip, Row, Col } from 'antd';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
 import { useAsync, useLogger } from 'react-use';
 import * as util from 'util';
 import { ErrorInfo, Loading } from './components';
+import { DebugInfo } from './';
 
 /* class decorator */
 export function StaticImplements<T>() {
@@ -50,10 +51,26 @@ export function castToArrays(value: string): string[] {
 //   return value ? (_.isArray(value) ? value : castToArrays(value)) : [];
 // }
 
-export const StateStoreProvider: StateFC<{}> = ({ initialState, children }) => {
+export const StoreProvider: StateFC<{
+  items?: string[];
+  heartbeat?: any;
+  tmpl?: string;
+  files?: string | string[];
+  fieldValues?: object;
+  data?: object;
+}> = ({ initialState, children }) => {
   const [state, setState] = React.useState(initialState);
-
-  return <div>{children(state, setState)}</div>;
+  const view = (state, setState) => (
+    <Row>
+      <Col span={12}>{children(state, setState)}</Col>
+      <Col span={11} offset={1}>
+        {/* <DebugInfo data={state} debug type="tree" /> */}
+        {/* <pre>{util.inspect(state)}</pre> */}
+        {JSON.stringify(state)}
+      </Col>
+    </Row>
+  );
+  return <div>{view(state, setState)}</div>;
 };
 
 export function TooltipContent({ value, link }: { value: any; link?: boolean }) {

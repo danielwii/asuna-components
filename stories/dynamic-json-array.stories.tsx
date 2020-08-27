@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/react';
 import { Button, Card, Input } from 'antd';
-
+import { StoreProvider } from '../src/helper';
 import 'antd/dist/antd.css';
 import { Field, Form, Formik } from 'formik';
 import React from 'react';
@@ -15,12 +15,6 @@ import {
   WithDebugInfo,
   WithVariable,
 } from '../src';
-
-const StoreProvider: StateFC<{}> = ({ initialState, children }) => {
-  const [state, setState] = React.useState(initialState);
-
-  return <div>{children(state, setState)}</div>;
-};
 
 storiesOf('DynamicJsonArray', module)
   .add('object', () => (
@@ -79,7 +73,6 @@ storiesOf('DynamicJsonArray', module)
                 </>
               )}
             </Formik>
-            <DebugInfo data={state} divider debug type="util" />
           </>
         )}
       </StoreProvider>
@@ -111,11 +104,12 @@ storiesOf('DynamicJsonArray', module)
                     </Field>
                   </Form>
                   <DebugInfo data={formikBag.values} divider debug type="util" />
+                  <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
+                    Submit
+                  </Button>
                 </>
               )}
             </Formik>
-
-            <DebugInfo data={state} divider debug type="util" />
           </>
         )}
       </StoreProvider>
@@ -159,11 +153,12 @@ storiesOf('DynamicJsonArray', module)
                     </Field>
                   </Form>
                   <DebugInfo data={formikBag.values} divider debug type="util" />
+                  <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
+                    Submit
+                  </Button>
                 </>
               )}
             </Formik>
-
-            <DebugInfo data={state} divider debug type="util" />
           </>
         )}
       </StoreProvider>
