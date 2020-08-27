@@ -1,10 +1,9 @@
-import { Button, Tooltip, Row, Col } from 'antd';
+import { Button, Col, Row, Tooltip } from 'antd';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
 import { useAsync, useLogger } from 'react-use';
 import * as util from 'util';
 import { ErrorInfo, Loading } from './components';
-import { DebugInfo } from './';
 
 /* class decorator */
 export function StaticImplements<T>() {
@@ -21,7 +20,7 @@ export interface CustomFC<P = {}, R = () => React.ReactNode> {
 
 export type StateChildren<S> = (state: S, setState: (state: S) => void) => ReactNode;
 export type StateFunctionComponent<P = {}, S = {}> = CustomFC<P, StateChildren<S>>;
-export type StateFC<State> = StateFunctionComponent<{ initialState: State }, State>;
+export type StateFC<State> = StateFunctionComponent<{ initialState?: State }, State>;
 
 export function parseString(value?: any): string {
   return value ? (_.isString(value) ? value : JSON.stringify(value)) : '';
@@ -51,26 +50,18 @@ export function castToArrays(value: string): string[] {
 //   return value ? (_.isArray(value) ? value : castToArrays(value)) : [];
 // }
 
-export const StoreProvider: StateFC<{
-  items?: string[];
-  heartbeat?: any;
-  tmpl?: string;
-  files?: string | string[];
-  fieldValues?: object;
-  data?: object;
-}> = ({ initialState, children }) => {
+export const StoreProvider: StateFC<any> = ({ initialState, children }) => {
   const [state, setState] = React.useState(initialState);
-  const view = (state, setState) => (
-    <Row>
-      <Col span={12}>{children(state, setState)}</Col>
-      <Col span={11} offset={1}>
-        {/* <DebugInfo data={state} debug type="tree" /> */}
-        {/* <pre>{util.inspect(state)}</pre> */}
-        {JSON.stringify(state)}
-      </Col>
-    </Row>
+  return (
+    <div>
+      <Row>
+        <Col span={12}>{children(state, setState)}</Col>
+        <Col span={11} offset={1}>
+          <pre>{util.inspect({ state, initialState })}</pre>
+        </Col>
+      </Row>
+    </div>
   );
-  return <div>{view(state, setState)}</div>;
 };
 
 export function TooltipContent({ value, link }: { value: any; link?: boolean }) {
