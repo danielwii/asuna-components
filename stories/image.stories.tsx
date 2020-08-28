@@ -13,7 +13,6 @@ storiesOf('Image', module).add('default', () => (
         <>
           <Image src="https://fakeimg.pl/80x30/282828/eae0d0/?retina=1&text=how are you?&font=noto" />
           <Image src="null" />
-          {/* <pre>{util.inspect(state)}</pre> */}
         </>
       )}
     </StoreProvider>
