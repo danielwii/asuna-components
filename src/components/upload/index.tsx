@@ -150,8 +150,8 @@ export const Uploader: React.FC<IUploaderProps> = ({
 
       if (allDone && uploads.length > 0) {
         const combined = func.valueToSubmit(
-          fileList.map((file) => file.url || _.get(file, 'response.fullpath')),
-          uploads.map((uploaded: any) => uploaded.fullpath),
+          fileList.map((file) => file.url ?? file.response.fullpath),
+          uploads.map((uploaded) => uploaded.response.fullpath),
         );
         onChange(combined);
       }

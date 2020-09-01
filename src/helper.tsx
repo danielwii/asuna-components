@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { css, jsx } from '@emotion/core';
 import { Button, Col, Row, Tooltip } from 'antd';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
@@ -53,13 +55,22 @@ export function castToArrays(value: string): string[] {
 export const StoreProvider: StateFC<any> = ({ initialState, children }) => {
   const [state, setState] = React.useState(initialState);
   return (
-    <div>
-      <Row>
-        <Col span={12}>{children(state, setState)}</Col>
-        <Col span={11} offset={1}>
-          <pre>{util.inspect({ state, initialState })}</pre>
-        </Col>
-      </Row>
+    <div
+      css={css`
+        display: flex;
+        justify-content: space-between;
+        > div {
+          flex: 0 0 calc(50% - 0.5rem);
+          border: silver dashed 1px;
+          padding: 0.5rem;
+          margin: 0.2rem;
+        }
+      `}
+    >
+      <div>{children(state, setState)}</div>
+      <div>
+        <pre>{util.inspect({ state, initialState })}</pre>
+      </div>
     </div>
   );
 };
@@ -77,9 +88,9 @@ export function TooltipContent({ value, link }: { value: any; link?: boolean }) 
         <div style={{ maxWidth: '15rem' }}>{shortValue}</div>
       </Tooltip>
     );
-    return <>{component}</>;
+    return <React.Fragment>{component}</React.Fragment>;
   }
-  return link ? <TextLink url={component} text={component} /> : <>{component}</>;
+  return link ? <TextLink url={component} text={component} /> : <React.Fragment>{component}</React.Fragment>;
 }
 
 function TextLink({ url, text }: { url: string; text?: string }) {
@@ -110,7 +121,7 @@ export const WithLoading: React.FC<{ loading: boolean; error: any; retry? }> = (
     return <Component />;
   }
 
-  return <>{children}</>;
+  return <React.Fragment>{children}</React.Fragment>;
 };
 
 export function WithFuture<R>({
@@ -135,7 +146,11 @@ export function WithFuture<R>({
         </ErrorInfo>
       );
 
-    return _.isFunction(children) ? <>{children(value as any)}</> : <>{children}</>;
+    return _.isFunction(children) ? (
+      <React.Fragment>{children(value as any)}</React.Fragment>
+    ) : (
+      <React.Fragment>{children}</React.Fragment>
+    );
   }
 
   const Component = React.lazy(
@@ -143,7 +158,12 @@ export function WithFuture<R>({
       new Promise(async (resolve) => {
         const data = await future();
         resolve({
-          default: () => (_.isFunction(children) ? <>{children(data)}</> : <>{children}</>),
+          default: () =>
+            _.isFunction(children) ? (
+              <React.Fragment>{children(data)}</React.Fragment>
+            ) : (
+              <React.Fragment>{children}</React.Fragment>
+            ),
         } as any);
       }),
   );
@@ -167,5 +187,5 @@ export function WithVariable<V>({
   if (_.isNull(variable) || _.isUndefined(variable)) {
     return <span>n/a</span>;
   }
-  return <>{children(variable as any)}</>;
+  return <React.Fragment>{children(variable as any)}</React.Fragment>;
 }
