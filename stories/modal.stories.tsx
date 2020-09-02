@@ -1,11 +1,10 @@
-import * as React from 'react';
 import { storiesOf } from '@storybook/react';
-import { AdvancedButtonWithModal } from '../src';
-import { DefaultFileUploaderAdapterImpl, EasyForm, FormFields } from '../src';
-import * as _ from 'lodash';
+import { Col, Divider, Row } from 'antd';
 import { PopconfirmProps } from 'antd/es/popconfirm';
 import { TooltipProps } from 'antd/es/tooltip';
-import { Row, Col, Divider } from 'antd';
+import * as _ from 'lodash';
+import * as React from 'react';
+import { AdvancedButtonWithModal, DefaultFileUploaderAdapterImpl, EasyForm, FormFields } from '../src';
 
 const fieldValues: FormFields = {
   switch: { name: 'switch', defaultValue: true, type: 'boolean' },
@@ -17,10 +16,7 @@ const fieldValues: FormFields = {
   },
   string: { name: 'reason', defaultValue: '', type: 'string' },
   text: { name: 'text', type: 'text' },
-  emailTmplData: {
-    name: 'emailTmplData',
-    type: 'emailTmplData',
-  },
+  emailTmplData: { name: 'emailTmplData', type: 'emailTmplData' },
   colorPicker: { name: 'colorPicker', type: 'color' },
   image: { name: 'image', type: 'image', extra: { adapter: new DefaultFileUploaderAdapterImpl() } },
 };
@@ -37,15 +33,17 @@ const tooltipProps: TooltipProps = {
   title: '点击创建一个角色',
 };
 
-const formBuilder = (
+const formBuilder = ({ onOk, onCancel }) => (
   <div style={{ margin: '1rem' }}>
     <EasyForm
       fields={fieldValues}
       onSubmit={(values) => {
         console.log('submitted', values);
+        onOk();
       }}
       onClear={() => {
         console.log('cleared');
+        onCancel();
       }}
     />
   </div>
@@ -61,7 +59,7 @@ storiesOf('modal', module).add('modal-button', () => (
           confirmProps={confirmProps}
           tooltipProps={tooltipProps}
           handleOk={() => console.log('ok')}
-          builder={() => formBuilder}
+          builder={formBuilder}
         >
           创建角色
         </AdvancedButtonWithModal>
@@ -75,7 +73,7 @@ storiesOf('modal', module).add('modal-button', () => (
           type="primary"
           tooltipProps={tooltipProps}
           handleOk={() => console.log('ok')}
-          builder={() => formBuilder}
+          builder={formBuilder}
         >
           创建角色
         </AdvancedButtonWithModal>
@@ -89,7 +87,7 @@ storiesOf('modal', module).add('modal-button', () => (
           type="primary"
           // tooltipProps={tooltipProps}
           handleOk={() => console.log('ok')}
-          builder={() => formBuilder}
+          builder={formBuilder}
         >
           创建角色
         </AdvancedButtonWithModal>

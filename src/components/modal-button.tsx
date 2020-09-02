@@ -1,9 +1,8 @@
-import { Button, Modal } from 'antd';
-import React, { useState } from 'react';
-import { Popconfirm, Tooltip } from 'antd';
+import { Button, Modal, Popconfirm, Tooltip } from 'antd';
 import { ButtonProps } from 'antd/es/button';
 import { PopconfirmProps } from 'antd/es/popconfirm';
 import { TooltipProps } from 'antd/es/tooltip';
+import React, { useState } from 'react';
 
 export const AdvancedButtonWithModal: React.FC<
   ButtonProps & {
@@ -11,7 +10,7 @@ export const AdvancedButtonWithModal: React.FC<
     tooltipProps?: TooltipProps;
     disableAfterSubmitted?: boolean;
     handleOk?: () => void;
-    builder?: () => React.ReactNode;
+    builder?: ({ onOk, onCancel }) => React.ReactNode;
   }
 > = (props) => {
   const { children, disableAfterSubmitted, handleOk, builder, confirmProps, tooltipProps, ...buttonProps } = props;
@@ -26,8 +25,8 @@ export const AdvancedButtonWithModal: React.FC<
   );
 
   const modal = (
-    <Modal title="Basic Modal" visible={visible} onOk={handleOk} onCancel={_handleCancel}>
-      {builder()}
+    <Modal title="Basic Modal" visible={visible} okButtonProps={{ hidden: true }} cancelButtonProps={{ hidden: true }}>
+      {builder({ onOk: handleOk, onCancel: _handleCancel })}
     </Modal>
   );
 
