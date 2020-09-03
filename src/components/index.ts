@@ -14,4 +14,3 @@ export * from './select';
 export * from './weather';
 export * from './living-loading';
 export * from './error';
-export * from './modal-button';
