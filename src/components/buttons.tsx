@@ -7,24 +7,26 @@ import React, { useState } from 'react';
 
 type WordingType = 'Submit' | 'Submitting' | 'Submitted';
 
-export const AdvancedButton: React.FC<
-  ButtonProps & {
-    confirmProps?: PopconfirmProps;
-    tooltipProps?: TooltipProps;
-    disableAfterSubmitted?: boolean;
-    handleOk?: () => void;
-  } & ({ onClick: () => Promise } | { builder: ({ onOk, onCancel }) => React.ReactNode })
-> = (props) => {
-  const {
-    children,
-    onClick,
-    handleOk,
-    disableAfterSubmitted,
-    builder,
-    confirmProps,
-    tooltipProps,
-    ...buttonProps
-  } = props;
+export type DefaultButton = ButtonProps & {
+  confirmProps?: PopconfirmProps;
+  tooltipProps?: TooltipProps;
+  disableAfterSubmitted?: boolean;
+  handleOk?: () => void;
+};
+export type NormalButton = { onClick: () => Promise };
+export type ModalButton = { builder: ({ onOk, onCancel }) => React.ReactNode };
+export type AdvancedButton<T> = DefaultButton & T;
+
+function isModalButton(props: any): props is AdvancedButton<ModalButton> {
+  return !!props.builder;
+}
+
+export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>> = (props) => {
+  const { children, onClick, handleOk, disableAfterSubmitted, confirmProps, tooltipProps, ...buttonProps } = props;
+
+  if (isModalButton(props)) {
+    // props.builder;
+  }
 
   const [loading, setLoading] = useState<boolean>(false);
   const [wording, setWording] = useState<WordingType>('Submit');
