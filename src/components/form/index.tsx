@@ -224,7 +224,19 @@ export function RenderInputComponent({
 }
 
 const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
-  const { touched, errors, isSubmitting, message, body, fields, handleSubmit, handleReset, values, onClear, onCancel } = props;
+  const {
+    touched,
+    errors,
+    isSubmitting,
+    message,
+    body,
+    fields,
+    handleSubmit,
+    handleReset,
+    values,
+    onCancel,
+    onClear,
+  } = props;
   return (
     <Form>
       {message && <h1>{message}</h1>}
@@ -266,7 +278,7 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
   );
 };
 
-export const EasyForm = formik.withFormik<EasyFormProps, formik.FormikValues>({
+export const EasyForm = withFormik<EasyFormProps, FormikValues>({
   // Transform outer props into form values
   mapPropsToValues: (props) =>
     Object.assign({}, ..._.map(props.fields, (field: FormField, name: string) => ({ [name]: field.defaultValue }))),
