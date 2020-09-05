@@ -15,5 +15,3 @@ export * from './sun';
 export * from './living-loading';
 export * from './error';
 export * from './form';
-
-// export * from './tabs';

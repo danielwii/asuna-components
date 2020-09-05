@@ -1,11 +1,10 @@
 import { SelectOutlined } from '@ant-design/icons';
-import { css, jsx } from '@emotion/core';
+import { css } from '@emotion/core';
 import { Button, Divider, Drawer, Empty, Popover, Skeleton, Timeline } from 'antd';
 import { BaseButtonProps } from 'antd/es/button/button';
 import { PopoverProps } from 'antd/lib/popover';
 import * as _ from 'lodash';
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 type RenderComponentType = React.FC<{ refreshFlag: number; openChildrenDrawer?: any }>;
 export type RenderChildrenComponentType = React.FC<{ item: any }>;
@@ -34,7 +33,7 @@ export const DrawerButtonBuilder: React.FC<
       </Button>
       <Drawer title={title || text} width={width ?? 520} closable={false} onClose={_onClose} visible={visible}>
         {builder()}
-        {/*<Button type="primary" onClick={this.showChildrenDrawer}>
+        {/* <Button type="primary" onClick={this.showChildrenDrawer}>
           Two-level drawer
         </Button>
         <Drawer
@@ -45,7 +44,7 @@ export const DrawerButtonBuilder: React.FC<
           visible={this.state.childrenDrawer}
         >
           This is two-level drawer
-        </Drawer>*/}
+        </Drawer> */}
         <div
           style={{
             position: 'absolute',
@@ -62,9 +61,9 @@ export const DrawerButtonBuilder: React.FC<
           <Button style={{ marginRight: 8 }} onClick={_onClose}>
             Cancel
           </Button>
-          {/*<Button onClick={this.onClose} type="primary">
+          {/* <Button onClick={this.onClose} type="primary">
             Submit
-          </Button>*/}
+          </Button> */}
         </div>
       </Drawer>
     </>
@@ -103,7 +102,7 @@ export const DrawerButton: React.FC<
   const RenderChildrenComponent: RenderChildrenComponentType = renderChildrenDrawer ?? ((<></>) as any);
 
   return (
-    <React.Fragment>
+    <>
       {popoverProps ? <Popover {...popoverProps}>{_renderButton}</Popover> : _renderButton}
       <Drawer title={title || text} width={width ?? 520} closable={false} onClose={_onClose} visible={visible}>
         <div
@@ -122,7 +121,7 @@ export const DrawerButton: React.FC<
             }}
           />
         )}
-        {/*<Button type="primary" onClick={this.showChildrenDrawer}>
+        {/* <Button type="primary" onClick={this.showChildrenDrawer}>
             Two-level drawer
           </Button>
           <Drawer
@@ -133,7 +132,7 @@ export const DrawerButton: React.FC<
             visible={this.state.childrenDrawer}
           >
             This is two-level drawer
-          </Drawer>*/}
+          </Drawer> */}
         <div
           style={{
             position: 'absolute',
@@ -169,7 +168,7 @@ export const DrawerButton: React.FC<
           </Drawer>
         )}
       </Drawer>
-    </React.Fragment>
+    </>
   );
 };
 

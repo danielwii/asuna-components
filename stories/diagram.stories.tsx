@@ -233,14 +233,14 @@ storiesOf('Diagram', module).add('default', () => {
     const port4 = node4.addPort(new DefaultPortModel(true, 'in-1', 'In'));
     node4.setPosition(95, 185);
     const node5 = new DefaultNodeModel('Node E', 'rgb(192,255,0)');
-    node5.setPosition(250, 180);*/
+    node5.setPosition(250, 180); */
 
     // linking things together (specifically using the pathFinding link)
     /*
     const link1 = port1.link(port4, pathFinding);
     const link2 = port2.link(port3, pathFinding);
 
-    link1.addLabel(new DefaultLabelModel({ label: 'I am a label!', offsetY: 20 }));*/
+    link1.addLabel(new DefaultLabelModel({ label: 'I am a label!', offsetY: 20 })); */
 
     // add all to the main model
     // model.addAll(node1, node2, node3, node4, node5, link1, link2);

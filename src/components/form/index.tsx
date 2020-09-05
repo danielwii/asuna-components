@@ -1,11 +1,9 @@
 import { css } from '@emotion/core';
 import { FormControl, FormControlLabel, FormHelperText, Switch, TextField } from '@material-ui/core';
-import * as antd from 'antd';
-import { Divider } from 'antd';
+import { Button, Card, Divider } from 'antd';
 import { Promise } from 'bluebird';
 import { changeAntdTheme, generateThemeColor } from 'dynamic-antd-theme';
-import * as formik from 'formik';
-import { FieldInputProps, FormikProps } from 'formik';
+import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, FormikValues, withFormik } from 'formik';
 import * as _ from 'lodash';
 import * as React from 'react';
 import { SketchPicker } from 'react-color';
@@ -81,7 +79,7 @@ export function RenderInputComponent({
           <label>{field.name}</label>
           <br />
           <Uploader
-            {...Object.assign({ adapter: new DefaultFileUploaderAdapterImpl() }, fieldDef.field.extra)}
+            {...{ adapter: new DefaultFileUploaderAdapterImpl(), ...fieldDef.field.extra }}
             // adapter={fieldDef.field.extra?.adapter ?? new DefaultFileUploaderAdapterImpl()}
             value={value}
             onChange={(newValue) => {
@@ -96,9 +94,9 @@ export function RenderInputComponent({
       const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
       return (
         <>
-          {/*<antd.Input.TextArea id={field.name} {...field} autoSize rows={4} value={value} />*/}
+          {/* <Input.TextArea id={field.name} {...field} autoSize rows={4} value={value} /> */}
           <TextField id={field.name} multiline {...field} value={value} label={label} />
-          {/*<DebugInfo data={{ field, fieldDef, value }} type="json" />*/}
+          {/* <DebugInfo data={{ field, fieldDef, value }} type="json" /> */}
         </>
       );
     }
@@ -121,10 +119,10 @@ export function RenderInputComponent({
             value={value}
             preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
             render={({ fieldOpts, index }) => (
-              <antd.Card>
+              <Card>
                 <TextField {...fieldOpts('key', index)} label="key" />
                 <TextField {...fieldOpts('subject', index)} label="subject" />
-                {/*<TextField {...fieldOpts('template', index)} label="template" />*/}
+                {/* <TextField {...fieldOpts('template', index)} label="template" /> */}
                 <WithVariable variable={fieldOpts('template', index)}>
                   {({ name, value, onChange }) => (
                     <StringTmpl
@@ -136,11 +134,11 @@ export function RenderInputComponent({
                   )}
                 </WithVariable>
                 <pre>{JSON.stringify(field, null, 2)}</pre>
-              </antd.Card>
+              </Card>
             )}
             onChange={(values) => form.setFieldValue(field.name, values)}
           />
-          {/*<DebugInfo data={value} type="util" />*/}
+          {/* <DebugInfo data={value} type="util" /> */}
         </>
       );
     }
@@ -154,15 +152,15 @@ export function RenderInputComponent({
             value={value}
             preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
             render={({ fieldOpts, index }) => (
-              <antd.Card>
+              <Card>
                 <TextField {...fieldOpts('key', index)} label="key" />{' '}
                 <TextField {...fieldOpts('color', index)} label="color" />
                 <TextField {...fieldOpts('value', index)} label="value" fullWidth multiline />
-              </antd.Card>
+              </Card>
             )}
             onChange={(values) => form.setFieldValue(field.name, values)}
           />
-          {/*<DebugInfo data={value} type="util" />*/}
+          {/* <DebugInfo data={value} type="util" /> */}
         </>
       );
     }
@@ -176,10 +174,10 @@ export function RenderInputComponent({
             value={value}
             preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
             render={({ fieldOpts, index }) => (
-              <antd.Card>
+              <Card>
                 <TextField {...fieldOpts('key', index)} label="key" />
                 <TextField {...fieldOpts('value', index)} label="value" fullWidth multiline />
-              </antd.Card>
+              </Card>
             )}
             onChange={(values) => {
               console.log('onChange', field.name, values);
@@ -195,21 +193,21 @@ export function RenderInputComponent({
       return (
         <WithDebugInfo info={{ field, fieldDef, value, label }}>
           <TextField id={field.name} type={fieldDef.field.type} {...field} value={value} label={label} />
-          {/*<DebugInfo data={{ field, fieldDef, value }} />*/}
+          {/* <DebugInfo data={{ field, fieldDef, value }} /> */}
         </WithDebugInfo>
       );
     }
   }
 }
 
-const InnerForm = (props: EasyFormProps & formik.FormikProps<formik.FormikValues>) => {
+const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
   const { touched, errors, isSubmitting, message, body, fields, handleSubmit, handleReset, values, onClear } = props;
   return (
-    <formik.Form>
+    <Form>
       {message && <h1>{message}</h1>}
       {_.map(fields, (formField: FormField, key: string) => (
-        <formik.Field key={key} name={key}>
-          {({ field, form }: formik.FieldProps<formik.FormikValues>) => {
+        <Field key={key} name={key}>
+          {({ field, form }: FieldProps<FormikValues>) => {
             const hasError = !!(form.touched[formField.name] && form.errors[formField.name]);
             const value = field.value ?? formField.defaultValue;
             return (
@@ -220,25 +218,25 @@ const InnerForm = (props: EasyFormProps & formik.FormikProps<formik.FormikValues
                   field={field}
                   value={value}
                 />
-                {/*<Input id={field.name} type={formField.type} {...field} value={value} />*/}
+                {/* <Input id={field.name} type={formField.type} {...field} value={value} /> */}
                 {formField.help && <FormHelperText>{formField.help}</FormHelperText>}
                 {hasError && <FormHelperText>{form.errors[formField.name]}</FormHelperText>}
                 <Divider dashed style={{ margin: '0.5rem 0' }} />
               </FormControl>
             );
           }}
-        </formik.Field>
+        </Field>
       ))}
-      <antd.Divider />
-      <antd.Button type="primary" htmlType="submit" onSubmit={handleSubmit} disabled={isSubmitting}>
+      <Divider />
+      <Button type="primary" htmlType="submit" onSubmit={handleSubmit} disabled={isSubmitting}>
         {isSubmitting ? 'Submitting' : 'Submit'}
-      </antd.Button>{' '}
+      </Button>{' '}
       {onClear && (
-        <antd.Button onClick={handleReset} disabled={isSubmitting}>
+        <Button onClick={handleReset} disabled={isSubmitting}>
           {isSubmitting ? 'Resetting' : 'Reset'}
-        </antd.Button>
+        </Button>
       )}
-    </formik.Form>
+    </Form>
   );
 };
 
@@ -260,14 +258,14 @@ const InnerForm = (props: EasyFormProps & formik.FormikProps<formik.FormikValues
         />
       ),
     });
-  },*/
-export const EasyForm = formik.withFormik<EasyFormProps, formik.FormikValues>({
+  }, */
+export const EasyForm = withFormik<EasyFormProps, FormikValues>({
   // Transform outer props into form values
   mapPropsToValues: (props) =>
     Object.assign({}, ..._.map(props.fields, (field: FormField, name: string) => ({ [name]: field.defaultValue }))),
 
-  validate: (values: formik.FormikValues, props) => {
-    const errors: formik.FormikErrors<formik.FormikValues> = {};
+  validate: (values: FormikValues, props) => {
+    const errors: FormikErrors<FormikValues> = {};
     _.forEach(props.fields, (field: FormField, name: string) => {
       if (field.required && !values[name]) {
         errors[name] = 'Required';

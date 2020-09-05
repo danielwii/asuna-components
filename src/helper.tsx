@@ -1,9 +1,9 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
-import { Button, Col, Row, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
-import { useAsync, useLogger } from 'react-use';
+import { useAsync } from 'react-use';
 import * as util from 'util';
 import { ErrorInfo, Loading } from './components';
 
@@ -13,11 +13,11 @@ export function StaticImplements<T>() {
 }
 
 export interface CustomFC<P = {}, R = () => React.ReactNode> {
-  (props: P & { children?: R }, context?: any): ReactElement | null;
   propTypes?: WeakValidationMap<P>;
   contextTypes?: ValidationMap<any>;
   defaultProps?: Partial<P>;
   displayName?: string;
+  (props: P & { children?: R }, context?: any): ReactElement | null;
 }
 
 export type StateChildren<S> = (state: S, setState: (state: S) => void) => ReactNode;
@@ -95,13 +95,13 @@ export function TooltipContent({ value, link }: { value: any; link?: boolean }) 
 
 function TextLink({ url, text }: { url: string; text?: string }) {
   return (
-    <a href={url} target={'_blank'}>
+    <a href={url} target="_blank">
       {text || url}
     </a>
   );
 }
 
-export const WithLoading: React.FC<{ loading: boolean; error: any; retry? }> = ({
+export const WithLoading: React.FC<{ loading: boolean; error: any; retry?: () => any }> = ({
   loading,
   error,
   retry,
@@ -125,34 +125,40 @@ export const WithLoading: React.FC<{ loading: boolean; error: any; retry? }> = (
 };
 
 export function WithFuture<R>({
-  async,
   future,
   fallback,
   children,
 }: {
-  async?: boolean;
   future: () => Promise<R>;
   fallback?: React.ReactElement;
   children: ((props: R) => React.ReactNode) | React.ReactNode;
 }): React.ReactElement {
-  if (async) {
-    const { loading, value, error } = useAsync(future);
+  const { loading, value, error } = useAsync(future);
 
-    if (loading) return fallback ?? <Loading type="circle" />;
-    if (error)
-      return (
-        <ErrorInfo>
-          <pre>{util.inspect(error)}</pre>
-        </ErrorInfo>
-      );
-
-    return _.isFunction(children) ? (
-      <React.Fragment>{children(value as any)}</React.Fragment>
-    ) : (
-      <React.Fragment>{children}</React.Fragment>
+  if (loading) return fallback ?? <Loading type="circle" />;
+  if (error)
+    return (
+      <ErrorInfo>
+        <pre>{util.inspect(error)}</pre>
+      </ErrorInfo>
     );
-  }
 
+  return _.isFunction(children) ? (
+    <React.Fragment>{children(value as any)}</React.Fragment>
+  ) : (
+    <React.Fragment>{children}</React.Fragment>
+  );
+}
+
+export function WithSuspense<R>({
+  future,
+  fallback,
+  children,
+}: {
+  future: () => Promise<R>;
+  fallback?: React.ReactElement;
+  children: ((props: R) => React.ReactNode) | React.ReactNode;
+}): React.ReactElement {
   const Component = React.lazy(
     () =>
       new Promise(async (resolve) => {
@@ -167,8 +173,6 @@ export function WithFuture<R>({
         } as any);
       }),
   );
-
-  useLogger(WithFuture.name);
 
   return (
     <React.Suspense fallback={fallback ?? <Loading type="circle" />}>

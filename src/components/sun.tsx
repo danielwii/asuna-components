@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 export const Sun = () => (
-  <React.Fragment>
+  <>
     <div className="sun">
-      {_.range(8).map(() => (
-        <span />
+      {_.range(8).map((index) => (
+        <span key={index} />
       ))}
     </div>
     {/* language=CSS */}
@@ -174,5 +174,5 @@ export const Sun = () => (
         }
       }
     `}</style>
-  </React.Fragment>
+  </>
 );

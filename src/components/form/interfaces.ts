@@ -14,7 +14,7 @@ export enum FormFieldType {
   wxSubscribeData = 'wxSubscribeData',
 }
 
-type BasicFormField<ExtraProps = undefined> = {
+interface BasicFormField<ExtraProps = undefined> {
   name: string;
   type: keyof typeof FormFieldType;
   validate?: (value) => string | null;
@@ -22,7 +22,7 @@ type BasicFormField<ExtraProps = undefined> = {
   required?: boolean;
   defaultValue?: boolean | number | string;
   extra?: ExtraProps;
-};
+}
 
 export type UploadableFormField = { type: 'image' } & BasicFormField<
   Pick<IUploaderProps, 'adapter' | 'multiple' | 'enableDragMode'>
@@ -31,5 +31,11 @@ export type UploadableFormField = { type: 'image' } & BasicFormField<
 export type FormField = UploadableFormField | BasicFormField;
 
 export type FormFields = Record<string, FormField>;
-export type FormFieldDef = { name: string; field: FormField };
-export type FormFieldsGroup = { name?: string; fields: FormFieldDef[] };
+export interface FormFieldDef {
+  name: string;
+  field: FormField;
+}
+export interface FormFieldsGroup {
+  name?: string;
+  fields: FormFieldDef[];
+}

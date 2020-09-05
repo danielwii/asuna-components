@@ -40,9 +40,9 @@ export interface IUploadedFile {
 }
 
 export interface UploaderAdapter {
-  upload(file: File, requestConfig?: AxiosRequestConfig): Promise<IUploadedFile[]>;
+  upload: (file: File, requestConfig?: AxiosRequestConfig) => Promise<IUploadedFile[]>;
 
-  validate(file: File): boolean;
+  validate: (file: File) => boolean;
 }
 
 export interface IUploaderProps {
@@ -111,7 +111,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
       adapter
         .upload(file, {
           onUploadProgress: ({ total, loaded }) =>
-            onProgress({ percent: +Math.round((loaded / total) * 100).toFixed(2) }, file),
+            onProgress({ percent: Number(Math.round((loaded / total) * 100).toFixed(2)) }, file),
         })
         .then(([uploaded]) => {
           // const combined = func.valueToSubmit(
@@ -282,7 +282,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
         }
       `}
     >
-      {/*<Tag>{refreshFlag}</Tag>*/}
+      {/* <Tag>{refreshFlag}</Tag> */}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         {views.renderedAddNetworkAddressButton}
         <Radio.Group value={layout} onChange={(e) => setLayout(e.target.value)}>

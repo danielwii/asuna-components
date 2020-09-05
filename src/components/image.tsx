@@ -12,10 +12,10 @@ export const Image: React.FC<{ src: string; height?: string; width?: string }> =
   const [imageRef, setImageRef] = React.useState<any>();
 
   const func = {
-    onLoad: event => {
+    onLoad: (event) => {
       event.target.classList.add('loaded');
     },
-    onError: event => {
+    onError: (event) => {
       event.target.classList.add('has-error');
     },
   };
@@ -27,8 +27,8 @@ export const Image: React.FC<{ src: string; height?: string; width?: string }> =
     if (imageRef && imageSrc !== src) {
       if (IntersectionObserver) {
         observer = new IntersectionObserver(
-          entries => {
-            entries.forEach(entry => {
+          (entries) => {
+            entries.forEach((entry) => {
               if (!didCancel && (entry.intersectionRatio > 0 || entry.isIntersecting)) {
                 setImageSrc(src);
                 observer.unobserve(imageRef);
@@ -45,8 +45,8 @@ export const Image: React.FC<{ src: string; height?: string; width?: string }> =
     }
     return () => {
       didCancel = true;
-      // on component cleanup, we remove the listner
-      if (observer && observer.unobserve) {
+      // on component cleanup, we remove the listener
+      if (observer?.unobserve) {
         observer.unobserve(imageRef);
       }
     };

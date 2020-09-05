@@ -62,7 +62,7 @@ storiesOf('Drawer', module).add('drawer', () => (
           renderChildrenDrawer={({ item }) => (
             <>
               <h3>{item.title}</h3>
-              <div dangerouslySetInnerHTML={{ __html: item.content }}></div>
+              <div dangerouslySetInnerHTML={{ __html: item.content }} />
             </>
           )}
         />

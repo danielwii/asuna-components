@@ -1,8 +1,8 @@
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Input, Tag } from 'antd';
-import * as React from 'react';
-import { TweenOneGroup } from 'rc-tween-one';
 import * as _ from 'lodash';
+import { TweenOneGroup } from 'rc-tween-one';
+import * as React from 'react';
 
 export interface IStringArrayProps {
   mode?: 'input' | 'tag';
@@ -15,12 +15,12 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
   const [inputValue, setInputValue] = React.useState('');
 
   const func = {
-    add: (item: string = '') => onChange([...items, item]),
+    add: (item = '') => onChange([...items, item]),
     remove: (index) => onChange(_.remove(items, (item, i) => i !== index)),
     showInput: () => setInputVisible(true),
     handleInputChange: (e) => setInputValue(e.target.value),
     handleInputConfirm: (e) => {
-      if (!!_.trim(e.target.value)) {
+      if (_.trim(e.target.value)) {
         func.add(e.target.value);
       }
       setInputVisible(false);
@@ -74,7 +74,7 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
   }
 
   return (
-    <React.Fragment>
+    <>
       {_.map(items, (item, index) => (
         <React.Fragment key={index}>
           <Input
@@ -91,6 +91,6 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
       <Button type="primary" onClick={() => func.add()}>
         Add
       </Button>
-    </React.Fragment>
+    </>
   );
 };

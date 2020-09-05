@@ -32,48 +32,46 @@ storiesOf('DynamicJsonArray', module)
         }}
       >
         {(state, setState) => (
-          <>
-            <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
-              {(formikBag) => (
-                <>
-                  <Form>
-                    <Field name="data">
-                      {({ field, form, meta }) => (
-                        <DynamicJsonArrayTable
-                          adapter={ObjectJsonTableHelper}
-                          value={field.value}
-                          preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
-                          render={({ formik, item, index, fieldOpts }) => (
-                            <WithDebugInfo info={{ formik }} debug>
-                              <Card>
-                                <Input {...fieldOpts('key', index)} addonBefore="key" />
-                                <Input {...fieldOpts('color', index)} addonBefore="color" />
-                                <WithVariable variable={ObjectJsonTableHelper.fieldParser(item, index)}>
-                                  {(current) => (
-                                    <Input
-                                      name={current.name('value')}
-                                      value={current.value('value')}
-                                      onChange={(event) => formik.handleChange(event)}
-                                      addonBefore="value"
-                                    />
-                                  )}
-                                </WithVariable>
-                              </Card>
-                            </WithDebugInfo>
-                          )}
-                          onChange={(values) => form.setFieldValue(field.name, values)}
-                        />
-                      )}
-                    </Field>
-                  </Form>
-                  <DebugInfo data={formikBag.values} divider debug type="util" />
-                  <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
-                    Submit
-                  </Button>
-                </>
-              )}
-            </Formik>
-          </>
+          <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
+            {(formikBag) => (
+              <>
+                <Form>
+                  <Field name="data">
+                    {({ field, form, meta }) => (
+                      <DynamicJsonArrayTable
+                        adapter={ObjectJsonTableHelper}
+                        value={field.value}
+                        preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
+                        render={({ formik, item, index, fieldOpts }) => (
+                          <WithDebugInfo info={{ formik }} debug>
+                            <Card>
+                              <Input {...fieldOpts('key', index)} addonBefore="key" />
+                              <Input {...fieldOpts('color', index)} addonBefore="color" />
+                              <WithVariable variable={ObjectJsonTableHelper.fieldParser(item, index)}>
+                                {(current) => (
+                                  <Input
+                                    name={current.name('value')}
+                                    value={current.value('value')}
+                                    onChange={(event) => formik.handleChange(event)}
+                                    addonBefore="value"
+                                  />
+                                )}
+                              </WithVariable>
+                            </Card>
+                          </WithDebugInfo>
+                        )}
+                        onChange={(values) => form.setFieldValue(field.name, values)}
+                      />
+                    )}
+                  </Field>
+                </Form>
+                <DebugInfo data={formikBag.values} divider debug type="util" />
+                <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
+                  Submit
+                </Button>
+              </>
+            )}
+          </Formik>
         )}
       </StoreProvider>
     </div>
@@ -86,31 +84,29 @@ storiesOf('DynamicJsonArray', module)
         }}
       >
         {(state, setState) => (
-          <>
-            <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
-              {(formikBag) => (
-                <>
-                  <Form>
-                    <Field name="data">
-                      {({ field, form, meta }) => (
-                        <DynamicJsonArrayTable
-                          adapter={StringArrayJsonTableHelper}
-                          value={field.value}
-                          preview={(item) => <div>{util.inspect(StringArrayJsonTableHelper.keyParser(item))}</div>}
-                          render={({ fieldOpts, index }) => <Input {...fieldOpts('key', index)} addonBefore="text" />}
-                          onChange={(values) => form.setFieldValue(field.name, values)}
-                        />
-                      )}
-                    </Field>
-                  </Form>
-                  <DebugInfo data={formikBag.values} divider debug type="util" />
-                  <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
-                    Submit
-                  </Button>
-                </>
-              )}
-            </Formik>
-          </>
+          <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
+            {(formikBag) => (
+              <>
+                <Form>
+                  <Field name="data">
+                    {({ field, form, meta }) => (
+                      <DynamicJsonArrayTable
+                        adapter={StringArrayJsonTableHelper}
+                        value={field.value}
+                        preview={(item) => <div>{util.inspect(StringArrayJsonTableHelper.keyParser(item))}</div>}
+                        render={({ fieldOpts, index }) => <Input {...fieldOpts('key', index)} addonBefore="text" />}
+                        onChange={(values) => form.setFieldValue(field.name, values)}
+                      />
+                    )}
+                  </Field>
+                </Form>
+                <DebugInfo data={formikBag.values} divider debug type="util" />
+                <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
+                  Submit
+                </Button>
+              </>
+            )}
+          </Formik>
         )}
       </StoreProvider>
     </div>
@@ -126,40 +122,38 @@ storiesOf('DynamicJsonArray', module)
         }}
       >
         {(state, setState) => (
-          <>
-            <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
-              {(formikBag) => (
-                <>
-                  <Form>
-                    <Field name="data">
-                      {({ field, form, meta }) => (
-                        <WithVariable variable={ObjectArrayJsonTableHelper}>
-                          {(helper) => (
-                            <DynamicJsonArrayTable
-                              adapter={helper}
-                              value={field.value}
-                              preview={(item) => <div>{util.inspect(helper.keyParser(item))}</div>}
-                              render={({ fieldOpts, index }) => (
-                                <>
-                                  <Input {...fieldOpts('path', index)} addonBefore="path" />
-                                  <Input.TextArea {...fieldOpts('text', index)} placeholder="text" autoSize />
-                                </>
-                              )}
-                              onChange={(values) => form.setFieldValue(field.name, values)}
-                            />
-                          )}
-                        </WithVariable>
-                      )}
-                    </Field>
-                  </Form>
-                  <DebugInfo data={formikBag.values} divider debug type="util" />
-                  <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
-                    Submit
-                  </Button>
-                </>
-              )}
-            </Formik>
-          </>
+          <Formik initialValues={state} onSubmit={(values, actions) => setState(values)}>
+            {(formikBag) => (
+              <>
+                <Form>
+                  <Field name="data">
+                    {({ field, form, meta }) => (
+                      <WithVariable variable={ObjectArrayJsonTableHelper}>
+                        {(helper) => (
+                          <DynamicJsonArrayTable
+                            adapter={helper}
+                            value={field.value}
+                            preview={(item) => <div>{util.inspect(helper.keyParser(item))}</div>}
+                            render={({ fieldOpts, index }) => (
+                              <>
+                                <Input {...fieldOpts('path', index)} addonBefore="path" />
+                                <Input.TextArea {...fieldOpts('text', index)} placeholder="text" autoSize />
+                              </>
+                            )}
+                            onChange={(values) => form.setFieldValue(field.name, values)}
+                          />
+                        )}
+                      </WithVariable>
+                    )}
+                  </Field>
+                </Form>
+                <DebugInfo data={formikBag.values} divider debug type="util" />
+                <Button htmlType="submit" onClick={() => formikBag.handleSubmit()}>
+                  Submit
+                </Button>
+              </>
+            )}
+          </Formik>
         )}
       </StoreProvider>
     </div>

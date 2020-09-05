@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { ComponentClass } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { ComponentClass } from 'react';
+import styled from 'styled-components';
 
 export const FlexCenterBox = (styled.div`
   display: flex;

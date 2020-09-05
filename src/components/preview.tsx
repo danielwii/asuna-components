@@ -171,7 +171,7 @@ export function AssetsPreview({
                 padding: 0.2rem 0.5rem;
               `}
             >
-              {/*<TooltipContent value={url} link />*/}
+              {/* <TooltipContent value={url} link /> */}
               {renderExtraActions(url, index, urls.length)}
             </div>
           </div>
@@ -313,7 +313,7 @@ export const Preview: React.FC<{
         <SyntaxHighlighter
           language="json"
           style={styles}
-          customStyle={{ /*backgroundColor,*/ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 'inherit' }}
+          customStyle={{ /* backgroundColor, */ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 'inherit' }}
         >
           {wrapped}
         </SyntaxHighlighter>
