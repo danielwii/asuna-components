@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { useMountedState } from 'react-use';
 
 import { parseJSONIfCould } from '../helper';
 // import styles from 'prism-themes/themes/prism-synthwave84.css';
@@ -195,7 +196,8 @@ interface IAssetPreviewState {
   loading: boolean;
 }
 
-export function AssetPreview({ url, width, height, showPdf, fullWidth }: IAssetPreviewProps) {
+export const AssetPreview: React.FC<IAssetPreviewProps> = ({ url, width, height, showPdf, fullWidth }) => {
+  const isMounted = useMountedState();
   const [state, setState] = useState<IAssetPreviewState>({ numPages: null, pageNumber: 1, loading: true });
   const href = url;
 
@@ -227,9 +229,11 @@ export function AssetPreview({ url, width, height, showPdf, fullWidth }: IAssetP
         )}
         <FlexCenterBox key={url}>
           <a href={href} target="_blank">
-            <Document file={href} onLoadSuccess={onDocumentLoadSuccess}>
-              <Page pageNumber={state.pageNumber} width={fullWidth ? (null as any) : width ?? 200} />
-            </Document>
+            {isMounted && (
+              <Document file={href} onLoadSuccess={onDocumentLoadSuccess}>
+                <Page pageNumber={state.pageNumber} width={fullWidth ? (null as any) : width ?? 200} />
+              </Document>
+            )}
           </a>
         </FlexCenterBox>
       </WithDebugInfo>
@@ -246,7 +250,7 @@ export function AssetPreview({ url, width, height, showPdf, fullWidth }: IAssetP
       <ThumbImage height={height} width={fullWidth ? '100%' : ''} src={url} />
     </FlexCenterBox>
   );
-}
+};
 
 export const MATCH_REGEX = /{{([^{}]+)}}/g;
 
