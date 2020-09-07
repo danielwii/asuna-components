@@ -21,18 +21,18 @@ const buttonTooltipProps: TooltipProps = {
 };
 
 const fieldValues: FormFields = {
-  switch: { name: 'switch', defaultValue: true, type: 'boolean' },
-  number: {
-    name: 'number',
-    defaultValue: 0,
-    type: 'number',
-    validate: (value) => (_.isNumber(value) && value === 0 ? '不为 0 的数字' : null),
-  },
-  string: { name: 'reason', defaultValue: '', type: 'string' },
+  // switch: { name: 'switch', defaultValue: true, type: 'boolean' },
+  // number: {
+  //   name: 'number',
+  //   defaultValue: 0,
+  //   type: 'number',
+  //   validate: (value) => (_.isNumber(value) && value === 0 ? '不为 0 的数字' : null),
+  // },
+  // string: { name: 'reason', defaultValue: '', type: 'string' },
   text: { name: 'text', type: 'text' },
-  emailTmplData: { name: 'emailTmplData', type: 'emailTmplData' },
-  colorPicker: { name: 'colorPicker', type: 'color' },
-  image: { name: 'image', type: 'image', extra: { adapter: new DefaultFileUploaderAdapterImpl() } },
+  // emailTmplData: { name: 'emailTmplData', type: 'emailTmplData' },
+  // colorPicker: { name: 'colorPicker', type: 'color' },
+  // image: { name: 'image', type: 'image', extra: { adapter: new DefaultFileUploaderAdapterImpl() } },
 };
 
 const modalConfirmProps: PopconfirmProps = {
