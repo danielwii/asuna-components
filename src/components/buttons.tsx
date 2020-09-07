@@ -14,7 +14,7 @@ export type DefaultButton = ButtonProps & {
   handleOk?: () => void;
 };
 export type NormalButton = { onClick: () => Promise };
-export type ModalButton = { builder: ({ onOk, onCancel }) => React.ReactNode };
+export type ModalButton = { builder: ({ onOk, cancel }) => React.ReactNode };
 export type AdvancedButton<T> = DefaultButton & T;
 
 function isModalButton(props: any): props is AdvancedButton<ModalButton> {
@@ -22,7 +22,16 @@ function isModalButton(props: any): props is AdvancedButton<ModalButton> {
 }
 
 export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>> = (props) => {
-  const { children, onClick, handleOk, disableAfterSubmitted, confirmProps, tooltipProps, ...buttonProps } = props;
+  const {
+    children,
+    onClick,
+    handleOk,
+    builder,
+    disableAfterSubmitted,
+    confirmProps,
+    tooltipProps,
+    ...buttonProps
+  } = props;
 
   if (isModalButton(props)) {
     // props.builder;
@@ -64,7 +73,7 @@ export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>
       okButtonProps={{ hidden: true }}
       cancelButtonProps={{ hidden: true }}
     >
-      {builder({ onOk: handleOk, onCancel: _handleCancel })}
+      {builder({ onOk: handleOk, cancel: _handleCancel })}
     </Modal>
   ) : null;
 
