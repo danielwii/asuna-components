@@ -1,17 +1,23 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Divider, Input, Select } from 'antd';
-import { SelectProps } from 'antd/es/select';
+import { SelectProps, SelectValue } from 'antd/es/select';
 import _ from 'lodash';
-import { DefaultValueType } from 'rc-select/lib/interface/generator';
+import * as R from 'ramda';
 import React from 'react';
 
-export const AsunaSelect: React.FC<{
-  value: string;
-  items: { text: string; title?: string; value: string | number; disabled?: boolean }[];
-  onChange: SelectProps<DefaultValueType>['onChange'];
-  allowCustom?: boolean;
-}> = ({ value, items, onChange, allowCustom }) => {
-  const [filteredItems, setItems] = React.useState(items);
+export const AsunaSelect: React.FC<
+  {
+    items: ((string | number) | { text: string; title?: string; value: string | number; disabled?: boolean })[];
+    allowCustom?: boolean;
+  } & SelectProps<SelectValue>
+> = ({ value, items, onChange, allowCustom, ...selectProps }) => {
+  const [filteredItems, setItems] = React.useState(
+    R.ifElse(
+      R.pipe(R.head, _.isObject),
+      () => items,
+      () => _.map(items, (v) => ({ text: v, value: v })),
+    )(items),
+  );
   const [extra, setExtra] = React.useState();
 
   const func = {
@@ -44,9 +50,12 @@ export const AsunaSelect: React.FC<{
             ),
           }
         : {})}
+      {...selectProps}
     >
       {_.map(filteredItems, ({ text, ...item }) => (
-        <Select.Option {...item}>{text}</Select.Option>
+        <Select.Option key={text} {...item}>
+          {text}
+        </Select.Option>
       ))}
     </Select>
   );

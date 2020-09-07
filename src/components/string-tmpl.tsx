@@ -83,7 +83,7 @@ const Editable: React.FC<{
                   }
                 `}
                 dangerouslySetInnerHTML={{
-                  __html: text?.replace(MATCH_REGEX, `<span class="tmpl__field" ">$1</span>`),
+                  __html: text.replace(MATCH_REGEX, `<span class="tmpl__field" ">$1</span>`),
                 }}
               />
             ) : (
