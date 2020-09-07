@@ -7,6 +7,7 @@ export enum FormFieldType {
   number = 'number',
   image = 'image',
   text = 'text',
+  select = 'select',
   boolean = 'boolean',
   stringTmpl = 'stringTmpl',
   wxTmplData = 'wxTmplData',

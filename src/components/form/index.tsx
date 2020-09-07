@@ -1,6 +1,7 @@
+import { PlusOutlined } from '@ant-design/icons';
 import { css } from '@emotion/core';
 import { FormControl, FormControlLabel, FormHelperText, Switch, TextField } from '@material-ui/core';
-import { Button, Card, Divider } from 'antd';
+import { Button, Card, Divider, Input, Select } from 'antd';
 import { Promise } from 'bluebird';
 import { changeAntdTheme, generateThemeColor } from 'dynamic-antd-theme';
 import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, FormikValues, withFormik } from 'formik';
@@ -98,6 +99,33 @@ export function RenderInputComponent({
           <TextField id={field.name} multiline {...field} value={value} label={label} />
           {/* <DebugInfo data={{ field, fieldDef, value }} type="json" /> */}
         </>
+      );
+    }
+    case 'select': {
+      const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
+      return (
+        <Select
+          style={{ width: 240 }}
+          placeholder={label}
+          dropdownRender={(menu) => (
+            <div>
+              {menu}
+              <Divider style={{ margin: '4px 0' }} />
+              <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
+                <Input style={{ flex: 'auto' }} value={name} onChange={this.onNameChange} />
+                <a style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }} onClick={this.addItem}>
+                  <PlusOutlined /> Add item
+                </a>
+              </div>
+            </div>
+          )}
+        >
+          {value.map((item) => (
+            <Select.Option key={item} value={item}>
+              {item}
+            </Select.Option>
+          ))}
+        </Select>
       );
     }
     case FormFieldType.stringTmpl: {
