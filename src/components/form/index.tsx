@@ -33,6 +33,7 @@ interface EasyFormProps extends FormProps<FormFields> {
   // initialValues(props): any;
   onSubmit: (values: any) => Promise<any> | any;
   onClear?: () => Promise<any> | any;
+  onCancel?: () => Promise<any> | any;
 }
 
 export function RenderInputComponent({
@@ -223,7 +224,7 @@ export function RenderInputComponent({
 }
 
 const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
-  const { touched, errors, isSubmitting, message, body, fields, handleSubmit, handleReset, values, onClear } = props;
+  const { touched, errors, isSubmitting, message, body, fields, handleSubmit, handleReset, values, onClear, onCancel } = props;
   return (
     <Form>
       {message && <h1>{message}</h1>}
@@ -258,6 +259,7 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
           {isSubmitting ? 'Resetting' : 'Reset'}
         </Button>
       )}
+      {onCancel && <Button>Cancel</Button>}
     </Form>
   );
 };

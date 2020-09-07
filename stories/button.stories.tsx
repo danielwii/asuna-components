@@ -6,6 +6,7 @@ import { TooltipProps } from 'antd/es/tooltip';
 import { Promise } from 'bluebird';
 import * as React from 'react';
 import { AdvancedButton, DefaultFileUploaderAdapterImpl, EasyForm, FormFields } from '../src';
+import * as _ from 'lodash';
 
 const buttonConfirmProps: PopconfirmProps = {
   title: '确认提交吗？',
@@ -46,7 +47,7 @@ const modalTooltipProps: TooltipProps = {
   title: '点击创建一个角色',
 };
 
-const formBuilder = ({ onOk, onCancel }) => (
+const formBuilder = ({ onOk, cancel }) => (
   <div style={{ margin: '1rem' }}>
     <EasyForm
       fields={fieldValues}
@@ -56,7 +57,10 @@ const formBuilder = ({ onOk, onCancel }) => (
       }}
       onClear={() => {
         console.log('cleared');
-        onCancel();
+      }}
+      onCancel={() => {
+        console.log('cancel');
+        cancel();
       }}
     />
   </div>
