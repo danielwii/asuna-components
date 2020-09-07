@@ -1,6 +1,6 @@
 import { css } from '@emotion/core';
 import { FormControl, FormControlLabel, FormHelperText, Switch, TextField } from '@material-ui/core';
-import { Button, Card, Divider } from 'antd';
+import { Button, Card, Divider, Space } from 'antd';
 import { Promise } from 'bluebird';
 import { changeAntdTheme, generateThemeColor } from 'dynamic-antd-theme';
 import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, FormikValues, withFormik } from 'formik';
@@ -251,39 +251,22 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
         </Field>
       ))}
       <Divider />
-      <Button type="primary" htmlType="submit" onSubmit={handleSubmit} disabled={isSubmitting}>
-        {isSubmitting ? 'Submitting' : 'Submit'}
-      </Button>{' '}
-      {onClear && (
-        <Button onClick={handleReset} disabled={isSubmitting}>
-          {isSubmitting ? 'Resetting' : 'Reset'}
+      <Space>
+        <Button type="primary" htmlType="submit" onSubmit={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting' : 'Submit'}
         </Button>
-      )}
-      {onCancel && <Button>Cancel</Button>}
+        {onClear && (
+        <Button onClick={handleReset} disabled={isSubmitting}>
+            {isSubmitting ? 'Resetting' : 'Reset'}
+        </Button>
+        )}
+        {onCancel && <Button onClick={onCancel}>Cancel</Button>}
+      </Space>
     </Form>
   );
 };
 
-/*  creatable: (key, actions, extras) => {
-    // Modal.info({ content: JSON.stringify({ key, actions, extras }) });
-    Modal.info({
-      okText: '取消',
-      content: (
-        <EasyForm
-          fields={{
-            change: {
-              name: 'change',
-              defaultValue: 0,
-              type: 'number',
-              validate: value => (_.isNumber(value) && value === 0 ? '不为 0 的数字' : null),
-            } as FormField,
-            reason: { name: 'reason', defaultValue: '', type: 'string' } as FormField,
-          }}
-        />
-      ),
-    });
-  }, */
-export const EasyForm = withFormik<EasyFormProps, FormikValues>({
+export const EasyForm = formik.withFormik<EasyFormProps, formik.FormikValues>({
   // Transform outer props into form values
   mapPropsToValues: (props) =>
     Object.assign({}, ..._.map(props.fields, (field: FormField, name: string) => ({ [name]: field.defaultValue }))),
