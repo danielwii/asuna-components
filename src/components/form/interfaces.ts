@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IUploaderProps } from '../upload';
+import { AsunaSelectProps } from '../select';
 
 export enum FormFieldType {
   string = 'string',
@@ -25,11 +26,13 @@ interface BasicFormField<ExtraProps = undefined> {
   extra?: ExtraProps;
 }
 
-export type UploadableFormField = { type: 'image' } & BasicFormField<
+export type UploadFormField = { type: 'image' } & BasicFormField<
   Pick<IUploaderProps, 'adapter' | 'multiple' | 'enableDragMode'>
 >;
 
-export type FormField = UploadableFormField | BasicFormField;
+export type SelectFormField = { type: 'select' } & BasicFormField<AsunaSelectProps>;
+
+export type FormField = BasicFormField | SelectFormField | UploadFormField;
 
 export type FormFields = Record<string, FormField>;
 export interface FormFieldDef {

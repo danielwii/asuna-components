@@ -110,7 +110,17 @@ export function RenderInputComponent({
     }
     case 'select': {
       const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
-      return <AsunaSelect style={{ width: 240 }} placeholder={label} items={value} />;
+      const name = field.name;
+      return (
+        <AsunaSelect
+          style={{ width: 240 }}
+          placeholder={label}
+          {...field}
+          onChange={(value) => field.onChange({ target: { id: name, name, value } })}
+          value={value}
+          {...fieldDef.field.extra}
+        />
+      );
     }
     case FormFieldType.stringTmpl: {
       const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
