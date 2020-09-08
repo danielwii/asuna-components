@@ -15,7 +15,7 @@ export const WithDebugInfo: React.FC<{ info: any; debug?: boolean }> = ({ info, 
       </>
     );
   }
-  return <>{children}</>;
+  return children as React.ReactElement;
 };
 
 export const DebugInfo: React.FC<{

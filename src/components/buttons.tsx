@@ -7,38 +7,32 @@ import React, { useState } from 'react';
 
 type WordingType = 'Submit' | 'Submitting' | 'Submitted';
 
-export type DefaultButton = ButtonProps & {
+export type DefaultButton = Omit<ButtonProps, 'onClick'> & {
   confirmProps?: PopconfirmProps;
   tooltipProps?: TooltipProps;
   disableAfterSubmitted?: boolean;
   handleOk?: () => void;
 };
-/* eslint-disable*/
-export type NormalButton = { onClick: () => Promise };
-export type ModalButton = { builder: ({ onOk, cancel }) => React.ReactNode };
+export interface NormalButton {
+  onClick: () => Promise<any>;
+}
+export interface ModalButton {
+  builder: ({ onOk, cancel }) => React.ReactNode;
+}
 export type AdvancedButton<T> = DefaultButton & T;
+
+function isNormalButton(props: any): props is AdvancedButton<NormalButton> {
+  return !!props.onClick;
+}
 
 function isModalButton(props: any): props is AdvancedButton<ModalButton> {
   return !!props.builder;
 }
 
 export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>> = (props) => {
-  const {
-    children,
-    onClick,
-    handleOk,
-    builder,
-    disableAfterSubmitted,
-    confirmProps,
-    tooltipProps,
-    ...buttonProps
-  } = props;
+  const { children, handleOk, disableAfterSubmitted, confirmProps, tooltipProps, ...buttonProps } = props;
 
-  if (isModalButton(props)) {
-    // props.builder;
-  }
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [wording, setWording] = useState<WordingType>('Submit');
 
   const [visible, setVisible] = useState(false);
@@ -49,7 +43,7 @@ export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>
   function handleConfirm(e?: React.MouseEvent<HTMLElement>) {
     setLoading(true);
     setWording('Submitting');
-    onClick().then(() => {
+    (props as NormalButton).onClick().then(() => {
       setLoading(false);
       setWording('Submitted');
     });
@@ -59,14 +53,14 @@ export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>
     <Button
       {...buttonProps}
       loading={loading}
-      onClick={(e) => !confirmProps && (onClick ? handleConfirm(e) : _show())}
+      onClick={(e) => !confirmProps && (isNormalButton(props) ? handleConfirm(e) : _show())}
       disabled={disableAfterSubmitted && wording === 'Submitted'}
     >
       {children ?? wording}
     </Button>
   );
 
-  const modal = builder ? (
+  const modal = isModalButton(props) ? (
     <Modal
       title="Basic Modal"
       visible={visible}
@@ -74,7 +68,7 @@ export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>
       okButtonProps={{ hidden: true }}
       cancelButtonProps={{ hidden: true }}
     >
-      {builder({ onOk: handleOk, cancel: _handleCancel })}
+      {props.builder({ onOk: handleOk, cancel: _handleCancel })}
     </Modal>
   ) : null;
 
@@ -82,7 +76,7 @@ export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>
 
   return confirmProps ? (
     <>
-      <Popconfirm {...confirmProps} onConfirm={(e) => (onClick ? handleConfirm(e) : _show())}>
+      <Popconfirm {...confirmProps} onConfirm={(e) => (isNormalButton(props) ? handleConfirm(e) : _show())}>
         {withTooltipView}
       </Popconfirm>
       {modal}
