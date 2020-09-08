@@ -30,7 +30,7 @@ interface FormProps<FieldsType> {
 }
 
 interface EasyFormProps extends FormProps<FormFields> {
-  // initialValues(props): any;
+  initialValues: Record<string, unknown>;
   onSubmit: (values: any) => Promise<any> | any;
   onClear?: () => Promise<any> | any;
   onCancel?: () => Promise<any> | any;
@@ -280,8 +280,11 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
 
 export const EasyForm = withFormik<EasyFormProps, FormikValues>({
   // Transform outer props into form values
-  mapPropsToValues: (props) =>
-    Object.assign({}, ..._.map(props.fields, (field: FormField, name: string) => ({ [name]: field.defaultValue }))),
+  mapPropsToValues: ({ fields, initialValues }) =>
+    Object.assign(
+      {},
+      ..._.map(fields, (field: FormField, name: string) => ({ [name]: initialValues[name] ?? field.defaultValue })),
+    ),
 
   validate: (values: FormikValues, props) => {
     const errors: FormikErrors<FormikValues> = {};
