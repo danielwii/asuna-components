@@ -234,8 +234,8 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
     handleSubmit,
     handleReset,
     values,
-    onCancel,
     onClear,
+    onCancel,
   } = props;
   return (
     <Form>

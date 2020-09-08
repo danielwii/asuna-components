@@ -13,6 +13,7 @@ export type DefaultButton = ButtonProps & {
   disableAfterSubmitted?: boolean;
   handleOk?: () => void;
 };
+/* eslint-disable*/
 export type NormalButton = { onClick: () => Promise };
 export type ModalButton = { builder: ({ onOk, cancel }) => React.ReactNode };
 export type AdvancedButton<T> = DefaultButton & T;
