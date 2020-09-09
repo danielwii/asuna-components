@@ -37,23 +37,27 @@ export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>
 
   const [visible, setVisible] = useState(false);
 
-  const _show = () => setVisible(true);
-  const _handleCancel = () => setVisible(false);
-
-  function handleConfirm(e?: React.MouseEvent<HTMLElement>) {
+  const handleConfirm = (e?: React.MouseEvent<HTMLElement>) => {
     setLoading(true);
     setWording('Submitting');
     (props as NormalButton).onClick().then(() => {
       setLoading(false);
       setWording('Submitted');
     });
-  }
+  };
+
+  const func = {
+    showModal: () => setVisible(true),
+    hideModal: () => setVisible(false),
+    confirm: (e) => !confirmProps && (isNormalButton(props) ? handleConfirm(e) : setVisible(true)),
+    popConfirm: (e) => (isNormalButton(props) ? handleConfirm(e) : setVisible(true)),
+  };
 
   const view = (
     <Button
       {...buttonProps}
       loading={loading}
-      onClick={(e) => !confirmProps && (isNormalButton(props) ? handleConfirm(e) : _show())}
+      onClick={func.confirm}
       disabled={disableAfterSubmitted && wording === 'Submitted'}
     >
       {children ?? wording}
@@ -64,11 +68,11 @@ export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>
     <Modal
       title="Basic Modal"
       visible={visible}
-      onCancel={_handleCancel}
+      onCancel={func.hideModal}
       okButtonProps={{ hidden: true }}
       cancelButtonProps={{ hidden: true }}
     >
-      {props.builder({ onOk: handleOk, cancel: _handleCancel })}
+      {props.builder({ onOk: handleOk, cancel: func.hideModal })}
     </Modal>
   ) : null;
 
@@ -76,7 +80,7 @@ export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>
 
   return confirmProps ? (
     <>
-      <Popconfirm {...confirmProps} onConfirm={(e) => (isNormalButton(props) ? handleConfirm(e) : _show())}>
+      <Popconfirm {...confirmProps} onConfirm={func.popConfirm}>
         {withTooltipView}
       </Popconfirm>
       {modal}

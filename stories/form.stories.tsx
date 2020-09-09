@@ -13,9 +13,9 @@ const fields: FormFields = {
     validate: (value) => (_.isNumber(value) && value === 0 ? '不为 0 的数字' : null),
   },
   string: { name: 'reason', defaultValue: '', type: 'string' },
-  text: { name: 'text', type: 'text' },
+  text: { name: 'text', type: 'text', defaultValue: '' },
   emailTmplData: { name: 'emailTmplData', type: 'emailTmplData' },
-  colorPicker: { name: 'colorPicker', type: 'color' },
+  // colorPicker: { name: 'colorPicker', type: 'color' },
   image: { name: 'image', type: 'image', extra: { adapter: new DefaultFileUploaderAdapterImpl() } },
 };
 const fieldValues = {
@@ -34,8 +34,11 @@ storiesOf('Form', module).add('default', () => (
             console.log('submitted', values);
             setState({ values });
           }}
+          onReset={() => {
+            console.log('reset');
+          }}
           onClear={() => {
-            console.log('cleared');
+            console.log('clear');
           }}
         />
       )}
