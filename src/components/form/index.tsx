@@ -1,6 +1,6 @@
 import { css } from '@emotion/core';
 import { FormControl, FormControlLabel, FormHelperText, Switch, TextField } from '@material-ui/core';
-import { Button, Card, Divider, Input, Select, Space } from 'antd';
+import { Button, Card, Divider, Space } from 'antd';
 import { Promise } from 'bluebird';
 import { changeAntdTheme, generateThemeColor } from 'dynamic-antd-theme';
 import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, FormikValues, withFormik } from 'formik';
@@ -225,21 +225,7 @@ export function RenderInputComponent({
 }
 
 const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
-  const {
-    touched,
-    errors,
-    isSubmitting,
-    message,
-    body,
-    fields,
-    handleSubmit,
-    handleReset,
-    values,
-    onReset,
-    onCancel,
-    onClear,
-    setValues,
-  } = props;
+  const { isSubmitting, message, fields, handleSubmit, handleReset, onReset, onCancel, onClear, setValues } = props;
 
   return (
     <Form>
@@ -272,9 +258,9 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
           {isSubmitting ? 'Submitting' : 'Submit'}
         </Button>
         {onReset && (
-        <Button onClick={handleReset} disabled={isSubmitting}>
+          <Button onClick={handleReset} disabled={isSubmitting}>
             {isSubmitting ? 'Resetting' : 'Reset'}
-        </Button>
+          </Button>
         )}
         {onCancel && <Button onClick={onCancel}>Cancel</Button>}
         {onClear && <Button onClick={() => setValues({ fields })}>Clear</Button>}
