@@ -32,8 +32,9 @@ interface FormProps<FieldsType> {
 interface EasyFormProps extends FormProps<FormFields> {
   initialValues: Record<string, unknown>;
   onSubmit: (values: any) => Promise<any> | any;
-  onClear?: () => Promise<any> | any;
+  onReset?: () => Promise<any> | any;
   onCancel?: () => Promise<any> | any;
+  onClear?: () => Promise<any> | any;
 }
 
 export function RenderInputComponent({
@@ -234,9 +235,12 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
     handleSubmit,
     handleReset,
     values,
-    onClear,
+    onReset,
     onCancel,
+    onClear,
+    setValues,
   } = props;
+
   return (
     <Form>
       {message && <h1>{message}</h1>}
@@ -267,12 +271,13 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
         <Button type="primary" htmlType="submit" onSubmit={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? 'Submitting' : 'Submit'}
         </Button>
-        {onClear && (
+        {onReset && (
         <Button onClick={handleReset} disabled={isSubmitting}>
             {isSubmitting ? 'Resetting' : 'Reset'}
         </Button>
         )}
         {onCancel && <Button onClick={onCancel}>Cancel</Button>}
+        {onClear && <Button onClick={() => setValues({ fields })}>Clear</Button>}
       </Space>
     </Form>
   );

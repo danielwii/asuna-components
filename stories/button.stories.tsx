@@ -20,19 +20,24 @@ const buttonTooltipProps: TooltipProps = {
   title: 'Click to submit',
 };
 
-const fieldValues: FormFields = {
-  // switch: { name: 'switch', defaultValue: true, type: 'boolean' },
-  // number: {
-  //   name: 'number',
-  //   defaultValue: 0,
-  //   type: 'number',
-  //   validate: (value) => (_.isNumber(value) && value === 0 ? '不为 0 的数字' : null),
-  // },
-  // string: { name: 'reason', defaultValue: '', type: 'string' },
+const fields: FormFields = {
+  switch: { name: 'switch', defaultValue: true, type: 'boolean' },
+  select: { name: 'Select', type: 'select', extra: { items: [1, 2, 3] }, defaultValue: 1 },
+  number: {
+    name: 'number',
+    defaultValue: 0,
+    type: 'number',
+    validate: (value) => (_.isNumber(value) && value === 0 ? '不为 0 的数字' : null),
+  },
+  string: { name: 'reason', defaultValue: '', type: 'string' },
   text: { name: 'text', type: 'text' },
-  // emailTmplData: { name: 'emailTmplData', type: 'emailTmplData' },
-  // colorPicker: { name: 'colorPicker', type: 'color' },
-  // image: { name: 'image', type: 'image', extra: { adapter: new DefaultFileUploaderAdapterImpl() } },
+  emailTmplData: { name: 'emailTmplData', type: 'emailTmplData' },
+  colorPicker: { name: 'colorPicker', type: 'color' },
+  image: { name: 'image', type: 'image', extra: { adapter: new DefaultFileUploaderAdapterImpl() } },
+};
+const fieldValues = {
+  number: 10,
+  string: 'hello world',
 };
 
 const modalConfirmProps: PopconfirmProps = {
@@ -50,7 +55,8 @@ const modalTooltipProps: TooltipProps = {
 const formBuilder = ({ onOk, cancel }) => (
   <div style={{ margin: '1rem' }}>
     <EasyForm
-      fields={fieldValues}
+      fields={fields}
+      initialValues={fieldValues}
       onSubmit={(values) => {
         console.log('submitted', values);
         onOk();
