@@ -4,8 +4,8 @@ import { css, jsx } from '@emotion/core';
 import { Button, Divider, Input, List, Modal, Tooltip } from 'antd';
 import faker from 'faker';
 import * as _ from 'lodash';
+import R from 'ramda';
 import React, { useState } from 'react';
-import { Document, Page } from 'react-pdf';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { useMountedState } from 'react-use';
@@ -217,6 +217,19 @@ export const AssetPreview: React.FC<IAssetPreviewProps> = ({ url, width, height,
 */
 
   if (/pdf$/.test(url)) {
+    const view = R.ifElse(
+      R.identity,
+      () => {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { Document, Page } = require('react-pdf');
+        return (
+          <Document file={href} onLoadSuccess={onDocumentLoadSuccess}>
+            <Page pageNumber={state.pageNumber} width={fullWidth ? (null as any) : width ?? 200} />
+          </Document>
+        );
+      },
+      () => null,
+    )(isMounted() && window);
     return showPdf ? (
       <WithDebugInfo info={state}>
         {!state.loading && (
@@ -229,11 +242,7 @@ export const AssetPreview: React.FC<IAssetPreviewProps> = ({ url, width, height,
         )}
         <FlexCenterBox key={url}>
           <a href={href} target="_blank">
-            {isMounted && (
-              <Document file={href} onLoadSuccess={onDocumentLoadSuccess}>
-                <Page pageNumber={state.pageNumber} width={fullWidth ? (null as any) : width ?? 200} />
-              </Document>
-            )}
+            {view}
           </a>
         </FlexCenterBox>
       </WithDebugInfo>
