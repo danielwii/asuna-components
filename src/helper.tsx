@@ -193,3 +193,16 @@ export function WithVariable<V>({
   }
   return <React.Fragment>{children(variable as any)}</React.Fragment>;
 }
+
+export const withP = <P, R>(parameter: P, fn: (p: P) => R) => fn(parameter);
+export const withP2 = <P1, P2, R>(parameter1: P1, parameter2: P2, fn: (p1: P1, p2: P2) => R) =>
+  fn(parameter1, parameter2);
+export const withP3 = <P1, P2, P3, R>(
+  parameter1: P1,
+  parameter2: P2,
+  parameter3: P3,
+  fn: (p1: P1, p2: P2, p3: P3) => R,
+) => fn(parameter1, parameter2, parameter3);
+export const fnWithP3 = <P1, P2, P3, R>(parameter1: P1, parameter2: P2, parameter3: P3) => (
+  fn: (p1: P1, p2: P2, p3: P3) => R,
+): R => fn(parameter1, parameter2, parameter3);

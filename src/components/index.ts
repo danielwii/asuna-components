@@ -1,4 +1,5 @@
 export * from './form';
+export * from './table';
 export * from './upload';
 export * from './debug';
 export * from './dynamic-json-array';
