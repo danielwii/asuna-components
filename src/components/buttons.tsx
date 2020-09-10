@@ -3,6 +3,7 @@ import { ButtonProps } from 'antd/es/button';
 import { PopconfirmProps } from 'antd/es/popconfirm';
 import { TooltipProps } from 'antd/es/tooltip';
 import { Promise } from 'bluebird';
+import _ from 'lodash';
 import React, { useState } from 'react';
 
 type WordingType = 'Submit' | 'Submitting' | 'Submitted';
@@ -30,7 +31,8 @@ function isModalButton(props: any): props is AdvancedButton<ModalButton> {
 }
 
 export const AdvancedButton: React.FC<AdvancedButton<NormalButton | ModalButton>> = (props) => {
-  const { children, handleOk, disableAfterSubmitted, confirmProps, tooltipProps, ...buttonProps } = props;
+  const { children, handleOk, disableAfterSubmitted, confirmProps, tooltipProps, ...otherProps } = props;
+  const buttonProps = _.omit(otherProps, 'builder');
 
   const [loading, setLoading] = useState(false);
   const [wording, setWording] = useState<WordingType>('Submit');
