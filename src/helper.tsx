@@ -69,7 +69,7 @@ export const StoreProvider: StateFC<any> = ({ initialState, children }) => {
     >
       <div>{children(state, setState)}</div>
       <div>
-        <pre>{util.inspect({ state, initialState })}</pre>
+        <pre>{JSON.stringify({ state, initialState }, null, 2)}</pre>
       </div>
     </div>
   );
@@ -161,6 +161,7 @@ export function WithSuspense<R>({
 }): React.ReactElement {
   const Component = React.lazy(
     () =>
+      // eslint-disable-next-line no-async-promise-executor
       new Promise(async (resolve) => {
         const data = await future();
         resolve({
@@ -202,6 +203,7 @@ export const withP3 = <P1, P2, P3, R>(
   parameter2: P2,
   parameter3: P3,
   fn: (p1: P1, p2: P2, p3: P3) => R,
+  // eslint-disable-next-line max-params
 ) => fn(parameter1, parameter2, parameter3);
 export const fnWithP3 = <P1, P2, P3, R>(parameter1: P1, parameter2: P2, parameter3: P3) => (
   fn: (p1: P1, p2: P2, p3: P3) => R,

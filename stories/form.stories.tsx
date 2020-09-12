@@ -4,7 +4,7 @@ import * as React from 'react';
 import { DefaultFileUploaderAdapterImpl, EasyForm, FormFields, StoreProvider } from '../src';
 
 const fields: FormFields = {
-  switch: { name: 'switch', defaultValue: true, type: 'boolean' },
+  switch: { name: 'switch', defaultValue: true, type: 'boolean', help: '我是一个帮助信息' },
   select: { name: 'Select', type: 'select', extra: { items: [1, 2, 3] }, defaultValue: 1 },
   number: {
     name: 'number',
