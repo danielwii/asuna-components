@@ -9,7 +9,7 @@ import * as React from 'react';
 import { SketchPicker } from 'react-color';
 import * as util from 'util';
 import { AsunaSelect, DebugInfo, DynamicJsonArrayTable, ObjectJsonTableHelper, StringTmpl, Uploader } from '..';
-import { WithVariable } from '../../helper';
+import { isPromiseAlike, WithVariable } from '../../helper';
 import { DefaultFileUploaderAdapterImpl } from '../upload';
 import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
 
@@ -23,23 +23,25 @@ interface FormProps<FieldsType> {
 
 interface EasyFormProps extends FormProps<FormFields> {
   initialValues: Record<string, unknown>;
-  onSubmit: (values: any) => Promise<any> | any;
-  onReset?: () => Promise<any> | any;
-  onCancel?: () => Promise<any> | any;
-  onClear?: () => Promise<any> | any;
+  onSubmit: (values: Record<string, unknown>) => Promise<unknown> | unknown;
+  onReset?: () => Promise<unknown> | unknown;
+  onCancel?: () => Promise<unknown> | unknown;
+  onClear?: () => Promise<unknown> | unknown;
 }
 
-export function RenderInputComponent({
+export function RenderInputComponent<Values, InputValue>({
   form,
   fieldDef,
   field,
   value,
 }: {
-  form: FormikProps<any>;
+  form: FormikProps<Values>;
   fieldDef: FormFieldDef;
-  field: FieldInputProps<any>;
+  field: FieldInputProps<InputValue>;
   value: any;
 }) {
+  // useLogger('RenderInputComponent', { fieldDef, field, value });
+
   switch (fieldDef.field.type) {
     case FormFieldType.boolean: {
       return (
@@ -228,25 +230,24 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
   const { isSubmitting, message, fields, handleSubmit, handleReset, onReset, onCancel, onClear, setValues } = props;
 
   return (
-    <Form>
+    <Form
+      css={css`
+        div > label {
+          display: block;
+          margin: 0.2rem 0.1rem;
+          font-weight: bold;
+        }
+      `}
+    >
       {message && <h1>{message}</h1>}
       {_.map(fields, (formField: FormField, key: string) => (
         <Field key={key} name={key}>
-          {({ field, form }: FieldProps<FormikValues>) => {
+          {({ field, form }: FieldProps<string | number | boolean, FormikValues>) => {
             const hasError = !!(form.touched[formField.name] && form.errors[formField.name]);
             const value = field.value ?? formField.defaultValue;
             return (
-              <div
-                key={field.name}
-                css={css`
-                  > label {
-                    display: block;
-                    margin: 0.2rem 0.1rem;
-                    font-weight: bold;
-                  }
-                `}
-              >
-                <RenderInputComponent
+              <div key={field.name}>
+                <RenderInputComponent<FormikValues, string | number | boolean>
                   form={form}
                   fieldDef={{ field: formField, name: formField.name }}
                   field={field}
@@ -304,7 +305,7 @@ export const EasyForm = withFormik<EasyFormProps, FormikValues>({
 
   handleSubmit: (values, { props, setSubmitting }) => {
     const submitted = props.onSubmit(values);
-    if (submitted?.then) {
+    if (isPromiseAlike(submitted)) {
       submitted.finally(() => setSubmitting(false));
     } else {
       Promise.delay(200).then(() => setSubmitting(false));

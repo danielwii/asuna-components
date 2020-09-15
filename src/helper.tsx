@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
 import { Button, Tooltip } from 'antd';
+import { Promise } from 'bluebird';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
 import { useAsync } from 'react-use';
@@ -208,3 +209,7 @@ export const withP3 = <P1, P2, P3, R>(
 export const fnWithP3 = <P1, P2, P3, R>(parameter1: P1, parameter2: P2, parameter3: P3) => (
   fn: (p1: P1, p2: P2, p3: P3) => R,
 ): R => fn(parameter1, parameter2, parameter3);
+
+export function isPromiseAlike<T>(value: any): value is Promise<T> {
+  return !!value.then;
+}
