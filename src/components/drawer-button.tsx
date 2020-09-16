@@ -5,6 +5,7 @@ import { BaseButtonProps } from 'antd/es/button/button';
 import { PopoverProps } from 'antd/lib/popover';
 import * as _ from 'lodash';
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 type RenderComponentType = React.FC<{ refreshFlag: number; openChildrenDrawer?: any }>;
 export type RenderChildrenComponentType = React.FC<{ item: any }>;
@@ -45,26 +46,14 @@ export const DrawerButtonBuilder: React.FC<
         >
           This is two-level drawer
         </Drawer> */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            width: '100%',
-            borderTop: '1px solid #e8e8e8',
-            padding: '10px 16px',
-            textAlign: 'right',
-            left: 0,
-            background: '#fff',
-            borderRadius: '0 0 4px 4px',
-          }}
-        >
+        <StyledButton>
           <Button style={{ marginRight: 8 }} onClick={_onClose}>
             Cancel
           </Button>
           {/* <Button onClick={this.onClose} type="primary">
             Submit
           </Button> */}
-        </div>
+        </StyledButton>
       </Drawer>
     </>
   );
@@ -133,19 +122,7 @@ export const DrawerButton: React.FC<
           >
             This is two-level drawer
           </Drawer> */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            width: '100%',
-            borderTop: '1px solid #e8e8e8',
-            padding: '10px 16px',
-            textAlign: 'right',
-            left: 0,
-            background: '#fff',
-            borderRadius: '0 0 4px 4px',
-          }}
-        >
+        <StyledButton>
           {extraButtons && (
             <>
               {extraButtons}
@@ -161,7 +138,7 @@ export const DrawerButton: React.FC<
             </>
           )}
           <Button onClick={_onClose}>关闭</Button>
-        </div>
+        </StyledButton>
         {renderChildrenDrawer && (
           <Drawer width={520} closable={false} onClose={_onChildrenClose} visible={childrenDrawer}>
             <RenderChildrenComponent item={childrenItem} />
@@ -188,10 +165,22 @@ export const HistoryTimeline: React.FC<HistoryTimelineProps> = ({ dataLoader, re
       const data = await dataLoader();
       if (data) setState({ loading: false, fields: data.items });
     })();
-  }, []);
+  });
 
   if (state.loading) return <Skeleton active />;
   if (_.isEmpty(state.fields)) return <Empty />;
 
   return <Timeline>{state.fields.map(render)}</Timeline>;
 };
+
+const StyledButton = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #e8e8e8;
+  padding: 10px 16px;
+  text-align: right;
+  left: 0;
+  background: #fff;
+  border-radius: 0 0 4px 4px;
+`;

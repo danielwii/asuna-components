@@ -228,7 +228,6 @@ export function RenderInputComponent<Values, InputValue>({
 
 const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
   const { isSubmitting, message, fields, handleSubmit, handleReset, onReset, onCancel, onClear, setValues } = props;
-
   return (
     <Form
       css={css`
@@ -245,6 +244,7 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
           {({ field, form }: FieldProps<string | number | boolean, FormikValues>) => {
             const hasError = !!(form.touched[formField.name] && form.errors[formField.name]);
             const value = field.value ?? formField.defaultValue;
+
             return (
               <div key={field.name}>
                 <RenderInputComponent<FormikValues, string | number | boolean>
