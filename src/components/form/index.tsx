@@ -8,7 +8,15 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { SketchPicker } from 'react-color';
 import * as util from 'util';
-import { AsunaSelect, DebugInfo, DynamicJsonArrayTable, ObjectJsonTableHelper, StringTmpl, Uploader } from '..';
+import {
+  AsunaSelect,
+  DebugInfo,
+  DynamicJsonArrayTable,
+  ObjectJsonTableHelper,
+  StringArray,
+  StringTmpl,
+  Uploader,
+} from '..';
 import { isPromiseAlike, WithVariable } from '../../helper';
 import { DefaultFileUploaderAdapterImpl } from '../upload';
 import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
@@ -122,6 +130,16 @@ export function RenderInputComponent<Values, InputValue>({
             value={value}
             {...fieldDef.field.extra}
           />
+        </React.Fragment>
+      );
+    }
+    case 'stringArray': {
+      const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
+      const name = field.name;
+      return (
+        <React.Fragment>
+          <label>{label}</label>
+          <StringArray onChange={(value) => field.onChange({ target: { id: name, name, value } })} items={value} />
         </React.Fragment>
       );
     }

@@ -4,7 +4,7 @@ import { css, jsx } from '@emotion/core';
 import { Button, Divider, Input, List, Modal, Tooltip } from 'antd';
 import faker from 'faker';
 import * as _ from 'lodash';
-import R from 'ramda';
+import * as R from 'ramda';
 import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/prism';

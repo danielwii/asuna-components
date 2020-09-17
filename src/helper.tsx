@@ -25,15 +25,15 @@ export type StateChildren<S> = (state: S, setState: (state: S) => void) => React
 export type StateFunctionComponent<P = {}, S = {}> = CustomFC<P, StateChildren<S>>;
 export type StateFC<State> = StateFunctionComponent<{ initialState?: State }, State>;
 
-export function parseString(value?: any): string {
+export function parseString(value?): string {
   return value ? (_.isString(value) ? value : JSON.stringify(value)) : '';
 }
 
-export function parseJSONIfCould(value?: string): any {
+export function parseJSONIfCould<OrElse>(value?: string, orElse?: OrElse): string | OrElse {
   try {
     if (value) return JSON.parse(value);
   } catch (e) {}
-  return value;
+  return orElse ?? value;
 }
 
 export function isJson(value): boolean {
@@ -43,6 +43,14 @@ export function isJson(value): boolean {
   } catch (e) {
     return false;
   }
+}
+
+export function parseArray(value, orElse?): any[] {
+  if (_.isArray(value)) {
+    return value;
+  }
+  const parsed = parseJSONIfCould(value, orElse);
+  return _.isArray(parsed) ? parsed : orElse;
 }
 
 export function castToArrays(value: string): string[] {
@@ -211,5 +219,9 @@ export const fnWithP3 = <P1, P2, P3, R>(parameter1: P1, parameter2: P2, paramete
 ): R => fn(parameter1, parameter2, parameter3);
 
 export function isPromiseAlike<T>(value: any): value is Promise<T> {
-  return !!value.then;
+  return !!value?.then;
+}
+
+function memoForwardRef<N, P>(comp: React.ForwardRefRenderFunction<N, P>) {
+  return React.memo(React.forwardRef<N, P>(comp));
 }
