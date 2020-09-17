@@ -7,6 +7,7 @@ export enum FormFieldType {
   color = 'color',
   number = 'number',
   image = 'image',
+  json = 'json',
   text = 'text',
   select = 'select',
   stringArray = 'stringArray',

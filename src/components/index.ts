@@ -2,6 +2,7 @@ export * from './form';
 export * from './upload';
 export * from './debug';
 export * from './dynamic-json-array';
+export * from './elements';
 export * from './image';
 export * from './loading';
 export * from './preview';

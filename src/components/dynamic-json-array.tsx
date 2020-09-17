@@ -27,12 +27,17 @@ export interface DynamicJsonTableAdapter {
   unparseValue: (value) => any;
   clear: (onChange) => any;
   // 包括 onChange 的帮助方法
-  getFieldOpts: (formik, item) => FieldOpts;
+  getFieldOpts: (formik: ReturnType<typeof useFormik>, item) => FieldOpts;
 }
 
 export interface DynamicJsonTableProps<V extends Record<string, string | number>> {
   value: V;
-  render: (opts: { formik; item: object; index: number; fieldOpts: FieldOpts }) => React.ReactNode;
+  render: (opts: {
+    formik: ReturnType<typeof useFormik>;
+    item: object;
+    index: number;
+    fieldOpts: FieldOpts;
+  }) => React.ReactNode;
   onChange: (values) => void;
   preview: (item, index: number) => React.ReactNode;
   adapter: DynamicJsonTableAdapter;
@@ -56,7 +61,10 @@ export class ObjectJsonTableHelper {
   public static unparseValue = (value) =>
     _.assign({}, ..._.flatMap(value, (v, i) => _.mapKeys(v, (v, k) => `${i}-${k}`)));
   public static clear = (onChange) => onChange({});
-  public static getFieldOpts = (formik, item): FieldOpts => (name: string, index: number) => {
+  public static getFieldOpts = (formik: ReturnType<typeof useFormik>, item): FieldOpts => (
+    name: string,
+    index: number,
+  ) => {
     const field = ObjectJsonTableHelper.fieldParser(item, index);
     return { name: field.name(name), value: field.value(name), onChange: (event) => formik.handleChange(event) };
   };
@@ -74,7 +82,10 @@ export class StringArrayJsonTableHelper {
   public static unparseValue = (value) => value;
   // public static unparseValue = value => _.flatten(_.map(value, field => (_.isObject(field) ? _.values(field) : field)));
   public static clear = (onChange) => onChange([]);
-  public static getFieldOpts = (formik, item): FieldOpts => (name: string, index: number) => {
+  public static getFieldOpts = (formik: ReturnType<typeof useFormik>, item): FieldOpts => (
+    name: string,
+    index: number,
+  ) => {
     const field = StringArrayJsonTableHelper.fieldParser(item, index);
     return {
       name: field.name(name),
@@ -101,7 +112,10 @@ export class ObjectArrayJsonTableHelper {
   public static unparseValue = (value) => value;
   //  unparseValue = value => _.flatten(_.map(value, field => (_.isObject(field) ? _.values(field) : field)));
   public static clear = (onChange) => onChange([]);
-  public static getFieldOpts = (formik, item): FieldOpts => (name: string, index: number) => {
+  public static getFieldOpts = (formik: ReturnType<typeof useFormik>, item): FieldOpts => (
+    name: string,
+    index: number,
+  ) => {
     const field = ObjectArrayJsonTableHelper.fieldParser(item, index);
     return {
       name: field.name(name),
@@ -137,7 +151,7 @@ export const DynamicJsonArrayTable: <T extends Record<string, string | number>>(
     onSubmit: (values) => {},
   });
 
-  useLogger(DynamicJsonArrayTable.name, initialValues, parsedFields, formik.values);
+  useLogger('DynamicJsonArrayTable', initialValues, parsedFields, formik.values);
 
   return (
     <React.Fragment>
@@ -169,7 +183,7 @@ export const DynamicJsonArrayTable: <T extends Record<string, string | number>>(
                       </div>
                     }
                   >
-                    {render({ formik, item, index, fieldOpts: func.fieldOpts(formik, item) })}
+                    {render({ formik: formik as any, item, index, fieldOpts: func.fieldOpts(formik as any, item) })}
                   </Collapse.Panel>
                 </Collapse>
               </List.Item>

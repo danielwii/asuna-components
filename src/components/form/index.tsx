@@ -106,6 +106,7 @@ export function RenderInputComponent<Values, InputValue>({
         </React.Fragment>
       );
     }
+    case FormFieldType.json:
     case FormFieldType.text: {
       const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
       return (
