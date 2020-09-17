@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
 import { Button, Tooltip } from 'antd';
+import { Promise } from 'bluebird';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
 import { useAsync } from 'react-use';
@@ -69,7 +70,7 @@ export const StoreProvider: StateFC<any> = ({ initialState, children }) => {
     >
       <div>{children(state, setState)}</div>
       <div>
-        <pre>{util.inspect({ state, initialState })}</pre>
+        <pre>{JSON.stringify({ state, initialState }, null, 2)}</pre>
       </div>
     </div>
   );
@@ -161,6 +162,7 @@ export function WithSuspense<R>({
 }): React.ReactElement {
   const Component = React.lazy(
     () =>
+      // eslint-disable-next-line no-async-promise-executor
       new Promise(async (resolve) => {
         const data = await future();
         resolve({
@@ -192,4 +194,22 @@ export function WithVariable<V>({
     return <span>n/a</span>;
   }
   return <React.Fragment>{children(variable as any)}</React.Fragment>;
+}
+
+export const withP = <P, R>(parameter: P, fn: (p: P) => R) => fn(parameter);
+export const withP2 = <P1, P2, R>(parameter1: P1, parameter2: P2, fn: (p1: P1, p2: P2) => R) =>
+  fn(parameter1, parameter2);
+export const withP3 = <P1, P2, P3, R>(
+  parameter1: P1,
+  parameter2: P2,
+  parameter3: P3,
+  fn: (p1: P1, p2: P2, p3: P3) => R,
+  // eslint-disable-next-line max-params
+) => fn(parameter1, parameter2, parameter3);
+export const fnWithP3 = <P1, P2, P3, R>(parameter1: P1, parameter2: P2, parameter3: P3) => (
+  fn: (p1: P1, p2: P2, p3: P3) => R,
+): R => fn(parameter1, parameter2, parameter3);
+
+export function isPromiseAlike<T>(value: any): value is Promise<T> {
+  return !!value.then;
 }
