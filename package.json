@@ -28,7 +28,7 @@
     "@ant-design/icons": "^4.2.2",
     "@emotion/core": "^10.0.35",
     "@projectstorm/react-diagrams": "^6.2.0",
-    "antd": "^4.6.5",
+    "antd": "^4.6.6",
     "axios": "^0.20.0",
     "bluebird": "^3.7.2",
     "closest": "^0.0.1",
