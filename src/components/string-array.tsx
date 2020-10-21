@@ -3,6 +3,8 @@ import { Button, Divider, Input, Tag } from 'antd';
 import * as _ from 'lodash';
 import { TweenOneGroup } from 'rc-tween-one';
 import * as React from 'react';
+import { useLogger } from 'react-use';
+import { parseArray } from '../helper';
 
 export interface IStringArrayProps {
   mode?: 'input' | 'tag';
@@ -14,9 +16,10 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
   const [inputVisible, setInputVisible] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
 
+  const parsedItems = parseArray(items, []);
   const func = {
-    add: (item = '') => onChange([...items, item]),
-    remove: (index) => onChange(_.remove(items, (item, i) => i !== index)),
+    add: (item = '') => onChange([...parsedItems, item]),
+    remove: (index) => onChange(_.remove(parsedItems, (item, i) => i !== index)),
     showInput: () => setInputVisible(true),
     handleInputChange: (e) => setInputValue(e.target.value),
     handleInputConfirm: (e) => {
@@ -28,6 +31,8 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
     },
   };
 
+  useLogger('StringArray', { mode, items, parsedItems, inputVisible, inputValue });
+
   if (mode === 'tag') {
     return (
       <div>
@@ -38,12 +43,12 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
               opacity: 0,
               type: 'from',
               duration: 100,
-              onComplete: (e) => ((e.target as any).style = ''),
+              onComplete: (e: { index: number; target: HTMLElement }) => _.set(e.target, 'style', ''),
             }}
             leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
             appear={false}
           >
-            {items.map((item, index) => (
+            {_.map(parsedItems, (item, index) => (
               <span key={`${index}-${item}`} style={{ display: 'inline-block' }}>
                 <Tag color="blue" closable onClose={() => func.remove(index)}>
                   {item}
@@ -75,13 +80,14 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
 
   return (
     <>
-      {_.map(items, (item, index) => (
+      {_.map(parsedItems, (item, index) => (
         <React.Fragment key={index}>
           <Input
             value={item}
             onChange={(e) => {
-              items[index] = e.target.value;
-              onChange(items);
+              _.set(parsedItems, index, e.target.value);
+              // parsedItems[index] = e.target.value;
+              onChange(parsedItems);
             }}
             addonAfter={<CloseOutlined onClick={() => func.remove(index)} />}
           />

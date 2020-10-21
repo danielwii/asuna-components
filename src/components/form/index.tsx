@@ -8,7 +8,15 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { SketchPicker } from 'react-color';
 import * as util from 'util';
-import { AsunaSelect, DebugInfo, DynamicJsonArrayTable, ObjectJsonTableHelper, StringTmpl, Uploader } from '..';
+import {
+  AsunaSelect,
+  DebugInfo,
+  DynamicJsonArrayTable,
+  ObjectJsonTableHelper,
+  StringArray,
+  StringTmpl,
+  Uploader,
+} from '..';
 import { isPromiseAlike, WithVariable } from '../../helper';
 import { DefaultFileUploaderAdapterImpl } from '../upload';
 import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
@@ -98,6 +106,7 @@ export function RenderInputComponent<Values, InputValue>({
         </React.Fragment>
       );
     }
+    case FormFieldType.json:
     case FormFieldType.text: {
       const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
       return (
@@ -122,6 +131,16 @@ export function RenderInputComponent<Values, InputValue>({
             value={value}
             {...fieldDef.field.extra}
           />
+        </React.Fragment>
+      );
+    }
+    case 'stringArray': {
+      const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
+      const name = field.name;
+      return (
+        <React.Fragment>
+          <label>{label}</label>
+          <StringArray onChange={(value) => field.onChange({ target: { id: name, name, value } })} items={value} />
         </React.Fragment>
       );
     }
@@ -228,6 +247,7 @@ export function RenderInputComponent<Values, InputValue>({
 
 const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
   const { isSubmitting, message, fields, handleSubmit, handleReset, onReset, onCancel, onClear, setValues } = props;
+
   return (
     <Form
       css={css`
@@ -244,7 +264,6 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
           {({ field, form }: FieldProps<string | number | boolean, FormikValues>) => {
             const hasError = !!(form.touched[formField.name] && form.errors[formField.name]);
             const value = field.value ?? formField.defaultValue;
-
             return (
               <div key={field.name}>
                 <RenderInputComponent<FormikValues, string | number | boolean>

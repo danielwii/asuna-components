@@ -1,5 +1,5 @@
-import React from 'react';
 import * as _ from 'lodash';
+import React from 'react';
 
 export type LoadingType =
   | 'plane'
@@ -15,7 +15,7 @@ export type LoadingType =
   | 'wave'
   | 'bounce';
 
-export const Loading: React.FC<{ type: LoadingType }> = ({ type }) => {
+export const Loading: React.FC<{ type: LoadingType }> = React.memo(({ type }) => {
   switch (type) {
     case 'wander':
       return (
@@ -103,4 +103,4 @@ export const Loading: React.FC<{ type: LoadingType }> = ({ type }) => {
     default:
       return <div className="sk-plane" />;
   }
-};
+});

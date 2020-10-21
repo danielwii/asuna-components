@@ -15,7 +15,7 @@ export const WithDebugInfo: React.FC<{ info: any; debug?: boolean }> = ({ info, 
       </>
     );
   }
-  return children as React.ReactElement;
+  return <div>{children}</div>;
 };
 
 export const DebugInfo: React.FC<{
@@ -27,7 +27,7 @@ export const DebugInfo: React.FC<{
   const [lv, setLevel] = useState(3);
 
   if (!debug) {
-    return null;
+    return <div />;
   }
 
   const rendered = ((type) => {

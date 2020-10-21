@@ -1,10 +1,8 @@
 import { storiesOf } from '@storybook/react';
-import { Divider } from 'antd';
 import 'antd/dist/antd.css';
 import React from 'react';
-import * as util from 'util';
-import { StoreProvider } from '../src/helper';
 import { Image } from '../src';
+import { StoreProvider } from '../src/helper';
 
 storiesOf('Image', module).add('default', () => (
   <div style={{ margin: '1rem' }}>
