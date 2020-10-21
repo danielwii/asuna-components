@@ -303,7 +303,9 @@ export const EasyForm = withFormik<EasyFormProps, FormikValues>({
   mapPropsToValues: ({ fields, initialValues }) =>
     Object.assign(
       {},
-      ..._.map(fields, (field: FormField, name: string) => ({ [name]: initialValues[name] ?? field.defaultValue })),
+      ..._.map(fields, (field: FormField, name: string) => ({
+        [name]: _.get(initialValues, name) ?? field.defaultValue,
+      })),
     ),
 
   validate: (values: FormikValues, props) => {
