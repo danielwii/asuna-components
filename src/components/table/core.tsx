@@ -32,11 +32,11 @@ export const AsunaTable: React.FC<AsunaTableProps> = ({ columns, dataSource, onC
         `}
       >
         <React.Fragment
-          css={css`
-            > div {
-              //grid-area: header;
-            }
-          `}
+        // css={css`
+        //   > div {
+        //     //grid-area: header;
+        //   }
+        // `}
         >
           {_.map(columns, (column) => (
             <div
@@ -50,11 +50,11 @@ export const AsunaTable: React.FC<AsunaTableProps> = ({ columns, dataSource, onC
           ))}
         </React.Fragment>
         <React.Fragment
-          css={css`
-            > div {
-              //grid-area: main;
-            }
-          `}
+        // css={css`
+        //   > div {
+        //     //grid-area: main;
+        //   }
+        // `}
         >
           {_.map(dataSource, (item, index) => (
             <RowRender
