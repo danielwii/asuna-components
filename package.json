@@ -1,6 +1,6 @@
 {
   "name": "asuna-components",
-  "version": "0.4.31",
+  "version": "0.4.32",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
