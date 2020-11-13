@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
+import { css, jsx } from '@emotion/react';
 import { FilePdfOutlined } from '@ant-design/icons';
 import { Button, Divider, Input, List, Modal, Tooltip } from 'antd';
 import faker from 'faker';

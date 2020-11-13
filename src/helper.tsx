@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
+import { css, jsx } from '@emotion/react';
 import { Button, Tooltip } from 'antd';
 import { Promise } from 'bluebird';
 import * as _ from 'lodash';

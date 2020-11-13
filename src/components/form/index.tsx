@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
+import { css, jsx } from '@emotion/react';
 import { Button, Card, Divider, Input, Space, Switch } from 'antd';
 import { Promise } from 'bluebird';
 import { changeAntdTheme, generateThemeColor } from 'dynamic-antd-theme';

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
+import { css, jsx } from '@emotion/react';
 import { Alert, Button, Col, Divider, Input, Row, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { WithVariable } from '../helper';

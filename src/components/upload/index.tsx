@@ -12,7 +12,7 @@ import {
   VerticalLeftOutlined,
   VerticalRightOutlined,
 } from '@ant-design/icons';
-import { css, jsx } from '@emotion/core';
+import { css, jsx } from '@emotion/react';
 import { Button, Divider, Input, Radio, Tag, Upload } from 'antd';
 import { RcCustomRequestOptions, RcFile, UploadFile, UploadListType } from 'antd/es/upload/interface';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
