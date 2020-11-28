@@ -7,6 +7,7 @@ import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, Fo
 import * as _ from 'lodash';
 import * as React from 'react';
 import { SketchPicker } from 'react-color';
+import { useLogger } from 'react-use';
 import * as util from 'util';
 import {
   AsunaSelect,
@@ -30,31 +31,17 @@ interface FormProps<FieldsType> {
 }
 
 interface EasyFormProps extends FormProps<FormFields> {
-  initialValues: Record<string, unknown>;
-  onSubmit: (values: Record<string, unknown>) => Promise<unknown> | unknown;
-  onReset?: () => Promise<unknown> | unknown;
-  onCancel?: () => Promise<unknown> | unknown;
-  onClear?: () => Promise<unknown> | unknown;
+  initialValues: Record<string, any>;
+  onSubmit: (values: Record<string, any>) => Promise<any> | any;
+  onReset?: () => Promise<any> | any;
+  onCancel?: () => Promise<any> | any;
+  onClear?: () => Promise<any> | any;
 }
 
-export function RenderInputComponent<Values, InputValue>({
-  form,
-  fieldDef,
-  field,
-  value,
-}: {
-  form: FormikProps<Values>;
-  fieldDef: FormFieldDef;
-  field: FieldInputProps<InputValue>;
-  value: any;
-}) {
-  // useLogger('RenderInputComponent', { fieldDef, field, value });
-
-  const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
-  const name = field.name;
-
-  const TheFileds = {
-    boolean: (
+const BooleanInput: React.FC<{ fieldDef: FormFieldDef; field: FieldInputProps<any>; value: any }> = React.memo(
+  ({ fieldDef, field, value }) => {
+    useLogger('[BooleanInput]', fieldDef, field, { value });
+    return (
       <React.Fragment>
         <label>{fieldDef.name}</label>
         <Switch
@@ -64,23 +51,15 @@ export function RenderInputComponent<Values, InputValue>({
           defaultChecked={value}
         />
       </React.Fragment>
-    ),
-    color: (
-      <React.Fragment>
-        <label>{field.name}</label>
-        <SketchPicker
-          css={css`
-            margin: 1rem;
-          `}
-          color={value}
-          onChange={(color) => {
-            changeAntdTheme(generateThemeColor(color.hex));
-            field.onChange({ target: { id: field.name, name: field.name, value: color } });
-          }}
-        />
-      </React.Fragment>
-    ),
-    image: (
+    );
+  },
+  (prevProps, nextProps) => prevProps.value === nextProps.value,
+);
+
+const UploaderInput: React.FC<{ fieldDef: FormFieldDef; field: FieldInputProps<any>; value: any }> = React.memo(
+  ({ fieldDef, field, value }) => {
+    useLogger('[UploaderInput]', fieldDef, field, { value });
+    return (
       <React.Fragment>
         <label>{field.name}</label>
         <Uploader
@@ -92,32 +71,60 @@ export function RenderInputComponent<Values, InputValue>({
           }}
         />
       </React.Fragment>
-    ),
-    string: (
+    );
+  },
+  (prevProps, nextProps) => prevProps.value === nextProps.value,
+);
+
+const SelectInput: React.FC<{
+  fieldDef: FormFieldDef;
+  field: FieldInputProps<any>;
+  label: string;
+  value: any;
+}> = React.memo(
+  ({ fieldDef, field, label, value }) => {
+    useLogger('[SelectInput]', fieldDef, field, { label, value });
+    return (
       <React.Fragment>
         <label>{label}</label>
-        <Input id={field.name} {...field} value={value} />
+        <AsunaSelect
+          style={{ width: 240 }}
+          placeholder={label}
+          {...field}
+          items={[]}
+          onChange={(value) => field.onChange({ target: { id: name, name, value } })}
+          value={value}
+          {...fieldDef.field.extra}
+        />
       </React.Fragment>
-    ),
-    json: (
-      <React.Fragment>
-        <label>{label}</label>
-        <Input.TextArea id={field.name} {...field} autoSize rows={4} value={value} />
-      </React.Fragment>
-    ),
-    stringArray: (
+    );
+  },
+  (prevProps, nextProps) => prevProps.value === nextProps.value,
+);
+
+const StringArrayInput: React.FC<{ label: string; field: FieldInputProps<any>; value: any }> = React.memo(
+  ({ label, field, value }) => {
+    const name = field.name;
+    useLogger('[StringArrayInput]', field, { label, value });
+    return (
       <React.Fragment>
         <label>{label}</label>
         <StringArray onChange={(value) => field.onChange({ target: { id: name, name, value } })} items={value} />
       </React.Fragment>
-    ),
-    stringTmpl: (
-      <React.Fragment>
-        <label>{label}</label>
-        <StringTmpl tmpl={value} {...field} fields={[]} {...fieldDef.field.extra} />
-      </React.Fragment>
-    ),
-    emailTmplData: (
+    );
+  },
+  (prevProps, nextProps) => prevProps.value === nextProps.value,
+);
+
+const EmailTmplDataInput: React.FC<{
+  form: FormikProps<any>;
+  label: string;
+  field: FieldInputProps<any>;
+  value: any;
+}> = React.memo(
+  ({ form, label, field, value }) => {
+    useLogger('[EmailTmplDataInput]', field, { label, value });
+    return (
       <React.Fragment>
         <label>{label}</label>
         <DynamicJsonArrayTable
@@ -146,109 +153,138 @@ export function RenderInputComponent<Values, InputValue>({
         />
         {/* <DebugInfo data={value} type="util" /> */}
       </React.Fragment>
-    ),
-    wxTmplData: (
-      <React.Fragment>
-        <label>{label}</label>
-        <DynamicJsonArrayTable
-          adapter={ObjectJsonTableHelper}
-          value={value}
-          preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
-          render={({ fieldOpts, index }) => (
-            <Card>
-              <Input {...fieldOpts('key', index)} placeholder="key" />{' '}
-              <Input {...fieldOpts('color', index)} placeholder="color" />
-              <Input.TextArea {...fieldOpts('value', index)} placeholder="value" autoSize />
-            </Card>
-          )}
-          onChange={(values) => form.setFieldValue(field.name, values)}
-        />
-        {/* <DebugInfo data={value} type="util" /> */}
-      </React.Fragment>
-    ),
-    wxSubscribeData: (
-      <React.Fragment>
-        <label>{label}</label>
-        <DynamicJsonArrayTable
-          adapter={ObjectJsonTableHelper}
-          value={value}
-          preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
-          render={({ fieldOpts, index }) => (
-            <Card>
-              <Input {...fieldOpts('key', index)} placeholder="key" />
-              <Input.TextArea {...fieldOpts('value', index)} placeholder="value" autoSize />
-            </Card>
-          )}
-          onChange={(values) => {
-            console.log('onChange', field.name, values);
-            form.setFieldValue(field.name, values);
-          }}
-        />
-        <DebugInfo data={value} type="util" />
-      </React.Fragment>
-    ),
-    select: (
-      <React.Fragment>
-        <label>{label}</label>
-        <AsunaSelect
-          style={{ width: 240 }}
-          placeholder={label}
-          {...field}
-          onChange={(value) => field.onChange({ target: { id: name, name, value } })}
-          value={value}
-          {...fieldDef.field.extra}
-        />
-      </React.Fragment>
-    ),
-    default: (
-      <React.Fragment>
-        <label>{label}</label>
-        <Input id={field.name} type={fieldDef.field.type} {...field} value={value} placeholder={label} />
-        {/* <DebugInfo data={{ field, fieldDef, value }} /> */}
-      </React.Fragment>
-    ),
-  };
+    );
+  },
 
-  switch (fieldDef.field.type) {
-    case FormFieldType.boolean: {
-      return TheFileds.boolean;
+  (prevProps, nextProps) => prevProps.value === nextProps.value,
+);
+
+export const RenderInputComponent: React.FC<{
+  form: FormikProps<FormikValues>;
+  fieldDef: FormFieldDef;
+  field: FieldInputProps<string | number | boolean>;
+  value: any;
+}> = React.memo(
+  ({ form, fieldDef, field, value }) => {
+    // useLogger('RenderInputComponent', { fieldDef, field, value });
+
+    const label = field.name === fieldDef.name ? field.name : `${field.name} / ${fieldDef.name}`;
+
+    switch (fieldDef.field.type) {
+      case FormFieldType.boolean: {
+        return <BooleanInput fieldDef={fieldDef} field={field} value={value} />;
+      }
+      case FormFieldType.color: {
+        return (
+          <React.Fragment>
+            <label>{field.name}</label>
+            <SketchPicker
+              css={css`
+                margin: 1rem;
+              `}
+              color={value}
+              onChange={(color) => {
+                changeAntdTheme(generateThemeColor(color.hex));
+                field.onChange({ target: { id: field.name, name: field.name, value: color } });
+              }}
+            />
+          </React.Fragment>
+        );
+      }
+      case FormFieldType.image: {
+        return <UploaderInput fieldDef={fieldDef} field={field} value={value} />;
+      }
+      case FormFieldType.string: {
+        return (
+          <React.Fragment>
+            <label>{label}</label>
+            <Input id={field.name} {...field} value={value} />
+          </React.Fragment>
+        );
+      }
+      case FormFieldType.json:
+      case FormFieldType.text: {
+        return (
+          <React.Fragment>
+            <label>{label}</label>
+            <Input.TextArea id={field.name} {...field} autoSize rows={4} value={value} />
+          </React.Fragment>
+        );
+      }
+      case FormFieldType.stringArray: {
+        return <StringArrayInput label={label} field={field} value={value} />;
+      }
+      case FormFieldType.stringTmpl: {
+        return (
+          <React.Fragment>
+            <label>{label}</label>
+            <StringTmpl tmpl={value} {...field} fields={[]} {...fieldDef.field.extra} />
+          </React.Fragment>
+        );
+      }
+      case FormFieldType.emailTmplData: {
+        return <EmailTmplDataInput form={form} label={label} field={field} value={value} />;
+      }
+      case FormFieldType.wxTmplData: {
+        return (
+          <React.Fragment>
+            <label>{label}</label>
+            <DynamicJsonArrayTable
+              adapter={ObjectJsonTableHelper}
+              value={value}
+              preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
+              render={({ fieldOpts, index }) => (
+                <Card>
+                  <Input {...fieldOpts('key', index)} placeholder="key" />{' '}
+                  <Input {...fieldOpts('color', index)} placeholder="color" />
+                  <Input.TextArea {...fieldOpts('value', index)} placeholder="value" autoSize />
+                </Card>
+              )}
+              onChange={(values) => form.setFieldValue(field.name, values)}
+            />
+            {/* <DebugInfo data={value} type="util" /> */}
+          </React.Fragment>
+        );
+      }
+      case FormFieldType.wxSubscribeData: {
+        return (
+          <React.Fragment>
+            <label>{label}</label>
+            <DynamicJsonArrayTable
+              adapter={ObjectJsonTableHelper}
+              value={value}
+              preview={(item) => <div>{util.inspect(ObjectJsonTableHelper.keyParser(item))}</div>}
+              render={({ fieldOpts, index }) => (
+                <Card>
+                  <Input {...fieldOpts('key', index)} placeholder="key" />
+                  <Input.TextArea {...fieldOpts('value', index)} placeholder="value" autoSize />
+                </Card>
+              )}
+              onChange={(values) => {
+                console.log('onChange', field.name, values);
+                form.setFieldValue(field.name, values);
+              }}
+            />
+            <DebugInfo data={value} type="util" />
+          </React.Fragment>
+        );
+      }
+      case FormFieldType.select: {
+        return <SelectInput fieldDef={fieldDef} field={field} label={label} value={value} />;
+      }
+      default: {
+        return (
+          <React.Fragment>
+            <label>{label}</label>
+            <Input id={field.name} type={fieldDef.field.type} {...field} value={value} placeholder={label} />
+            {/* <DebugInfo data={{ field, fieldDef, value }} /> */}
+          </React.Fragment>
+        );
+      }
     }
-    case FormFieldType.color: {
-      return TheFileds.color;
-    }
-    case FormFieldType.image: {
-      return TheFileds.image;
-    }
-    case FormFieldType.string: {
-      return TheFileds.string;
-    }
-    case FormFieldType.json:
-    case FormFieldType.text: {
-      return TheFileds.json;
-    }
-    case FormFieldType.stringArray: {
-      return TheFileds.stringArray;
-    }
-    case FormFieldType.stringTmpl: {
-      return TheFileds.stringTmpl;
-    }
-    case FormFieldType.emailTmplData: {
-      return TheFileds.emailTmplData;
-    }
-    case FormFieldType.wxTmplData: {
-      return TheFileds.wxTmplData;
-    }
-    case FormFieldType.wxSubscribeData: {
-      return TheFileds.wxSubscribeData;
-    }
-    case FormFieldType.select: {
-      return TheFileds.select;
-    }
-    default: {
-      return TheFileds.default;
-    }
-  }
-}
+  },
+  (prevProps, nextProps) => prevProps.value === nextProps.value,
+);
 
 const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
   const { isSubmitting, message, fields, handleSubmit, handleReset, onReset, onCancel, onClear, setValues } = props;
@@ -265,26 +301,29 @@ const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
     >
       {message && <h1>{message}</h1>}
       {_.map(fields, (formField: FormField, key: string) => (
-        <Field key={key} name={key}>
-          {({ field, form }: FieldProps<string | number | boolean, FormikValues>) => {
-            const hasError = !!(form.touched[formField.name] && form.errors[formField.name]);
-            const value = field.value ?? formField.defaultValue;
-            return (
-              <div key={field.name}>
-                <RenderInputComponent<FormikValues, string | number | boolean>
-                  form={form}
-                  fieldDef={{ field: formField, name: formField.name }}
-                  field={field}
-                  value={value}
-                />
-                {/* <Input id={field.name} type={formField.type} {...field} value={value} /> */}
-                {formField.help && <div style={{ color: 'grey' }}>{formField.help}</div>}
-                {hasError && <div style={{ color: 'red' }}>{form.errors[formField.name]}</div>}
-                <Divider dashed style={{ margin: '0.5rem 0' }} />
-              </div>
-            );
-          }}
-        </Field>
+        <div key={key}>
+          <div>{key}</div>
+          <Field key={key} name={key}>
+            {({ field, form }: FieldProps<string | number | boolean, FormikValues>) => {
+              const hasError = !!(form.touched[formField.name] && form.errors[formField.name]);
+              const value = field.value ?? formField.defaultValue;
+              return (
+                <div key={field.name}>
+                  <RenderInputComponent
+                    form={form}
+                    fieldDef={{ field: formField, name: formField.name }}
+                    field={field}
+                    value={value}
+                  />
+                  {/* <Input id={field.name} type={formField.type} {...field} value={value} /> */}
+                  {formField.help && <div style={{ color: 'grey' }}>{formField.help}</div>}
+                  {hasError && <div style={{ color: 'red' }}>{form.errors[formField.name]}</div>}
+                  <Divider dashed style={{ margin: '0.5rem 0' }} />
+                </div>
+              );
+            }}
+          </Field>
+        </div>
       ))}
       <Divider />
       <Space>

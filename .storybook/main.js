@@ -11,7 +11,7 @@ module.exports = {
     config.resolve.extensions.push('.ts', '.tsx');
 
     // remove CaseSensitivePathsPlugin
-    config.plugins = config.plugins.filter((plugin) => plugin.constructor.name !== 'CaseSensitivePathsPlugin');
+    // config.plugins = config.plugins.filter((plugin) => plugin.constructor.name !== 'CaseSensitivePathsPlugin');
     // console.log(config.plugins);
 
     return config;

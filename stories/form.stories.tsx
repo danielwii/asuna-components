@@ -19,21 +19,16 @@ const fields: FormFields = {
   // colorPicker: { name: 'colorPicker', type: 'color' },
   image: { name: 'image', type: 'image', extra: { adapter: new DefaultFileUploaderAdapterImpl() } },
 };
-const fieldValues = {
-  number: 10,
-  string: 'hello world',
-};
-
 storiesOf('Form', module).add('default', () => (
   <div style={{ margin: '1rem' }}>
     <StoreProvider>
       {(state, setState) => (
         <EasyForm
           fields={fields}
-          initialValues={fieldValues}
-          onSubmit={(values) => {
-            console.log('submitted', values);
-            setState({ values });
+          initialValues={{ number: 10, string: 'hello world' }}
+          onSubmit={({ number, string }) => {
+            console.log('submitted', { number, string });
+            setState({ number, string });
           }}
           onReset={() => {
             console.log('reset');
