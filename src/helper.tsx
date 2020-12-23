@@ -1,3 +1,4 @@
+/** @jsxRuntime classic */
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
 import { Button, Tooltip } from 'antd';

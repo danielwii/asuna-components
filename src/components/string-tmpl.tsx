@@ -1,3 +1,4 @@
+/** @jsxRuntime classic */
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
 import { Alert, Button, Col, Divider, Input, Row, Tooltip } from 'antd';
