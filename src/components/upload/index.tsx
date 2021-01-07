@@ -1,5 +1,6 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
+import { css, jsx } from '@emotion/react';
 import {
   CloudUploadOutlined,
   DeleteOutlined,
@@ -13,20 +14,18 @@ import {
   VerticalLeftOutlined,
   VerticalRightOutlined,
 } from '@ant-design/icons';
-import { css, jsx } from '@emotion/react';
 import { Button, Divider, Input, Radio, Tag, Upload } from 'antd';
-import { RcCustomRequestOptions, RcFile, UploadFile, UploadListType } from 'antd/es/upload/interface';
-import { UploadChangeParam } from 'antd/lib/upload/interface';
+import { UploadFile, UploadListType, UploadProps, UploadChangeParam } from 'antd/es/upload/interface';
 import { AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
 import React from 'react';
 import { useLogger } from 'react-use';
+
 import { WithVariable } from '../../helper';
 import { WithDebugInfo } from '../debug';
 import { Loading } from '../loading';
 import { AssetsPreview, ImagePreview, WithModal } from '../preview';
 import { valueToArray, valueToString, wrapFilesToFileList } from './utils';
-
 export * from './utils';
 
 export interface IUploadedFile {
@@ -91,7 +90,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
   useLogger(Uploader.name, { loading, layout }, fileList);
 
   const func = {
-    beforeUpload: (file: RcFile, files: RcFile[]): boolean | PromiseLike<void> => {
+    beforeUpload: ((file, files) => {
       if (disabled) {
         return false;
       }
@@ -103,8 +102,8 @@ export const Uploader: React.FC<IUploaderProps> = ({
 
       // TODO return false to support upload on manual
       return validated;
-    },
-    customRequest: (options: RcCustomRequestOptions): void => {
+    }) as UploadProps['beforeUpload'],
+    customRequest: ((options) => {
       setLoading(true);
       // console.log('[customRequest]', options, fileList);
 
@@ -112,7 +111,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
       adapter
         .upload(file, {
           onUploadProgress: ({ total, loaded }) =>
-            onProgress({ percent: Number(Math.round((loaded / total) * 100).toFixed(2)) }, file),
+            (onProgress as any)({ percent: Number(Math.round((loaded / total) * 100).toFixed(2)) }, file), // fixme type issue
         })
         .then(([uploaded]) => {
           // const combined = func.valueToSubmit(
@@ -125,12 +124,12 @@ export const Uploader: React.FC<IUploaderProps> = ({
           // onChange(combined);
 
           // file['new'] = true;
-          onSuccess(uploaded, file); // update status to done
+          (onSuccess as any)(uploaded, file); // update status to done fixme type issue
           // setTimeout(() => updateRefreshFlag(refreshFlag + 1), fileList.length * 10);
         })
         .catch(onError)
         .finally(() => setLoading(false));
-    },
+    }) as UploadProps['customRequest'],
     handleChange: (info: UploadChangeParam): void => {
       const uploads = _.filter(info.fileList, (file) => _.has(file, 'status'));
       const status = uploads.map((file: UploadFile) => file.status);
