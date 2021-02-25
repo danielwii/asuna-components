@@ -3,7 +3,7 @@
 import { css, jsx } from '@emotion/react';
 import { Button, Card, Divider, Input, Space, Switch } from 'antd';
 import { Promise } from 'bluebird';
-import { changeAntdTheme, generateThemeColor } from 'dynamic-antd-theme';
+import { changeAntdTheme } from 'dynamic-antd-theme';
 import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, FormikValues, withFormik } from 'formik';
 import * as _ from 'lodash';
 import * as React from 'react';
@@ -185,7 +185,7 @@ export const RenderInputComponent: React.FC<{
               `}
               color={value}
               onChange={(color) => {
-                changeAntdTheme(generateThemeColor(color.hex));
+                changeAntdTheme(color.hex);
                 field.onChange({ target: { id: field.name, name: field.name, value: color } });
               }}
             />

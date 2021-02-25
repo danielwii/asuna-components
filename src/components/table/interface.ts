@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export type ColumnType = 'text';
 
 export interface AsunaTableProps {

@@ -2,7 +2,6 @@ import { Button, Modal, Popconfirm, Tooltip } from 'antd';
 import { ButtonProps } from 'antd/es/button';
 import { PopconfirmProps } from 'antd/es/popconfirm';
 import { TooltipProps } from 'antd/es/tooltip';
-import { Promise } from 'bluebird';
 import _ from 'lodash';
 import React, { useState } from 'react';
 
