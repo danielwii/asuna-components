@@ -1,6 +1,11 @@
 /** @jsxRuntime classic */
+
 /** @jsx jsx */
-import { css, jsx } from '@emotion/react';
+import { WithVariable } from '../../helper';
+import { WithDebugInfo } from '../debug';
+import { Loading } from '../loading';
+import { AssetsPreview, ImagePreview, WithModal } from '../preview';
+import { valueToArray, valueToString, wrapFilesToFileList } from './utils';
 import {
   CloudUploadOutlined,
   DeleteOutlined,
@@ -14,18 +19,15 @@ import {
   VerticalLeftOutlined,
   VerticalRightOutlined,
 } from '@ant-design/icons';
+import { css, jsx } from '@emotion/react';
 import { Button, Divider, Input, Radio, Tag, Upload } from 'antd';
-import type { UploadFile, UploadListType, UploadProps, UploadChangeParam, RcFile } from 'antd/es/upload/interface';
-import type { AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
 import React from 'react';
 import { useLogger } from 'react-use';
 
-import { WithVariable } from '../../helper';
-import { WithDebugInfo } from '../debug';
-import { Loading } from '../loading';
-import { AssetsPreview, ImagePreview, WithModal } from '../preview';
-import { valueToArray, valueToString, wrapFilesToFileList } from './utils';
+import type { UploadFile, UploadListType, UploadProps, UploadChangeParam, RcFile } from 'antd/es/upload/interface';
+import type { AxiosRequestConfig } from 'axios';
+
 export * from './utils';
 
 export interface IUploadedFile {
@@ -148,10 +150,12 @@ export const Uploader: React.FC<IUploaderProps> = ({
         setFileList([...info.fileList]); // update progress
       }
 
+      const responses = _.map(uploads, (upload) => ({ ...upload.response }));
+      const files = _.map(fileList, (file) => ({ url: file.url, response: { ...file.response } }));
       if (allDone && uploads.length > 0) {
         const combined = func.valueToSubmit(
-          fileList.map((file) => file.url ?? file.response.fullpath),
-          uploads.map((uploaded) => uploaded.response.fullpath),
+          _.map(files, (file) => file.url ?? file.response.fullpath),
+          _.map(responses, (res) => res.fullpath),
         );
         onChange(combined);
       }

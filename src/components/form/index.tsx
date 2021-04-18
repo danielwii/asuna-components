@@ -1,15 +1,6 @@
 /** @jsxRuntime classic */
+
 /** @jsx jsx */
-import { css, jsx } from '@emotion/react';
-import { Button, Card, Divider, Input, Space, Switch } from 'antd';
-import { Promise } from 'bluebird';
-import { changeAntdTheme } from 'dynamic-antd-theme';
-import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, FormikValues, withFormik } from 'formik';
-import * as _ from 'lodash';
-import * as React from 'react';
-import { SketchPicker } from 'react-color';
-import { useLogger } from 'react-use';
-import * as util from 'util';
 import {
   AsunaSelect,
   DebugInfo,
@@ -22,6 +13,17 @@ import {
 import { isPromiseAlike, WithVariable } from '../../helper';
 import { DefaultFileUploaderAdapterImpl } from '../upload';
 import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
+// noinspection ES6UnusedImports
+import { css, jsx } from '@emotion/react';
+import { Button, Card, Divider, Input, Space, Switch } from 'antd';
+import { Promise } from 'bluebird';
+import { changeAntdTheme } from 'dynamic-antd-theme';
+import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, FormikValues, withFormik } from 'formik';
+import _ from 'lodash';
+import React from 'react';
+import { SketchPicker } from 'react-color';
+import { useLogger } from 'react-use';
+import util from 'util';
 
 export * from './interfaces';
 
@@ -31,8 +33,10 @@ interface FormProps<FieldsType> {
   fields: FieldsType;
 }
 
+export type FieldRender = (opts: { form; formField: FormField; field; value }) => React.ReactNode;
 interface EasyFormProps extends FormProps<FormFields> {
   initialValues: Record<string, any>;
+  customFieldsRender?: Record<string, FieldRender>;
   onSubmit: (values: Record<string, any>) => Promise<any> | any;
   onReset?: () => Promise<any> | any;
   onCancel?: () => Promise<any> | any;
@@ -57,19 +61,24 @@ const BooleanInput: React.FC<{ fieldDef: FormFieldDef; field: FieldInputProps<an
   (prevProps, nextProps) => prevProps.value === nextProps.value,
 );
 
-const UploaderInput: React.FC<{ fieldDef: FormFieldDef; field: FieldInputProps<any>; value: any }> = React.memo(
-  ({ fieldDef, field, value }) => {
-    useLogger('[UploaderInput]', fieldDef, field, { value });
+const UploaderInput: React.FC<{
+  fieldDef: FormFieldDef;
+  field: FieldInputProps<any>;
+  value: any;
+  multiple?: boolean;
+}> = React.memo(
+  ({ fieldDef, field, value, multiple }) => {
+    useLogger('*[UploaderInput]*', fieldDef, field, { value });
     return (
       <React.Fragment>
         <label>{field.name}</label>
         <Uploader
-          {...{ adapter: new DefaultFileUploaderAdapterImpl(), ...fieldDef.field.extra }}
+          multiple={multiple}
+          adapter={new DefaultFileUploaderAdapterImpl(`${process.env.NEXT_PUBLIC_API_ENDPOINT}`)}
+          {...fieldDef.field.extra}
           // adapter={fieldDef.field.extra?.adapter ?? new DefaultFileUploaderAdapterImpl()}
           value={value}
-          onChange={(newValue) => {
-            field.onChange({ target: { id: field.name, name: field.name, value: newValue } });
-          }}
+          onChange={(newValue: any) => field.onChange({ target: { id: field.name, name: field.name, value: newValue } })}
         />
       </React.Fragment>
     );
@@ -195,6 +204,9 @@ export const RenderInputComponent: React.FC<{
       case FormFieldType.image: {
         return <UploaderInput fieldDef={fieldDef} field={field} value={value} />;
       }
+      case FormFieldType.images: {
+        return <UploaderInput multiple fieldDef={fieldDef} field={field} value={value} />;
+      }
       case FormFieldType.string: {
         return (
           <React.Fragment>
@@ -287,61 +299,72 @@ export const RenderInputComponent: React.FC<{
   (prevProps, nextProps) => prevProps.value === nextProps.value,
 );
 
-const InnerForm = (props: EasyFormProps & FormikProps<FormikValues>) => {
-  const { isSubmitting, message, fields, handleSubmit, handleReset, onReset, onCancel, onClear, setValues } = props;
-
-  return (
-    <Form
-      css={css`
-        div > label {
-          display: block;
-          margin: 0.2rem 0.1rem;
-          font-weight: bold;
-        }
-      `}
-    >
-      {message && <h1>{message}</h1>}
-      {_.map(fields, (formField: FormField, key: string) => (
-        <div key={key}>
-          <div>{key}</div>
-          <Field key={key} name={key}>
-            {({ field, form }: FieldProps<string | number | boolean, FormikValues>) => {
-              const hasError = !!(form.touched[formField.name] && form.errors[formField.name]);
-              const value = field.value ?? formField.defaultValue;
-              return (
-                <div key={field.name}>
+const InnerForm: React.FC<EasyFormProps & FormikProps<FormikValues>> = ({
+  isSubmitting,
+  message,
+  fields,
+  handleSubmit,
+  handleReset,
+  onReset,
+  onCancel,
+  onClear,
+  setValues,
+  customFieldsRender,
+}) => (
+  <Form
+    css={css`
+      div > label {
+        display: block;
+        margin: 0.2rem 0.1rem;
+        font-weight: bold;
+      }
+    `}
+  >
+    {message && <h1>{message}</h1>}
+    {_.map(fields, (formField: FormField, key: string) => (
+      <div key={key}>
+        <div>{key}</div>
+        <Field key={key} name={key}>
+          {({ field, form }: FieldProps<string | number | boolean, FormikValues>) => {
+            const hasError = !!(form.touched[formField.name] && form.errors[formField.name]);
+            const value = field.value ?? formField.defaultValue;
+            return (
+              <div key={field.name}>
+                {!_.has(customFieldsRender, formField.type) ? (
                   <RenderInputComponent
                     form={form}
                     fieldDef={{ field: formField, name: formField.name }}
                     field={field}
                     value={value}
                   />
-                  {/* <Input id={field.name} type={formField.type} {...field} value={value} /> */}
-                  {formField.help && <div style={{ color: 'grey' }}>{formField.help}</div>}
-                  {hasError && <div style={{ color: 'red' }}>{form.errors[formField.name]}</div>}
-                  <Divider dashed style={{ margin: '0.5rem 0' }} />
-                </div>
-              );
-            }}
-          </Field>
-        </div>
-      ))}
-      <Divider />
-      <Space>
-        <Button type="primary" htmlType="submit" onSubmit={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting' : 'Submit'}
+                ) : (
+                  customFieldsRender[formField.type]({ form, formField, field, value })
+                )}
+                {/* <Input id={field.name} type={formField.type} {...field} value={value} /> */}
+                {formField.help && <div style={{ color: 'grey' }}>{formField.help}</div>}
+                {hasError && <div style={{ color: 'red' }}>{form.errors[formField.name]}</div>}
+                <Divider dashed style={{ margin: '0.5rem 0' }} />
+              </div>
+            );
+          }}
+        </Field>
+      </div>
+    ))}
+    <Divider />
+    <Space>
+      <Button type="primary" htmlType="submit" onSubmit={handleSubmit} disabled={isSubmitting}>
+        {isSubmitting ? 'Submitting' : 'Submit'}
+      </Button>
+      {onReset && (
+        <Button onClick={handleReset} disabled={isSubmitting}>
+          {isSubmitting ? 'Resetting' : 'Reset'}
         </Button>
-        {onReset && (
-          <Button onClick={handleReset} disabled={isSubmitting}>
-            {isSubmitting ? 'Resetting' : 'Reset'}
-          </Button>
-        )}
-        {onCancel && <Button onClick={onCancel}>Cancel</Button>}
-        {onClear && <Button onClick={() => setValues({ fields })}>Clear</Button>}
-      </Space>
-    </Form>
-  );
-};
+      )}
+      {onCancel && <Button onClick={onCancel}>Cancel</Button>}
+      {onClear && <Button onClick={() => setValues({ fields })}>Clear</Button>}
+    </Space>
+  </Form>
+);
 
 export const EasyForm = withFormik<EasyFormProps, FormikValues>({
   // Transform outer props into form values

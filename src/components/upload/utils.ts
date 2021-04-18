@@ -1,10 +1,10 @@
+import { castToArrays } from '../../helper';
+import { IUploadedFile, UploaderAdapter } from './index';
 import { message } from 'antd';
 import { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
 import axios, { AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
 import * as fp from 'lodash/fp';
-import { castToArrays } from '../../helper';
-import { IUploadedFile, UploaderAdapter } from './index';
 
 export function wrapFilesToFileList(value: string | string[]): UploadFile[] {
   const files = valueToArray(value);
@@ -54,7 +54,7 @@ export function valueToString(value: string | string[], multiple: boolean, jsonM
 }
 
 export class DefaultFileUploaderAdapterImpl implements UploaderAdapter {
-  constructor(protected readonly host: string = '') {}
+  constructor(protected readonly host: string = '', private readonly config: AxiosRequestConfig = {}) {}
 
   upload(file: File, requestConfig?: AxiosRequestConfig): Promise<IUploadedFile[]> {
     const instance = axios.create({ baseURL: this.host, timeout: 60_000 });
@@ -62,6 +62,7 @@ export class DefaultFileUploaderAdapterImpl implements UploaderAdapter {
     const config: AxiosRequestConfig = {
       headers: { 'content-type': 'multipart/form-data' },
       ...(requestConfig ?? {}),
+      ...this.config,
     };
     const data = new FormData();
     data.append('files', file, file.name);
