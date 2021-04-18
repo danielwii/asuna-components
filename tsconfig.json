@@ -29,9 +29,9 @@
     /* Experimental Options */
 
     /* Advanced Options */
-    "outDir": "lib",
-    "declarationDir": "lib"
+    "outDir": "dist",
+    "declarationDir": "dist"
   },
   "include": ["src/**/*.ts*", "typings"],
-  "exclude": ["node_modules", "dist", "lib"]
+  "exclude": ["node_modules", "dist"]
 }

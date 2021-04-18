@@ -15,8 +15,8 @@ import {
   VerticalRightOutlined,
 } from '@ant-design/icons';
 import { Button, Divider, Input, Radio, Tag, Upload } from 'antd';
-import { UploadFile, UploadListType, UploadProps, UploadChangeParam } from 'antd/es/upload/interface';
-import { AxiosRequestConfig } from 'axios';
+import type { UploadFile, UploadListType, UploadProps, UploadChangeParam, RcFile } from 'antd/es/upload/interface';
+import type { AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
 import React from 'react';
 import { useLogger } from 'react-use';
@@ -109,7 +109,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
 
       const { file, onProgress, onSuccess, onError } = options;
       adapter
-        .upload(file, {
+        .upload(file as RcFile, {
           onUploadProgress: ({ total, loaded }) =>
             (onProgress as any)({ percent: Number(Math.round((loaded / total) * 100).toFixed(2)) }, file), // fixme type issue
         })
