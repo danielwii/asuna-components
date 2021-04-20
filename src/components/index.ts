@@ -7,6 +7,7 @@ export * from './elements';
 export * from './image';
 export * from './loading';
 export * from './preview';
+export * from './kv-array';
 export * from './string-array';
 export * from './string-tmpl';
 export * from './styled';

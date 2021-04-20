@@ -46,7 +46,7 @@ export function isJson(value): boolean {
   }
 }
 
-export function parseArray(value, orElse?): any[] {
+export function parseArray<T = any>(value, orElse?): T[] {
   if (_.isArray(value)) {
     return value;
   }
