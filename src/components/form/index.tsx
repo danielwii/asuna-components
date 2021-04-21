@@ -1,20 +1,9 @@
 /** @jsxRuntime classic */
 
 /** @jsx jsx */
-import {
-  AsunaSelect,
-  DebugInfo,
-  DynamicJsonArrayTable,
-  ObjectJsonTableHelper,
-  StringArray,
-  StringTmpl,
-  Uploader,
-} from '..';
-import { isPromiseAlike, WithVariable } from '../../helper';
-import { DefaultFileUploaderAdapterImpl } from '../upload';
-import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
 // noinspection ES6UnusedImports
 import { css, jsx } from '@emotion/react';
+
 import { Button, Card, Divider, Input, Space, Switch } from 'antd';
 import { Promise } from 'bluebird';
 import { changeAntdTheme } from 'dynamic-antd-theme';
@@ -24,6 +13,15 @@ import React from 'react';
 import { SketchPicker } from 'react-color';
 import { useLogger } from 'react-use';
 import util from 'util';
+
+import { isPromiseAlike, WithVariable } from '../../helper';
+import { DebugInfo } from '../debug';
+import { DynamicJsonArrayTable, ObjectJsonTableHelper } from '../dynamic-json-array';
+import { AsunaSelect } from '../select';
+import { StringArray } from '../string-array';
+import { StringTmpl } from '../string-tmpl';
+import { DefaultFileUploaderAdapterImpl, Uploader } from '../upload';
+import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
 
 export * from './interfaces';
 
@@ -78,7 +76,9 @@ const UploaderInput: React.FC<{
           {...fieldDef.field.extra}
           // adapter={fieldDef.field.extra?.adapter ?? new DefaultFileUploaderAdapterImpl()}
           value={value}
-          onChange={(newValue: any) => field.onChange({ target: { id: field.name, name: field.name, value: newValue } })}
+          onChange={(newValue: any) =>
+            field.onChange({ target: { id: field.name, name: field.name, value: newValue } })
+          }
         />
       </React.Fragment>
     );

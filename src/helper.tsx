@@ -1,13 +1,17 @@
 /** @jsxRuntime classic */
+
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
+
 import { Button, Tooltip } from 'antd';
 import { Promise } from 'bluebird';
 import * as _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
 import { useAsync } from 'react-use';
 import * as util from 'util';
-import { ErrorInfo, Loading } from './components';
+
+import { ErrorInfo } from './components/error';
+import { Loading } from './components/loading';
 
 /* class decorator */
 export function StaticImplements<T>() {
