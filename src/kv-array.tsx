@@ -5,7 +5,7 @@ import _ from 'lodash';
 import * as React from 'react';
 import { useLogger } from 'react-use';
 
-import { parseArray } from './helper';
+import { parseArray } from './helper/helper';
 
 export type KvArrayItem = { key: string; value: string };
 export interface KvArrayProps {

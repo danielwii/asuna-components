@@ -11,8 +11,8 @@ import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from
 import { useAsync } from 'react-use';
 import * as util from 'util';
 
-import { ErrorInfo } from './error';
-import { Loading } from './loading';
+import { ErrorInfo } from '../error/error';
+import { Loading } from '../loading';
 
 /* class decorator */
 export function StaticImplements<T>() {

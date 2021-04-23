@@ -10,7 +10,7 @@ import _ from 'lodash';
 import React from 'react';
 import { useLogger } from 'react-use';
 
-import { parseJSONIfCould, StaticImplements, WithVariable } from '../helper';
+import { parseJSONIfCould, StaticImplements, WithVariable } from '../helper/helper';
 
 export type FieldOpts = (
   name: string,

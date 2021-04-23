@@ -1,5 +1,5 @@
-import { castToArrays } from '../helper';
-import { IUploadedFile, UploaderAdapter } from './index';
+import { castToArrays } from '../helper/helper';
+import { IUploadedFile, UploaderAdapter } from './uploader';
 import { message } from 'antd';
 import { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
 import axios, { AxiosRequestConfig } from 'axios';

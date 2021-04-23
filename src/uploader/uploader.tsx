@@ -1,8 +1,8 @@
 /** @jsxRuntime classic */
 
 /** @jsx jsx */
-import { WithVariable } from '../helper';
-import { WithDebugInfo } from '../debug';
+import { WithVariable } from '../helper/helper';
+import { WithDebugInfo } from '../debug/debug';
 import { Loading } from '../loading';
 import { AssetsPreview, ImagePreview, WithModal } from '../preview-button/asset-preview';
 import { valueToArray, valueToString, wrapFilesToFileList } from './utils';

@@ -1,7 +1,7 @@
 import { Input, Tag } from 'antd';
 import React from 'react';
 
-import { isJson } from './helper';
+import { isJson } from '../helper/helper';
 
 import type { TextAreaProps } from 'antd/es/input';
 

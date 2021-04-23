@@ -7,7 +7,7 @@ import { css, jsx } from '@emotion/react';
 import { Alert, Button, Col, Divider, Input, Row, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 
-import { WithVariable } from './helper';
+import { WithVariable } from './helper/helper';
 import { MATCH_REGEX, Preview } from './preview-button/asset-preview';
 
 const Editable: React.FC<{

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
 
-import { Loading } from './loading';
+import { Loading } from '../loading';
 
 export const Image: React.FC<{ src: string; height?: string; width?: string }> = React.memo(
   ({ src, height, width }) => {

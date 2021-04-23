@@ -14,13 +14,13 @@ import { SketchPicker } from 'react-color';
 import { useLogger } from 'react-use';
 import util from 'util';
 
-import { DebugInfo } from '../debug';
-import { isPromiseAlike, WithVariable } from '../helper';
-import { AsunaSelect } from '../select';
+import { DebugInfo } from '../debug/debug';
+import { isPromiseAlike, WithVariable } from '../helper/helper';
+import { AsunaSelect } from '../select/select';
 import { StringArray } from '../string-array';
 import { StringTmpl } from '../string-tmpl';
 import { DynamicJsonArrayTable, ObjectJsonTableHelper } from '../table-helper/dynamic-json-array-table';
-import { DefaultFileUploaderAdapterImpl, Uploader } from '../upload';
+import { DefaultFileUploaderAdapterImpl, Uploader } from '../uploader/uploader';
 import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
 
 interface FormProps<FieldsType> {
@@ -30,7 +30,7 @@ interface FormProps<FieldsType> {
 }
 
 export type FieldRender = (opts: { form; formField: FormField; field; value }) => React.ReactNode;
-interface EasyFormProps extends FormProps<FormFields> {
+export interface EasyFormProps extends FormProps<FormFields> {
   initialValues: Record<string, any>;
   customFieldsRender?: Record<string, FieldRender>;
   onSubmit: (values: Record<string, any>) => Promise<any> | any;

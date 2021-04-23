@@ -15,9 +15,9 @@ import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/pri
 import { useMountedState } from 'react-use';
 
 // import styles from 'prism-themes/themes/prism-synthwave84.css';
-import { WithDebugInfo } from '../debug';
-import { parseJSONIfCould } from '../helper';
-import { FlexCenterBox, ThumbImage } from '../styled';
+import { WithDebugInfo } from '../debug/debug';
+import { parseJSONIfCould } from '../helper/helper';
+import { FlexCenterBox, ThumbImage } from '../styled/styled';
 
 export const WithModal: React.FC<{
   title?: string;
