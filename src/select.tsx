@@ -1,9 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
+
 import { Divider, Input, Select } from 'antd';
-import { SelectProps, SelectValue } from 'antd/es/select';
 import _ from 'lodash';
 import * as R from 'ramda';
 import React from 'react';
+
+import type { SelectProps, SelectValue } from 'antd/es/select';
 
 export type SelectItem =
   | (string | number)

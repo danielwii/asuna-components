@@ -1,7 +1,9 @@
 import { Input, Tag } from 'antd';
-import { TextAreaProps } from 'antd/lib/input/TextArea';
 import React from 'react';
-import { isJson } from '../helper';
+
+import { isJson } from './helper';
+
+import type { TextAreaProps } from 'antd/es/input';
 
 export const AsunaTextArea: React.FC<
   { value: string; onChange: (value: string) => any } & Omit<TextAreaProps, 'onChange'>

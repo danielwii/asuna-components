@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { IUploaderProps } from '../upload';
-import { AsunaSelectProps } from '../select';
+
+import type { IUploaderProps } from '../upload';
+import type { AsunaSelectProps } from '../select';
 
 export enum FormFieldType {
   string = 'string',

@@ -1,7 +1,10 @@
 /** @jsxRuntime classic */
+
 /** @jsx jsx */
-import { css, jsx } from '@emotion/react';
 import { FilePdfOutlined } from '@ant-design/icons';
+// noinspection ES6UnusedImports
+import { css, jsx } from '@emotion/react';
+
 import { Button, Divider, Input, List, Modal, Tooltip } from 'antd';
 import faker from 'faker';
 import * as _ from 'lodash';
@@ -11,10 +14,10 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { useMountedState } from 'react-use';
 
-import { parseJSONIfCould } from '../helper';
 // import styles from 'prism-themes/themes/prism-synthwave84.css';
-import { WithDebugInfo } from './debug';
-import { FlexCenterBox, ThumbImage } from './styled';
+import { WithDebugInfo } from '../debug';
+import { parseJSONIfCould } from '../helper';
+import { FlexCenterBox, ThumbImage } from '../styled';
 
 export const WithModal: React.FC<{
   title?: string;

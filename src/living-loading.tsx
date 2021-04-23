@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
-import * as _ from 'lodash';
+import _ from 'lodash';
 import * as React from 'react';
 import styled from 'styled-components';
 

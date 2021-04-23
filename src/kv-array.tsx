@@ -1,22 +1,22 @@
-import { CloseOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined } from '@ant-design/icons';
 
 import { Button, Divider, Input, Space } from 'antd';
 import _ from 'lodash';
 import * as React from 'react';
 import { useLogger } from 'react-use';
 
-import { parseArray } from '../helper';
+import { parseArray } from './helper';
 
-export type KVArrayItem = { key: string; value: string };
-export interface KVArrayProps {
-  items: KVArrayItem[];
-  onChange: (items: KVArrayItem[]) => void;
+export type KvArrayItem = { key: string; value: string };
+export interface KvArrayProps {
+  items: KvArrayItem[];
+  onChange: (items: KvArrayItem[]) => void;
 }
 
-export const KVArray: React.FC<KVArrayProps> = ({ items, onChange }) => {
-  const parsedItems = parseArray<KVArrayItem>(items, []);
+export const KvArray: React.FC<KvArrayProps> = ({ items, onChange }) => {
+  const parsedItems = parseArray<KvArrayItem>(items, []);
   const func = {
-    add: (item?: KVArrayItem) => {
+    add: (item?: KvArrayItem) => {
       const updateTo = [...parsedItems, item ?? ({} as any)];
       console.log('<KVArray>', '[add]', item, updateTo);
       onChange(updateTo);

@@ -4,7 +4,7 @@ import { css, jsx } from '@emotion/react';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { createReducerContext, useLogger, useToggle } from 'react-use';
-import { withP } from '../../helper';
+import { withP } from '../helper';
 import { AsunaTableProps } from './interface';
 
 const reducer = (prev: { id: number; looseFocus: () => void }, next: { id: number; looseFocus: () => void }) => {

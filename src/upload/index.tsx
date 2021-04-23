@@ -1,10 +1,10 @@
 /** @jsxRuntime classic */
 
 /** @jsx jsx */
-import { WithVariable } from '../../helper';
+import { WithVariable } from '../helper';
 import { WithDebugInfo } from '../debug';
 import { Loading } from '../loading';
-import { AssetsPreview, ImagePreview, WithModal } from '../preview';
+import { AssetsPreview, ImagePreview, WithModal } from '../preview-button/asset-preview';
 import { valueToArray, valueToString, wrapFilesToFileList } from './utils';
 import {
   CloudUploadOutlined,

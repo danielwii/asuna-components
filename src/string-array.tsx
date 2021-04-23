@@ -1,10 +1,12 @@
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+
 import { Button, Divider, Input, Tag } from 'antd';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { TweenOneGroup } from 'rc-tween-one';
 import * as React from 'react';
 import { useLogger } from 'react-use';
-import { parseArray } from '../helper';
+
+import { parseArray } from './helper';
 
 export interface IStringArrayProps {
   mode?: 'input' | 'tag';

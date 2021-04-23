@@ -1,10 +1,14 @@
 /** @jsxRuntime classic */
+
 /** @jsx jsx */
+// noinspection ES6UnusedImports
 import { css, jsx } from '@emotion/react';
+
 import { Alert, Button, Col, Divider, Input, Row, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { WithVariable } from '../helper';
-import { MATCH_REGEX, Preview } from './preview';
+
+import { WithVariable } from './helper';
+import { MATCH_REGEX, Preview } from './preview-button/asset-preview';
 
 const Editable: React.FC<{
   text: string;

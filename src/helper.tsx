@@ -1,17 +1,18 @@
 /** @jsxRuntime classic */
 
 /** @jsx jsx */
+// noinspection ES6UnusedImports
 import { css, jsx } from '@emotion/react';
 
 import { Button, Tooltip } from 'antd';
 import { Promise } from 'bluebird';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import React, { ReactElement, ReactNode, ValidationMap, WeakValidationMap } from 'react';
 import { useAsync } from 'react-use';
 import * as util from 'util';
 
-import { ErrorInfo } from './components/error';
-import { Loading } from './components/loading';
+import { ErrorInfo } from './error';
+import { Loading } from './loading';
 
 /* class decorator */
 export function StaticImplements<T>() {

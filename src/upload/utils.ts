@@ -1,4 +1,4 @@
-import { castToArrays } from '../../helper';
+import { castToArrays } from '../helper';
 import { IUploadedFile, UploaderAdapter } from './index';
 import { message } from 'antd';
 import { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';

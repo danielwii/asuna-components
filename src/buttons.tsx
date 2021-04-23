@@ -1,9 +1,10 @@
 import { Button, Modal, Popconfirm, Tooltip } from 'antd';
-import { ButtonProps } from 'antd/es/button';
-import { PopconfirmProps } from 'antd/es/popconfirm';
-import { TooltipProps } from 'antd/es/tooltip';
 import _ from 'lodash';
 import React, { useState } from 'react';
+
+import type { ButtonProps } from 'antd/es/button';
+import type { PopconfirmProps } from 'antd/es/popconfirm';
+import type { TooltipProps } from 'antd/es/tooltip';
 
 type WordingType = 'Submit' | 'Submitting' | 'Submitted';
 
