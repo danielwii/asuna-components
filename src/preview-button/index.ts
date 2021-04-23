@@ -1,3 +1,3 @@
-import { AssetPreview, PdfButton, MATCH_REGEX, Preview } from './asset-preview';
+import { AssetPreview, PdfButton } from './asset-preview';
 
 export const PreviewButton = { AssetPreview, PdfButton };

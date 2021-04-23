@@ -185,7 +185,7 @@ export function AssetsPreview({
   );
 }
 
-interface IAssetPreviewProps {
+export interface IAssetPreviewProps {
   host?: string;
   url: string;
   width?: number;
