@@ -2,7 +2,7 @@ export * from './easy-form';
 export * from './table';
 export * from './uploader';
 // export * from './debug/debug';
-export * from './table-helper';
+// export * from './table-helper';
 // export * from './elements/elements';
 // export * from './image/image';
 export * from './loading';

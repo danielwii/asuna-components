@@ -21,7 +21,7 @@ import { StringArray } from '../string-array';
 import { StringTmpl } from '../string-tmpl';
 import { DynamicJsonArrayTable, ObjectJsonTableHelper } from '../table-helper/dynamic-json-array-table';
 import { DefaultFileUploaderAdapterImpl, Uploader } from '../uploader/uploader';
-import { FormField, FormFieldDef, FormFields, FormFieldType } from './interfaces';
+import { FormField, FormFieldDef, FormFields, FormFieldType, UploadFormField } from './interfaces';
 
 interface FormProps<FieldsType> {
   message?: string | React.ReactChild;
@@ -65,13 +65,16 @@ const UploaderInput: React.FC<{
 }> = React.memo(
   ({ fieldDef, field, value, multiple }) => {
     useLogger('*[UploaderInput]*', fieldDef, field, { value });
+    const formField = fieldDef.field as UploadFormField;
     return (
       <React.Fragment>
         <label>{field.name}</label>
         <Uploader
           multiple={multiple}
-          adapter={new DefaultFileUploaderAdapterImpl(`${process.env.NEXT_PUBLIC_API_ENDPOINT}`)}
-          {...fieldDef.field.extra}
+          {...formField.extra}
+          adapter={
+            formField.extra?.adapter ?? new DefaultFileUploaderAdapterImpl(`${process.env.NEXT_PUBLIC_API_ENDPOINT}`)
+          }
           // adapter={fieldDef.field.extra?.adapter ?? new DefaultFileUploaderAdapterImpl()}
           value={value}
           onChange={(newValue: any) =>
