@@ -2,9 +2,8 @@ import { storiesOf } from '@storybook/react';
 import { Divider } from 'antd';
 import { Promise } from 'bluebird';
 import React from 'react';
-import { StoreProvider } from '../src/helper';
 import 'spinkit/spinkit.min.css';
-import { LivingLoading, Loading, LoadingType, StateFC } from '../src';
+import { LivingLoading, Loading, LoadingType, StoreProvider } from '../src';
 
 const loadingList: LoadingType[] = [
   'plane',

@@ -57,7 +57,7 @@ export class DefaultFileUploaderAdapterImpl implements UploaderAdapter {
   constructor(protected readonly host: string = '', private readonly config: AxiosRequestConfig = {}) {}
 
   upload(file: File, requestConfig?: AxiosRequestConfig): Promise<IUploadedFile[]> {
-    const instance = axios.create({ baseURL: this.host, timeout: 60_000 });
+    const instance = axios.create({ baseURL: this.host, timeout: 60e3 });
     const url = 'api/v1/uploader';
     const config: AxiosRequestConfig = {
       headers: { 'content-type': 'multipart/form-data' },

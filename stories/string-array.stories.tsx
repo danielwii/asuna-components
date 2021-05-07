@@ -1,8 +1,7 @@
 import { storiesOf } from '@storybook/react';
-import { StoreProvider } from '../src/helper';
 import 'antd/dist/antd.css';
 import React from 'react';
-import { StringArray } from '../src';
+import { StringArray, StoreProvider } from '../src';
 
 storiesOf('StringArray', module)
   .add('input', () => (

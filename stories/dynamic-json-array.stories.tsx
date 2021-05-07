@@ -12,8 +12,8 @@ import {
   StringArrayJsonTableHelper,
   WithDebugInfo,
   WithVariable,
+  StoreProvider,
 } from '../src';
-import { StoreProvider } from '../src/helper';
 
 storiesOf('DynamicJsonArray', module)
   .add('object', () => (

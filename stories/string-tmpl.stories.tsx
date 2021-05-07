@@ -1,10 +1,9 @@
 import { storiesOf } from '@storybook/react';
 import { Divider } from 'antd';
-import { StoreProvider } from '../src/helper';
 import 'antd/dist/antd.css';
 import { html } from 'common-tags';
 import React from 'react';
-import { StateFC, StringTmpl } from '../src';
+import { StoreProvider, StringTmpl } from '../src';
 
 storiesOf('StringTmpl', module)
   .add('default', () => (
