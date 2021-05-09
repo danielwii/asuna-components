@@ -1,36 +1,48 @@
 import { FormOutlined, Html5Outlined } from '@ant-design/icons';
 
-import CodeMirror from '@uiw/react-codemirror';
-import { Radio, Space } from 'antd';
+import { Alert, Button, Divider, Radio, Space } from 'antd';
 import 'codemirror/addon/comment/comment';
 import 'codemirror/addon/display/autorefresh';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/keymap/sublime';
-import 'codemirror/theme/monokai.css';
-
+import 'codemirror/mode/htmlmixed/htmlmixed';
+// import 'codemirror/theme/monokai.css';
 import prettier from 'prettier';
 import parserHtml from 'prettier/parser-html';
 import React, { useState } from 'react';
-import { useToggle } from 'react-use';
+import { Controlled as CodeMirror } from 'react-codemirror2';
+import { useMount, useToggle } from 'react-use';
+
 import { BraftRichEditor } from './braft';
 
 export * from './braft';
 
-export const RichEditor: React.FC<{ value: string; onChange: (value: string) => any }> = ({ value, onChange }) => {
+export type RichEditorProps = { value: string; onChange: (value: string) => any; validateFn; upload };
+export const RichEditor = ({ value, onChange, validateFn, upload }: RichEditorProps): JSX.Element => {
   const [mode, setMode] = useToggle(false);
-  const [currentValue, setValue] = useState(prettier.format(value, { parser: 'html', plugins: [parserHtml] }));
+  const [state, setState] = useState(prettier.format(value, { parser: 'html', plugins: [parserHtml] }));
+
+  useMount(() => {
+    setMode(true);
+  });
 
   const view =
     typeof window !== 'undefined' ? (
       <>
         <div style={{ display: mode ? 'inherit' : 'none' }}>
-          <BraftRichEditor value={value} onChange={onChange} />
+          <BraftRichEditor value={value} onChange={onChange} upload={upload} validateFn={validateFn} />
         </div>
         <div style={{ display: !mode ? 'inherit' : 'none' }}>
+          <Alert type="info" showIcon message="HTML 模式下必须手动点击更新后才可进行提交操作" />
           <CodeMirror
-            value={currentValue}
-            options={{ theme: 'monokai', tabSize: 2, keyMap: 'sublime', mode: 'html' }}
+            value={state}
+            options={{ theme: 'monokai', lineNumbers: true, tabSize: 2, keyMap: 'sublime', mode: 'htmlmixed' }}
+            onBeforeChange={(editor, data, updateTo) => setState(updateTo)}
           />
+          <Divider type="horizontal" style={{ height: '1rem' }} />
+          <Button type="dashed" onClick={() => onChange(state)}>
+            更新
+          </Button>
         </div>
       </>
     ) : null;
@@ -49,3 +61,5 @@ export const RichEditor: React.FC<{ value: string; onChange: (value: string) => 
     </Space>
   );
 };
+
+export default RichEditor;

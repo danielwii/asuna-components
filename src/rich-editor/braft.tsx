@@ -1,16 +1,16 @@
 import { Input } from 'antd';
-import type { ExtendControlType } from 'braft-editor';
+import { ExtendControlType } from 'braft-editor';
+import ColorPicker from 'braft-extensions/dist/color-picker';
 import { ContentUtils } from 'braft-utils';
-import consola from 'consola';
 import * as _ from 'lodash';
 import * as React from 'react';
 import { FoldingCube } from 'styled-spinkit';
 
-const logger = consola.withScope('[BraftRichEditor]');
-
 let BraftEditor;
 
 interface IProps {
+  validateFn;
+  upload;
   host?: string;
   prefix?: string;
   urlHandler?: (res) => string;
@@ -37,9 +37,15 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
   componentDidMount() {
     // to avoid ·window is not defined· issue
     BraftEditor = require('braft-editor').default;
-    logger.debug('[componentDidMount]', { state: this.state, props: this.props });
     const { value } = this.props;
     const editorState = BraftEditor.createEditorState(value || '');
+    BraftEditor.use(
+      ColorPicker({
+        includeEditors: ['editor-with-color-picker'],
+        theme: 'light', // 支持dark和light两种主题，默认为dark
+      }),
+    );
+
     this.setState({ loading: false, editorState });
   }
 
@@ -50,21 +56,17 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
   };
 
   _uploadFn = async (param) => {
-    const { prefix, urlHandler } = this.props;
-    logger.debug('[uploadFn]', { prefix, param });
-    /*
-    const response = await apiProxy.upload(
+    const { prefix, urlHandler, upload } = this.props;
+
+    const response = await upload(
       param.file,
       { prefix },
       {
         onUploadProgress(progressEvent) {
-          logger.debug('[uploadFn][progressFn]', 'event is', progressEvent);
           param.progress((progressEvent.loaded / progressEvent.total) * 100);
         },
       },
     );
-
-    logger.debug('[uploadFn]', 'response is', response);
 
     if (/^20\d$/.test(response.status as any)) {
       const image = urlHandler ? urlHandler(response.data[0]) : response.data[0];
@@ -77,20 +79,14 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
       param.error({
         msg: 'unable to upload.',
       });
-    }*/
+    }
   };
 
   render() {
-    const { host } = this.props;
+    const { validateFn } = this.props;
     const { loading, editorState } = this.state;
 
     if (loading) return <FoldingCube />;
-
-    /*
-    if (AppContext.isServer) {
-      return <div />;
-    }
-*/
 
     const extendControls: ExtendControlType[] = [
       {
@@ -127,13 +123,14 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
 
     return (
       <BraftEditor
+        id="editor-with-color-picker"
         ref={(instance) => (this.editorInstance = instance)}
         value={editorState}
         defaultValue={editorState}
         onChange={this._handleEditorChange}
         extendControls={extendControls}
         media={{
-          // validateFn: validateFile, // 指定本地校验函数
+          validateFn, // 指定本地校验函数
           uploadFn: this._uploadFn, // 指定上传函数
           externalMedias: { image: true, audio: false, video: false, embed: true },
         }}
