@@ -20,3 +20,4 @@ export * from './weather';
 export * from './living-loading';
 export * from './error/error';
 export * from './helper/helper';
+export * from './helper/store';

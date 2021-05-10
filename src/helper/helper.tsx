@@ -67,29 +67,6 @@ export function castToArrays(value: string): string[] {
 //   return value ? (_.isArray(value) ? value : castToArrays(value)) : [];
 // }
 
-export const StoreProvider: StateFC<any> = ({ initialState, children }) => {
-  const [state, setState] = React.useState(initialState);
-  return (
-    <div
-      css={css`
-        display: flex;
-        justify-content: space-between;
-        > div {
-          flex: 0 0 calc(50% - 0.5rem);
-          border: silver dashed 1px;
-          padding: 0.5rem;
-          margin: 0.2rem;
-        }
-      `}
-    >
-      <div>{children(state, setState)}</div>
-      <div>
-        <pre>{JSON.stringify({ state, initialState }, null, 2)}</pre>
-      </div>
-    </div>
-  );
-};
-
 export function TooltipContent({ value, link }: { value: any; link?: boolean }) {
   let component = _.isObject(value) ? util.inspect(value) : value;
   const length = 30;
