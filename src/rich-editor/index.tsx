@@ -26,37 +26,41 @@ export const RichEditor = ({ value, onChange, validateFn, upload }: RichEditorPr
     setMode(true);
   });
 
+  // useLogger('<RichEditor>', _.difference(state, value));
+
   const view =
     typeof window !== 'undefined' ? (
       <>
+        <Alert type="info" showIcon message="修改完毕后需要手动点击更新后再进行提交操作" />
         <div style={{ display: mode ? 'inherit' : 'none' }}>
-          <BraftRichEditor value={value} onChange={onChange} upload={upload} validateFn={validateFn} />
+          <BraftRichEditor value={state} onChange={setState} upload={upload} validateFn={validateFn} />
         </div>
         <div style={{ display: !mode ? 'inherit' : 'none' }}>
-          <Alert type="info" showIcon message="HTML 模式下必须手动点击更新后才可进行提交操作" />
           <CodeMirror
             value={state}
             options={{ theme: 'monokai', lineNumbers: true, tabSize: 2, keyMap: 'sublime', mode: 'htmlmixed' }}
             onBeforeChange={(editor, data, updateTo) => setState(updateTo)}
           />
           <Divider type="horizontal" style={{ height: '1rem' }} />
-          <Button type="dashed" onClick={() => onChange(state)}>
-            更新
-          </Button>
         </div>
       </>
     ) : null;
 
   return (
     <Space direction="vertical">
-      <Radio.Group size="small" value={mode} onChange={(e) => setMode(e.target.value)}>
-        <Radio.Button value={true}>
-          Editor <FormOutlined />
-        </Radio.Button>
-        <Radio.Button value={false}>
-          HTML <Html5Outlined />
-        </Radio.Button>
-      </Radio.Group>
+      <Space direction="horizontal">
+        <Radio.Group size="small" value={mode} onChange={(e) => setMode(e.target.value)}>
+          <Radio.Button value={true}>
+            Editor <FormOutlined />
+          </Radio.Button>
+          <Radio.Button value={false}>
+            HTML <Html5Outlined />
+          </Radio.Button>
+        </Radio.Group>
+        <Button size="small" type="primary" disabled={state === value} onClick={() => onChange(state)}>
+          更新
+        </Button>
+      </Space>
       <div>{view}</div>
     </Space>
   );
