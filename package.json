@@ -76,6 +76,7 @@
     "@testing-library/jest-dom": "^5",
     "@testing-library/react": "^11",
     "@testing-library/user-event": "^13",
+    "@types/codemirror": "^5",
     "@types/dagre": "^0",
     "@types/faker": "^5",
     "@types/pathfinding": "^0",

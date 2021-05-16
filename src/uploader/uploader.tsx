@@ -244,6 +244,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
             <Divider type="horizontal" dashed style={{ margin: '1rem 0' }} />
             <Button
               type="primary"
+              size="small"
               onClick={() => {
                 func.addNetworkAddress(state);
                 setVisible(false);
@@ -254,7 +255,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
           </div>
         )}
       >
-        <Button>
+        <Button size="small">
           <CloudUploadOutlined /> Add Network Address
         </Button>
       </WithModal>
@@ -289,7 +290,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
       {/* <Tag>{refreshFlag}</Tag> */}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         {views.renderedAddNetworkAddressButton}
-        <Radio.Group value={layout} onChange={(e) => setLayout(e.target.value)}>
+        <Radio.Group size="small" value={layout} onChange={(e) => setLayout(e.target.value)}>
           <Radio.Button value="picture">
             picture <PictureOutlined />
           </Radio.Button>
@@ -321,7 +322,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
                 <InboxOutlined />
               </p>
               <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <Button loading={loading}>
+              <Button loading={loading} size="small">
                 <UploadOutlined /> Click to Upload
               </Button>
             </React.Fragment>
@@ -344,7 +345,7 @@ export const Uploader: React.FC<IUploaderProps> = ({
               <Loading type="chase" />
             </div>
           ) : (
-            <Button>
+            <Button size="small">
               <UploadOutlined /> upload
             </Button>
           )}
