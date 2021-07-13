@@ -31,7 +31,7 @@ export const RichEditor: React.VFC<RichEditorProps> = ({ value, onChange, valida
     !mode && setMode(true);
   });
 
-  // useLogger('<RichEditor>', { value });
+  // useLogger('<RichEditor>', { value, parsed });
 
   return (
     <Space direction="vertical">

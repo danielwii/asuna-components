@@ -73,7 +73,7 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
       param.success({
         image,
         // url: join(prefix || '', `${image}`),
-        url: image,
+        url: image.fullpath,
       });
     } else {
       param.error({
@@ -106,7 +106,6 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
           onConfirm: () => {
             const id = _.trim(_.get(document.getElementById('braft-modal-01-id'), 'value'));
             const text = _.trim(_.get(document.getElementById('braft-modal-01-input'), 'value'));
-            console.log({ id, text });
             if (id && text) {
               this.setState({
                 editorState: ContentUtils.insertHTML(
@@ -132,7 +131,7 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
         media={{
           validateFn, // 指定本地校验函数
           uploadFn: this._uploadFn, // 指定上传函数
-          externalMedias: { image: true, audio: false, video: false, embed: true },
+          externalMedias: { image: true, audio: true, video: true, embed: true },
         }}
       />
     );
