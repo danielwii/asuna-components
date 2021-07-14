@@ -1,10 +1,11 @@
 import { Input } from 'antd';
-import { ExtendControlType } from 'braft-editor';
 import ColorPicker from 'braft-extensions/dist/color-picker';
 import { ContentUtils } from 'braft-utils';
 import * as _ from 'lodash';
 import * as React from 'react';
 import { FoldingCube } from 'styled-spinkit';
+
+import type { ExtendControlType } from 'braft-editor';
 
 let BraftEditor;
 

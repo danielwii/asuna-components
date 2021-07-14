@@ -1,19 +1,26 @@
 import { FormOutlined, Html5Outlined } from '@ant-design/icons';
 
-import { Alert, Button, Divider, Radio, Space } from 'antd';
-import 'codemirror/addon/comment/comment';
-import 'codemirror/addon/display/autorefresh';
-import 'codemirror/addon/edit/matchbrackets';
-import 'codemirror/keymap/sublime';
-import 'codemirror/mode/htmlmixed/htmlmixed';
-// import 'codemirror/theme/monokai.css';
+import { Divider, Radio, Space } from 'antd';
+import dynamic from 'next/dynamic';
 import { format } from 'prettier';
 import parserHtml from 'prettier/parser-html';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Controlled as CodeMirror } from 'react-codemirror2';
-import { useEffectOnce, useLogger, useMount, useToggle } from 'react-use';
+import React from 'react';
+import { useMount, useToggle } from 'react-use';
 
 import { BraftRichEditor } from './braft';
+
+const CodeMirror: any = dynamic(
+  () => {
+    import('codemirror/addon/comment/comment');
+    import('codemirror/addon/display/autorefresh');
+    import('codemirror/addon/edit/matchbrackets');
+    // import('codemirror/theme/monokai.css');
+    import('codemirror/keymap/sublime');
+    import('codemirror/mode/htmlmixed/htmlmixed');
+    return import('react-codemirror2').then(({ Controlled }) => Controlled);
+  },
+  { ssr: false },
+);
 
 // const logger = consola.withScope('<RichEditor>');
 
@@ -55,7 +62,7 @@ export const RichEditor: React.VFC<RichEditorProps> = ({ value, onChange, valida
         {mode && (
           <BraftRichEditor value={parsed} onChange={(v) => onChange(v)} upload={upload} validateFn={validateFn} />
         )}
-        {!mode && (
+        {!mode && CodeMirror && (
           <CodeMirror
             value={parsed}
             options={{
