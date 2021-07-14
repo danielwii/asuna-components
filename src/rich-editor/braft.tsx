@@ -1,5 +1,4 @@
 import { Input } from 'antd';
-import ColorPicker from 'braft-extensions/dist/color-picker';
 import { ContentUtils } from 'braft-utils';
 import * as _ from 'lodash';
 import * as React from 'react';
@@ -38,6 +37,7 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
   componentDidMount() {
     // to avoid ·window is not defined· issue
     BraftEditor = require('braft-editor').default;
+    const ColorPicker = require('braft-extensions/dist/color-picker');
     const { value } = this.props;
     const editorState = BraftEditor.createEditorState(value || '');
     BraftEditor.use(
