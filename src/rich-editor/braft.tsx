@@ -37,7 +37,7 @@ export class BraftRichEditor extends React.Component<IProps, IState> {
   componentDidMount() {
     // to avoid ·window is not defined· issue
     BraftEditor = require('braft-editor').default;
-    const ColorPicker = require('braft-extensions/dist/color-picker');
+    const ColorPicker = require('braft-extensions/dist/color-picker').default;
     const { value } = this.props;
     const editorState = BraftEditor.createEditorState(value || '');
     BraftEditor.use(
