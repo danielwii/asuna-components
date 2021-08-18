@@ -8,6 +8,7 @@ import { Button, Card, Divider, Input, Space, Switch } from 'antd';
 import { Promise } from 'bluebird';
 import { changeAntdTheme } from 'dynamic-antd-theme';
 import { Field, FieldInputProps, FieldProps, Form, FormikErrors, FormikProps, FormikValues, withFormik } from 'formik';
+import { WithFormikConfig } from 'formik/dist/withFormik';
 import _ from 'lodash';
 import React from 'react';
 import { SketchPicker } from 'react-color';
@@ -367,7 +368,7 @@ const InnerForm: React.FC<EasyFormProps & FormikProps<FormikValues>> = ({
   </Form>
 );
 
-export const EasyForm = withFormik<EasyFormProps, FormikValues>({
+const EasyFormProps: WithFormikConfig<EasyFormProps, FormikValues, FormikValues> = {
   // Transform outer props into form values
   mapPropsToValues: ({ fields, initialValues }) =>
     Object.assign(
@@ -401,4 +402,7 @@ export const EasyForm = withFormik<EasyFormProps, FormikValues>({
       Promise.delay(200).then(() => setSubmitting(false));
     }
   },
-})(InnerForm);
+};
+export const useEasyForm = (validationSchema?: any | ((props: EasyFormProps) => any)) =>
+  withFormik<EasyFormProps, FormikValues>({ validationSchema, ...EasyFormProps })(InnerForm);
+export const EasyForm = withFormik<EasyFormProps, FormikValues>(EasyFormProps)(InnerForm);
