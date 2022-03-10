@@ -10,8 +10,7 @@ storiesOf('StringTmpl', module)
     <div style={{ margin: '1rem' }}>
       <StoreProvider
         initialState={{
-          tmpl:
-            'a={{n1}}&b={{n2}}&n3={{n3}}&n4={{n4}}&n5={{n5}}&n6={{n6}}&n7={{n7}}&no-fake={{no-fake}}&error={{error}}',
+          tmpl: 'a={{n1}}&b={{n2}}&n3={{n3}}&n4={{n4}}&n5={{n5}}&n6={{n6}}&n7={{n7}}&no-fake={{no-fake}}&error={{error}}',
         }}
       >
         {(state, setState) => (

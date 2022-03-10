@@ -1,10 +1,12 @@
-import { castToArrays } from '../helper/helper';
-import { IUploadedFile, UploaderAdapter } from './uploader';
 import { message } from 'antd';
-import { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
 import axios, { AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
 import * as fp from 'lodash/fp';
+
+import { castToArrays } from '../helper/helper';
+
+import type { IUploadedFile, UploaderAdapter } from './uploader';
+import type { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
 
 export function wrapFilesToFileList(value: string | string[]): UploadFile[] {
   const files = valueToArray(value);

@@ -4,7 +4,7 @@ import React from 'react';
 import { DefaultFileUploaderAdapterImpl, StoreProvider, Uploader } from '../src';
 
 storiesOf('Uploader', module).add('default', () => (
-  <StoreProvider initialState={''}>
+  <StoreProvider initialState={null}>
     {(state, setState) => (
       <>
         <Uploader

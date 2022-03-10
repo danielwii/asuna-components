@@ -2,10 +2,11 @@ module.exports = {
   presets: ['@babel/env', '@babel/typescript'],
   plugins: [
     ['@babel/plugin-proposal-decorators', { legacy: true }],
-    ['@babel/plugin-proposal-class-properties', { loose: true }],
+    '@babel/plugin-proposal-class-properties',
     '@babel/plugin-transform-react-jsx',
     '@babel/proposal-object-rest-spread',
-    '@babel/plugin-transform-runtime',
+    ['@babel/plugin-transform-runtime', { absoluteRuntime: false, corejs: false, helpers: true, regenerator: true }],
+    ['import', { libraryName: 'antd' }, 'antd'],
   ],
   env: {
     production: {

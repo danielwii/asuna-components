@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import type { IUploaderProps } from '../uploader/uploader';
 import type { AsunaSelectProps } from '../select/select';
