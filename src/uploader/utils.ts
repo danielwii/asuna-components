@@ -66,7 +66,7 @@ export class DefaultFileUploaderAdapterImpl implements UploaderAdapter {
     };
     const data = new FormData();
     data.append('files', file, file.name);
-    return instance.post(url, data, config).then((res) => res.data);
+    return instance.post<IUploadedFile[]>(url, data, config).then((res) => res.data);
   }
 
   validate(file: File): boolean {

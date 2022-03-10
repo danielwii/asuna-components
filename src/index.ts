@@ -18,6 +18,6 @@ export * from './drawer-button/drawer-button';
 export * from './select/select';
 export * from './weather';
 export * from './living-loading';
-export * from './error/error';
+export * from './error';
 export * from './helper/helper';
 export * from './helper/store';
