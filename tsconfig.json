@@ -22,9 +22,10 @@
     "esModuleInterop": true,
 
     /* Source Map Options */
-    "sourceRoot": "src",
-    "inlineSourceMap": true,
-    "inlineSources": true,
+    // "sourceRoot": "src",
+    //    "sourceMap": true,
+    //    "inlineSourceMap": true,
+    //    "inlineSources": true,
 
     /* Experimental Options */
 
