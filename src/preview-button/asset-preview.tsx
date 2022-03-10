@@ -6,7 +6,7 @@ import { FilePdfOutlined } from '@ant-design/icons';
 import { css, jsx } from '@emotion/react';
 
 import { Button, Divider, Input, List, Modal, Tooltip } from 'antd';
-import faker from 'faker';
+import faker from '@faker-js/faker';
 import * as _ from 'lodash';
 import * as R from 'ramda';
 import React, { useState } from 'react';
