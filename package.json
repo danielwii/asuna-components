@@ -2,6 +2,7 @@
   "name": "@danielwii/asuna-components",
   "version": "0.4.38",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -14,9 +15,11 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn type-check -- --watch",
     "prebuild": "yarn clean",
-    "build": "yarn clean && yarn tsc",
-    "build:types": "tsc --emitDeclarationOnly",
-    "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
+    "rename": "find dist -depth -name \"*.js\" -exec sh -c 'mv \"$1\" \"${1%.js}.mjs\"' _ \\{\\} \\; && find dist -depth -name \"*.js.map\" -exec sh -c 'mv \"$1\" \"${1%.js.map}.mjs.map\"' _ \\{\\} \\;",
+    "build": "yarn clean && yarn build:types && yarn build:js",
+    "build:types": "tsc --emitDeclarationOnly --declarationDir dist ",
+    "build:js": "swc src -d dist -C module.type=es6 && yarn rename && swc src -d dist -C module.type=commonjs -s",
+    "build:babel": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
     "postinstall!": "yarn build",
     "clean": "rm -rf dist dist",
     "storybook": "start-storybook -p 9009 -s public"
@@ -72,6 +75,8 @@
     "@projectstorm/geometry": "^6.7.0",
     "@projectstorm/react-canvas-core": "^6.7.0",
     "@storybook/react": "^6.4.19",
+    "@swc/cli": "^0",
+    "@swc/core": "^1",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",

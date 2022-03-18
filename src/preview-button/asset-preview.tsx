@@ -4,12 +4,13 @@
 import { FilePdfOutlined } from '@ant-design/icons';
 // noinspection ES6UnusedImports
 import { css, jsx } from '@emotion/react';
+import faker from '@faker-js/faker';
 
 import { Button, Divider, Input, List, Modal, Tooltip } from 'antd';
-import faker from '@faker-js/faker';
 import * as _ from 'lodash';
 import * as R from 'ramda';
 import React, { useState } from 'react';
+import { Document, Page } from 'react-pdf';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as styles } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { useMountedState } from 'react-use';
@@ -200,7 +201,7 @@ interface IAssetPreviewState {
   loading: boolean;
 }
 
-export const AssetPreview: React.FC<IAssetPreviewProps> = ({ url, width, height, showPdf, fullWidth }) => {
+export const AssetPreview: React.VFC<IAssetPreviewProps> = ({ url, width, height, showPdf, fullWidth }) => {
   const isMounted = useMountedState();
   const [state, setState] = useState<IAssetPreviewState>({ numPages: null, pageNumber: 1, loading: true });
   const href = url;
@@ -221,19 +222,29 @@ export const AssetPreview: React.FC<IAssetPreviewProps> = ({ url, width, height,
 */
 
   if (/pdf$/.test(url)) {
-    const view = R.ifElse(
-      R.identity,
-      () => {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { Document, Page } = require('react-pdf');
-        return (
-          <Document file={href} onLoadSuccess={onDocumentLoadSuccess}>
-            <Page pageNumber={state.pageNumber} width={fullWidth ? (null as any) : width ?? 200} />
-          </Document>
-        );
-      },
-      () => null,
-    )(isMounted() && window);
+    let view = null;
+    if (typeof window !== 'undefined') {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { Document, Page } = require('react-pdf');
+      view = (
+        <Document file={href} onLoadSuccess={onDocumentLoadSuccess}>
+          <Page pageNumber={state.pageNumber} width={fullWidth ? (null as any) : width ?? 200} />
+        </Document>
+      );
+    }
+    // const view = R.ifElse(
+    //   R.identity,
+    //   () => {
+    //     // eslint-disable-next-line @typescript-eslint/no-require-imports
+    //     const { Document, Page } = require('react-pdf');
+    //     return (
+    //       <Document file={href} onLoadSuccess={onDocumentLoadSuccess}>
+    //         <Page pageNumber={state.pageNumber} width={fullWidth ? (null as any) : width ?? 200} />
+    //       </Document>
+    //     );
+    //   },
+    //   () => null,
+    // )(isMounted() && window);
     return showPdf ? (
       <WithDebugInfo info={state}>
         {!state.loading && (
