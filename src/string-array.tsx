@@ -45,7 +45,7 @@ export const StringArray: React.FC<IStringArrayProps> = ({ mode, items, onChange
               opacity: 0,
               type: 'from',
               duration: 100,
-              onComplete: (e: { index: number; target: HTMLElement }) => _.set(e.target, 'style', ''),
+              onComplete: (e) => _.set(e.targets, 'style', ''),
             }}
             leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
             appear={false}

@@ -2,7 +2,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 
 import { Button, Divider, Popover, Space } from 'antd';
 import React, { useState } from 'react';
-import JSONTree from 'react-json-tree';
+import { JSONTree } from 'react-json-tree';
 import * as util from 'util';
 
 export const WithDebugInfo: React.FC<{ info: any; debug?: boolean }> = ({ info, debug, children }) => {
