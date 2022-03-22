@@ -56,7 +56,7 @@
     "pathfinding": "^0.4.18",
     "paths-js": "^0.4.11",
     "ramda": "^0.28.0",
-    "rc-tween-one": "^3.0.3",
+    "rc-tween-one": "^2.7.3",
     "react": "^17.0.2",
     "react-codemirror2": "^7.2.1",
     "react-color": "^2.19.3",
