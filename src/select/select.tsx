@@ -7,18 +7,17 @@ import React from 'react';
 
 import type { SelectProps, SelectValue } from 'antd/es/select';
 
-export type SelectItem =
-  | (string | number)
-  | { text: string; title?: string; value: string | number; disabled?: boolean };
-export type SelectItems = SelectItem[];
-export type AsunaSelectProps = { items: SelectItems; allowCustom?: boolean } & SelectProps<SelectValue>;
+type SelectItemObject = { text: string; title?: string; value: string | number; disabled?: boolean };
+export type SelectItem = string | number | SelectItemObject;
+// export type SelectItems = SelectItem[];
+export type AsunaSelectProps = { items: SelectItem[]; allowCustom?: boolean } & SelectProps<SelectValue>;
 
 export const AsunaSelect: React.FC<AsunaSelectProps> = ({ value, items, onChange, allowCustom, ...selectProps }) => {
-  const [filteredItems, setItems] = React.useState(
-    R.ifElse(
+  const [filteredItems, setItems] = React.useState<SelectItemObject[]>(
+    R.ifElse<[SelectItem[]], SelectItemObject[], SelectItemObject[]>(
       R.pipe(R.head, _.isObject),
-      () => items,
-      () => _.map(items, (v) => ({ text: v, value: v })),
+      () => items as SelectItemObject[],
+      () => _.map(items, (v) => ({ text: v, value: v } as SelectItemObject)),
     )(items),
   );
   const [extra, setExtra] = React.useState();
